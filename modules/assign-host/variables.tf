@@ -1,24 +1,19 @@
 
-//location variables
-variable "zone" {
+variable "host_vm" {
 }
 
 variable "location" {
 }
-variable "label" {
-}
+
+variable "ip_count" {}
+
 variable "module_depends_on" {
 }
-# variable "cos_key"{
-# }
 
-# variable "cos_key_id"{
-# }
+variable "host_zone" {}
 variable "ibmcloud_api_key" {
 }
 variable "region" {
 }
 variable "resource_group" {
 }
-
-
