@@ -3,7 +3,7 @@ resource "null_resource" "assign_host" {
   count      = var.ip_count
 
   triggers = {
-      hostname       = "${element(var.host_vm, count.index)}"
+      hostname       = element(var.host_vm, count.index)
       LOCATION       = var.location
       API_KEY        = var.ibmcloud_api_key
       REGION         = var.region
@@ -16,7 +16,7 @@ resource "null_resource" "assign_host" {
     when = create
     command = ". ${path.module}/../../modules/host/scripts/host.sh"
     environment = {
-      hostname       = "${element(var.host_vm, count.index)}"
+      hostname       = element(var.host_vm, count.index)
       index          = count.index
       LOCATION       = var.location
       host_zone      = var.host_zone
