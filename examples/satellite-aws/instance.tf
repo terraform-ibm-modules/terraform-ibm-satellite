@@ -48,9 +48,10 @@ module "security_group" {
       cidr_blocks = "0.0.0.0/0"
     },
     {
-      from_port   = -1
-      to_port     = -1
-      protocol    = "icmp"
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      description = "All traffic"
       cidr_blocks = "0.0.0.0/0"
     },
   ]
@@ -109,15 +110,11 @@ resource "aws_key_pair" "keypair" {
   public_key  = var.ssh_public_key
 }
 
-data "local_file" "satellite_script" {
-  filename   = "${path.module}/addhost.sh"
-  depends_on = [module.satellite-location]
-}
 
 module "ec2" {
   source                      = "terraform-aws-modules/ec2-instance/aws"
   
-  depends_on                  = [module.satellite-location, data.local_file.satellite_script ]
+  depends_on                  = [ module.satellite-location ]
   instance_count              = var.instance_count
   name                        = var.vm_prefix
   ami                         = var.ami
@@ -127,8 +124,8 @@ module "ec2" {
   vpc_security_group_ids      = [module.security_group.this_security_group_id]
   associate_public_ip_address = true
   placement_group             = aws_placement_group.web.id
-  user_data                   = file(data.local_file.satellite_script.filename)
-
+  user_data                   = file(replace("${path.module}/addhost.sh*${module.satellite-location.module_id}", "/[*].*/", ""))
+ 
   root_block_device = [
     {
       volume_type = "gp2"
