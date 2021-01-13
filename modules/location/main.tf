@@ -41,3 +41,7 @@ resource "null_resource" "satellite_location" {
 output "satellite_location" {
   value = null_resource.satellite_location
 }
+
+output "module_id" {
+  value = null_resource.satellite_location.id
+}
