@@ -13,12 +13,18 @@ do
     echo status = action required
     status="action"
   fi
-   echo *************provisioning location*****************
-    sleep 10
+   echo "************* provisioning location *****************"
+   sleep 10
 done
 
 path_out=`ibmcloud sat host attach --location $LOCATION -l $LABEL`
 echo $path_out
+if [[ $path_out == "" ]]; then
+  echo "************* Failed to generate script *************"
+  exit 1
+fi
+
+
 path=$(echo $path_out| cut -d' ' -f 21)
 echo path= $path
 if [[ $PROVIDER == "ibm" ]];

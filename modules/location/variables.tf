@@ -7,18 +7,15 @@ variable "location" {
 }
 variable "label" {
 }
-variable "module_depends_on" {
-}
-# variable "cos_key"{
-# }
+variable "host_provider" {
 
-# variable "cos_key_id"{
-# }
+}
 variable "ibmcloud_api_key" {
 }
+variable "endpoint" {
+}
+
 variable "region" {
 }
 variable "resource_group" {
 }
-
-
