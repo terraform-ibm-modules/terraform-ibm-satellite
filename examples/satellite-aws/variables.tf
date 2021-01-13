@@ -5,7 +5,6 @@
 
 variable "location_name" {
     description  =  "Name of the satellite location on which cluster has to be created | attached"
-    default      =  ""
 }
 
 variable "location_zone" {
@@ -26,7 +25,6 @@ variable "label" {
 variable "ibmcloud_api_key" { 
   description  = "IBM Cloud API Key"
   type         = string
-  default      = ""
 }
 
 variable "endpoint" {
@@ -42,13 +40,11 @@ variable "aws_region" {
 variable "aws_access_key" {
   description  = "AWS access key"
   type         = string
-  default      = ""
 }
 
 variable "aws_secret_key" {
   description  = "AWS secret key"
   type         = string
-  default      = ""
 }
 
 variable "region" {
@@ -100,7 +96,6 @@ variable "key_name" {
 variable "ssh_public_key" {
   description  = "SSH public key"
   type         = string
-  default      = ""
 }
 
 variable "instance_count" {
