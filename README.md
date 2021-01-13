@@ -16,24 +16,24 @@ you can add hosts that you run in your on-prem data center, in IBM Cloud, or in 
 
 * Step 4: Setup Satellite Control Plane. The Satellite control plane serves as the .... TODO. To create the control plane, you must add at least 3 compute hosts to your location that meet the [minimum requirements](https://cloud.ibm.com/docs/satellite?topic=satellite-host-reqs) . Assign these hosts to your location.
 
-*Step 5: Create DNS for your new Location.
+* Step 5: Create DNS for your new Location.
 
 ## Compatibility
 
-This module is meant for use with Terraform 0.12. 
+This module is meant for use with Terraform 0.13. 
 
 ## Requirements
 
 ### Terraform plugins
 
-- [Terraform](https://www.terraform.io/downloads.html) 0.12
+- [Terraform](https://www.terraform.io/downloads.html) 0.13
 - [terraform-provider-ibm](https://github.com/IBM-Cloud/terraform-provider-ibm) 
 
 ## Install
 
 ### Terraform
 
-Be sure you have the correct Terraform version (0.12), you can choose the binary here:
+Be sure you have the correct Terraform version (0.13), you can choose the binary here:
 - https://releases.hashicorp.com/terraform/
 
 ### Terraform plugins

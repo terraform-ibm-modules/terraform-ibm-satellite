@@ -1,14 +1,3 @@
-#####################################################
-# AWS EC2 Insatnce Module Example
-# Copyright 2020 IBM
-#####################################################
-
-provider "aws" {
-}
-
-##################################################################
-# Data sources to get VPC, subnet
-##################################################################
 data "aws_vpc" "default" {
   default = true
 }
@@ -33,10 +22,15 @@ module "security_group" {
       cidr_blocks = "0.0.0.0/0"
     },
     {
+      from_port   = 30000
+      to_port     = 32767
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
       from_port   = 22
       to_port     = 22
       protocol    = "tcp"
-      description = "SSH TCP"
       cidr_blocks = "0.0.0.0/0"
     },
     {
@@ -52,21 +46,33 @@ module "security_group" {
       protocol    = "tcp"
       description = "HTTP TCP"
       cidr_blocks = "0.0.0.0/0"
-    }
+    },
+    {
+      from_port   = -1
+      to_port     = -1
+      protocol    = "icmp"
+      cidr_blocks = "0.0.0.0/0"
+    },
   ]
 
   ingress_with_ipv6_cidr_blocks   = [
-     {
-      from_port   = 30000
-      to_port     = 32767
-      protocol    = "udp"
+    {
+      from_port        = 30000
+      to_port          = 32767
+      protocol         = "udp"
       ipv6_cidr_blocks = "::/0"
     },
     {
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      description = "HTTPS TCP"
+      from_port        = 30000
+      to_port          = 32767
+      protocol         = "tcp"
+      ipv6_cidr_blocks = "::/0"
+    },
+    {
+      from_port        = 443
+      to_port          = 443
+      protocol         = "tcp"
+      description      = "HTTPS TCP"
       ipv6_cidr_blocks = "::/0"
     },
   ] 
@@ -98,33 +104,38 @@ resource "aws_placement_group" "web" {
   strategy = "cluster"
 }
 
+resource "aws_key_pair" "keypair" {
+  key_name    = var.key_name
+  public_key  = var.ssh_public_key
+}
+
+data "local_file" "satellite_script" {
+  filename   = "${path.module}/addhost.sh"
+  depends_on = [module.satellite-location]
+}
 
 module "ec2" {
-  source = "terraform-aws-modules/ec2-instance/aws"
-
+  source                      = "terraform-aws-modules/ec2-instance/aws"
+  
+  depends_on                  = [module.satellite-location, data.local_file.satellite_script ]
   instance_count              = var.instance_count
-  name                        = var.name
+  name                        = var.vm_prefix
   ami                         = var.ami
   instance_type               = var.instance_type
-  key_name                    = var.key_name
+  key_name                    = aws_key_pair.keypair.key_name
   subnet_id                   = tolist(data.aws_subnet_ids.all.ids)[0]
   vpc_security_group_ids      = [module.security_group.this_security_group_id]
   associate_public_ip_address = true
   placement_group             = aws_placement_group.web.id
-  user_data                   = file(var.input_file_name)
+  user_data                   = file(data.local_file.satellite_script.filename)
 
   root_block_device = [
     {
       volume_type = "gp2"
-      volume_size = 10
+      volume_size = var.volume_size
     },
   ]
 
-  tags = {
-    "env" = "aws"
-  }
+  tags = var.tags
 
 }
-
-
-
