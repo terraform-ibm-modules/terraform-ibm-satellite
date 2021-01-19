@@ -21,7 +21,3 @@ variable "resource_group" {
 variable "host_provider" {
 
 }
-
-variable "host_zone" {
-}
-

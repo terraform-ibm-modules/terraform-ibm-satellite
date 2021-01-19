@@ -19,7 +19,7 @@ resource "null_resource" "assign_host" {
       hostname       = element(var.host_vm, count.index)
       index          = count.index
       LOCATION       = var.location
-      host_zone      = var.host_zone
+      host_zone      = var.region
       API_KEY        = var.ibmcloud_api_key
       REGION         = var.region
       RESOURCE_GROUP = var.resource_group

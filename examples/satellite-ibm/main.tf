@@ -1,3 +1,8 @@
+#######################################################################################
+# Satellite Location module download attach host script in the current directory and 
+# appends respective permissions to the script..
+# The modified script must be used in the `user_data` attribute of VSI instance
+#######################################################################################
 module "satellite_location" {
   source            = "../../modules/location"
   zone              = var.location_zone
@@ -7,7 +12,7 @@ module "satellite_location" {
   ibmcloud_api_key  = var.ibmcloud_api_key
   region            = var.region
   resource_group    = var.resource_group
-  endpoint          = var.endpoint
+  endpoint          = "cloud.ibm.com"
 }
 module "satellite_host" {
   source            = "../../modules/host"
@@ -17,6 +22,7 @@ module "satellite_host" {
   location          = var.location_name
   ibmcloud_api_key  = var.ibmcloud_api_key
   region            = var.region
-  endpoint          = var.endpoint
+  endpoint          = "cloud.ibm.com"
+  host_provider     = "ibm"
   resource_group    = var.resource_group
 }

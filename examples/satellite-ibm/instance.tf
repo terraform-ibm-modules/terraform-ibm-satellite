@@ -25,11 +25,11 @@ resource "ibm_is_instance" "satellite_instance" {
   name           = "${var.is_prefix}-instance-${count.index}"
   vpc            = ibm_is_vpc.satellite_vpc.id
   zone           = "${var.region}-${count.index + 1}"
-  image          = var.image
-  profile        = var.profile
+  image          = "r014-931515d2-fcc3-11e9-896d-3baa2797200f"
+  profile        = "mx2-8x64"
   keys           = [ibm_is_ssh_key.satellite_ssh.id]
   resource_group = data.ibm_resource_group.resource_group.id
-  user_data      = fileexists("${path.module}/addhost.sh") ? file("${path.module}/addhost.sh") : ""
+  user_data      = file(replace("${path.module}/addhost.sh*${module.satellite_location.module_id}", "/[*].*/", ""))
   primary_network_interface {
     subnet = ibm_is_subnet.satellite_subnet[count.index].id
   }
