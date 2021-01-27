@@ -4,8 +4,9 @@ Use this terraform automation to set up IBM Cloud satellite location for Virtual
 
 This example uses two modules to set up the control plane.
 
-1. [location.](../modules/location) This module `creates satellite location` for the specified zone|location|region and `generates script` named addhost.sh in the working directory by performing attach host.The generated script is used by `ibm_is_instance` as `user_data` and runs the script. At this stage all the VMs that has run addhost.sh will be attached to the satellite location and will be in unassigned state.
-2. [host](../modules/host) This module assigns hosts to the location.
+1. [satellite-location](../../modules/location) This module `creates satellite location` for the specified zone|location|region and `generates script` named addhost.sh in the working directory by performing attach host.The generated script is used by `ibm_is_instance` as `user_data` and runs the script. At this stage all the VMs that has run addhost.sh will be attached to the satellite location and will be in unassigned state.
+2. [satellite-host](../../modules/host) This module assigns 3 host to setup the location control plane.
+3. [satellite-cluster](../../modules/cluster) This module will create satellite cluster.
  
 ## Prerequisite
 
@@ -60,13 +61,11 @@ module "satellite_host" {
 
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
-| resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | yes      |
 | ibmcloud_api_key                      | IBM Cloud API Key.                                                | string   | n/a     | yes      |
-| region                                | The location or the region in which VM instance exists.           | string   | n/a     | yes      |
-| endpoint                              | Endpoint of production environment of IBM Cloud                   | string   |cloud.ibm.com| yes  |
+| resource_group                        | Resource Group Name that has to be targeted.                      | string   | Defult  | yes      |
+| ibm_region                            | The location or the region in which VM instance exists.           | string   | us-east | yes      |
 | location_name                         | Name of teh Location that has to be created                       | string   | n/a     | yes      |
-| location_zone                         | Zone in which satellite location has to be created. Ex:wdc06      | string   | n/a     | yes      |
-| labels                                | Label to create location                                          | string   |prod=true| yes      |
+| location_label                        | Label to create location                                          | string   |prod=true| yes      |
 | is_prefix                             | Prefix to the Names of all VSI Resources                          | string   | n/a     | yes      |
 | public_key                            | Public SSH key used to provision Host/VSI                         | string   | n/a     | yes      |
 

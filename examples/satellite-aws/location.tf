@@ -1,12 +1,12 @@
 
 module "satellite-location" {
   source            = "../../modules/location"
-  zone              = var.location_zone
-  location          = var.location_name
-  label             = var.label
+
+  location_name     = var.location_name
+  location_label    = var.location_label
   ibmcloud_api_key  = var.ibmcloud_api_key
-  region            = var.region
-  endpoint          = var.endpoint
+  ibm_region        = var.ibm_region
+  endpoint          = "cloud.ibm.com"
   resource_group    = var.resource_group
   host_provider     = "aws"
 }

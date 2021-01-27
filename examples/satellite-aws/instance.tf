@@ -6,11 +6,23 @@ data "aws_subnet_ids" "all" {
   vpc_id = data.aws_vpc.default.id
 }
 
+data "aws_ami" "redhat_linux" {
+  owners = ["309956199498"]
+
+  filter {
+    name = "name"
+
+    values = [
+      "RHEL-7.7_HVM_GA-20190723-x86_64-1-Hourly2-GP2",
+    ]
+  }
+}
+
 module "security_group" {
   source      = "terraform-aws-modules/security-group/aws"
   version     = "~> 3.0"
 
-  name        = "satellite-security"
+  name        = "${var.vm_prefix}-satellite-security"
   description = "Security group for satellite usage with EC2 instance"
   vpc_id      = data.aws_vpc.default.id
 
@@ -24,12 +36,6 @@ module "security_group" {
     {
       from_port   = 30000
       to_port     = 32767
-      protocol    = "tcp"
-      cidr_blocks = "0.0.0.0/0"
-    },
-    {
-      from_port   = 22
-      to_port     = 22
       protocol    = "tcp"
       cidr_blocks = "0.0.0.0/0"
     },
@@ -101,13 +107,18 @@ module "security_group" {
 }
 
 resource "aws_placement_group" "web" {
-  name     = "hunky-dory-pg"
+  name     = "${var.vm_prefix}-hunky-dory-pg"
   strategy = "cluster"
 }
 
+resource "tls_private_key" "example" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "aws_key_pair" "keypair" {
-  key_name    = var.key_name
-  public_key  = var.ssh_public_key
+  key_name    = "${var.vm_prefix}-ssh"
+  public_key  = var.ssh_public_key != "" ? var.ssh_public_key : tls_private_key.example.public_key_openssh
 }
 
 
@@ -115,9 +126,10 @@ module "ec2" {
   source                      = "terraform-aws-modules/ec2-instance/aws"
   
   depends_on                  = [ module.satellite-location ]
-  instance_count              = var.instance_count
-  name                        = var.vm_prefix
-  ami                         = var.ami
+  instance_count              = var.satellite_host_count + var.addl_host_count
+  name                        = "${var.vm_prefix}-host"
+  use_num_suffix              = true
+  ami                         = data.aws_ami.redhat_linux.id
   instance_type               = var.instance_type
   key_name                    = aws_key_pair.keypair.key_name
   subnet_id                   = tolist(data.aws_subnet_ids.all.ids)[0]
@@ -125,14 +137,5 @@ module "ec2" {
   associate_public_ip_address = true
   placement_group             = aws_placement_group.web.id
   user_data                   = file(replace("${path.module}/addhost.sh*${module.satellite-location.module_id}", "/[*].*/", ""))
- 
-  root_block_device = [
-    {
-      volume_type = "gp2"
-      volume_size = var.volume_size
-    },
-  ]
-
-  tags = var.tags
 
 }

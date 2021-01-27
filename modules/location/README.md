@@ -1,6 +1,6 @@
-# This Module is used to create hocation and attach hosts to the Satellite Location.
+# This Module is used to create satellite location and generate attach host script.
 
-This module `creates satellite location` for the specified zone|location|region and `generates script` named addhost.sh in the working directory by performing attach host.The generated script is used by `ibm_is_instance` as `user_data` attribute and runs the script. At this stage all the VMs that has run addhost.sh will be attached to the satellite location and will be in unassigned state.
+This module `creates satellite location` for the specified zone|location|region and `generates script` named addhost.sh in the working directory by performing attach host.The generated script is used by `ibm_is_instance` resource or AWS EC2 module as `user_data` attribute and runs the script. At this stage all the VMs that has run addhost.sh will be attached to the satellite location and will be in unassigned state.
  
 ## Prerequisite
 
@@ -20,19 +20,22 @@ terraform plan
 ```
 terraform apply
 ```
+```
+terraform destroy
+```
 ## Example Usage
 ``` hcl
-module "satellite_location" {
+module "satellite-location" {
   source            = "../../modules/location"
-  module_depends_on = var.module_depends_on
-  zone              = var.location_zone
-  location          = var.location_name
-  label             = var.labels
-  host_provider     = "ibm"
+
+  location_name     = var.location_name
+  location_zone     = var.location_zone
+  location_label    = var.location_label
   ibmcloud_api_key  = var.ibmcloud_api_key
-  region            = var.region
+  ibm_region        = var.ibm_region
+  endpoint          = "cloud.ibm.com"
   resource_group    = var.resource_group
-  endpoint= var.endpoint
+  host_provider     = "aws"
 }
 ```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -40,14 +43,14 @@ module "satellite_location" {
 
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
-| resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | yes      |
+| location_name                         | Name of the Location that has to be created                       | string   | n/a     | yes      |
+| location_label                        | Label to add to attach host script                                | string   |prod=true| yes      |
 | ibmcloud_api_key                      | IBM Cloud API Key.                                                | string   | n/a     | yes      |
-| region                                | The location or the region in which VM instance exists.           | string   | n/a     | yes      |
+| ibm_region                            | The location or the region in which VM instance exists.           | string   | us-east | yes      |
+| resource_group                        | Resource Group Name that has to be targeted.                      | string   | Default | yes      |
 | endpoint                              | Endpoint of production environment of IBM Cloud                   | string   |cloud.ibm.com| yes  |
 | host_provider                         | The cloud provider of host|vms.                                   | string   | ibm     | yes      |
-| labels                                | Label to create location                                          | string   |prod=true| yes      |
-| location_name                         | Name of teh Location that has to be created                       | string   | n/a     | yes      |
-| location_zone                         | Zone in which satellite location has to be created. Ex:wdc06      | string   | n/a     | yes      |
+
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Note
