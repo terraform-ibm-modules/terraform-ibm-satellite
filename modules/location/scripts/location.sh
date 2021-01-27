@@ -1,10 +1,21 @@
 
 #!/bin/bash
 
-echo *************create location*****************
+echo "************* ibmcloud cli login *****************"
 ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
-ibmcloud iam oauth-tokens
+
+ZONE=""
+if [[ $REGION == "us-east" ]]; then
+  ZONE="wdc06"
+elif [[ $REGION == "eu-gb" ]]; then
+  ZONE="lon04"  
+fi
+
+
+echo "************* create satellite location *****************"
 ibmcloud sat location create --managed-from $ZONE --name $LOCATION
+
+sleep 30
 status='provisioning'
 echo $status
 while [ "$status" != "action" ]
@@ -13,18 +24,22 @@ do
     echo status = action required
     status="action"
   fi
-   echo "************* provisioning location *****************"
+   echo "************* provisioning location $LOCATION  *****************"
+   sleep 60
+done
+
+echo location= $LOCATION
+n=0
+path_out=""
+until [ "$n" -ge 5 ]
+do
+   path_out=`ibmcloud sat host attach --location $LOCATION -l $LABEL` && break
+   echo "************* Failed with $n, waiting to retry *****************"
+   n=$((n+1))
    sleep 10
 done
 
-path_out=`ibmcloud sat host attach --location $LOCATION -l $LABEL`
 echo $path_out
-if [[ $path_out == "" ]]; then
-  echo "************* Failed to generate script *************"
-  exit 1
-fi
-
-
 path=$(echo $path_out| cut -d' ' -f 21)
 echo path= $path
 if [[ $PROVIDER == "ibm" ]];

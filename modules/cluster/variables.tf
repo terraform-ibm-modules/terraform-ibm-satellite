@@ -1,17 +1,10 @@
 
-##################################################
-# IBMCLOUD Satellite Location Variables
-##################################################
-
 variable "location_name" {
-  description = "Location Name"
   type         = string
 }
 
-variable "location_label" {
-  description = "Label to add to attach host script"
+variable "cluster_name" {
   type         = string
-  default     = "prod=true"
 }
 
 #################################################################################################
@@ -30,19 +23,9 @@ variable "resource_group" {
 }
 
 variable "ibm_region" {
-  description = "Region of the IBM Cloud account. Currently supported regions for satellite are us-east and eu-gb region."
-  default     = "eu-gb"
-
-  validation {
-    condition     = var.ibm_region == "us-east" || var.ibm_region == "eu-gb"
-    error_message = "Sorry, satellite only accepts us-east or eu-gb region."
-  }
-}
-
-variable "host_provider" {
-    description  = "The cloud provider of host|vms"
-    type         = string
-    default      = "aws"
+  description = "Region of the IBM Cloud account"
+  type         = string
+  default     = "us-east"
 }
 
 variable "endpoint" {
