@@ -1,4 +1,4 @@
-# This Module is used to create hocation and attach hosts to the Satellite Location.
+# This Module is used to create location and attach hosts to the Satellite Location.
 
 This module `creates satellite location` for the specified zone|location|region and `generates script` named addhost.sh in the working directory by performing attach host.The generated script is used by `ibm_is_instance` as `user_data` attribute and runs the script. At this stage all the VMs that has run addhost.sh will be attached to the satellite location and will be in unassigned state.
  
