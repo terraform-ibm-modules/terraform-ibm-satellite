@@ -1,6 +1,6 @@
-# This Module is used to assign hosts to the Satellite Location.
+# This Module is used to assign hosts to the Satellite location control plane.
 
-This module depends on `satellite_location` module..To use this module the hosts in the control plane|Satellite location should be in unassigned state.
+This module depends on `satellite_location` module..To use this module the hosts in the control plane should be in unassigned state.
  
 ## Prerequisite
 
@@ -20,19 +20,25 @@ terraform plan
 ```
 terraform apply
 ```
+```
+terraform destroy
+```
 ## Example Usage
 ``` hcl
 
-module "sateliite_host" {
+module "satellite-host" {
   source            = "../../modules/host"
-  module_depends_on = ibm_is_instance.satellite_instance
+  
+  module_depends_on = module.ec2
   ip_count          = 3
-  host_vm           = ibm_is_instance.satellite_instance[*].name
-  location          = var.location_name
-  ibmcloud_api_key=var.ibmcloud_api_key
-  region=var.region
-  endpoint= var.endpoint
-  resource_group=var.resource_group
+  host_vm           = module.ec2.private_dns
+  location_name     = var.location_name
+  host_zone         = var.ibm_region
+  ibmcloud_api_key  = var.ibmcloud_api_key
+  ibm_region        = var.ibm_region
+  endpoint          = "cloud.ibm.com"
+  resource_group    = var.resource_group
+  host_provider     = "aws"
 }
 ```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -40,12 +46,13 @@ module "sateliite_host" {
 
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
+| location_name                         | Name of the Location that has to be created                       | string   | n/a     | yes      |
 | resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | yes      |
 | ibmcloud_api_key                      | IBM Cloud API Key.                                                | string   | n/a     | yes      |
-| region                                | The location or the region in which VM instance exists.           | string   | n/a     | yes      |
+| ibm_region                            | The location or the region in which VM instance exists.           | string   | n/a     | yes      |
 | endpoint                              | Endpoint of production environment of IBM Cloud                   | string   |cloud.ibm.com| yes  |
 | host_provider                         | The cloud provider of host/vms.                                   | string   | ibm     | yes      |
-| location_name                         | Name of teh Location that has to be created                       | string   | n/a     | yes      |
+
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Note

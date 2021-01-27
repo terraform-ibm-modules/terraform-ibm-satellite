@@ -1,40 +1,12 @@
 
-##################################################
-# IBMCLOUD Satellite Location Variables
-##################################################
-
-variable "location_name" {
-    description  =  "Name of the satellite location on which cluster has to be created | attached"
-}
-
-variable "location_zone" {
-  description  = "zone of the staellite location"
-  default      = "wdc06"
-}
-
-variable "label" {
-  description  =  "Host labels"
-  default      =  "env=dev"
-}
-
 #################################################################################################
 # IBMCLOUD & AWS -  Authentication , Target Variables.
 # The region variable is common across zones used to setup VSI Infrastructure and Satellite host.
 #################################################################################################
 
-variable "ibmcloud_api_key" { 
+variable "ibmcloud_api_key" {
   description  = "IBM Cloud API Key"
   type         = string
-}
-
-variable "endpoint" {
-  default = "cloud.ibm.com"
-}
-
-variable "aws_region" {
-  description  = "AWS region"
-  type         = string
-  default      = "eu-west-1"
 }
 
 variable "aws_access_key" {
@@ -47,78 +19,86 @@ variable "aws_secret_key" {
   type         = string
 }
 
-variable "region" {
-  description = "Location Region"
-  type        = string
-  default     = "us-south"
+variable "ibm_region" {
+  description = "Region of the IBM Cloud account. Currently supported regions for satellite are `us-east` and `eu-gb` region."
+  default     = "us-east"
+
+  validation {
+    condition     = var.ibm_region == "us-east" || var.ibm_region == "eu-gb"
+    error_message = "Sorry, satellite only accepts us-east or eu-gb region."
+  }
+}
+
+variable "aws_region" {
+  description  = "AWS region"
+  type         = string
+  default      = "us-east-1"
 }
 
 variable "resource_group" {
-  description = "Resoure Group"
+  description = "Name of the resource group on which location has to be created"
   type        = string
-  default     = "default"
+  default     = "Default"
 }
+
+##################################################
+# IBMCLOUD Satellite Location Variables
+##################################################
+
+variable "location_name" {
+  description = "Location Name"
+  default     = "satellite-location-aws"
+
+  validation {
+    condition     = var.location_name != ""
+    error_message = "Sorry, please provide value for location_name variable."
+  }
+}
+
+variable "location_label" {
+  description = "Label to create location"
+  default     = "prod=true"
+}
+
 
 ##################################################
 # AWS EC2 Variables
 ##################################################
+variable "satellite_host_count" {
+  description    = "The total number of aws host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts"
+  type           = number
+  default        = 3
+  validation {
+    condition     = (var.satellite_host_count % 3) == 0 &&  var.satellite_host_count > 0
+    error_message = "Sorry, host_count value should always be in multiples of 3, such as 6, 9, or 12 hosts."
+  }
+}
 
-variable "ami" {
-  description  = "AWS ami ID"
-  type         = string
-   default     = "ami-065ec1e661d619058"
+variable "addl_host_count" {
+  description    = "The total number of additional aws host"
+  type           = number
+  default        = 0
 }
 
 variable "instance_type" {
-  description = "AWS EC2 Instance type"
-  type        = string
-  default     = "m5d.2xlarge"
-}
+  description    = "The type of aws instance to start, satellite only accepts `m5d.2xlarge` or `m5d.4xlarge` as instance type."
+  type           = string
+  default        = "m5d.2xlarge"
 
-variable "vm_prefix" {
-  description = "Name to be used on all VMs as prefix"
-  type        = string
-  default     = "sat"
-}
-
-variable "volume_size" {
-  description = "Volume size of instance"
-  type        = number
-  default     = 10
-}
-
-variable "key_name" {
-  description  = "Number of instances to launch"
-  type         = string
-  default      = "aws_ssh_key"
+  validation {
+    condition     = var.instance_type == "m5d.2xlarge" || var.instance_type == "m5d.4xlarge"
+    error_message = "Sorry, satellite only accepts m5d.2xlarge or m5d.4xlarge as instance type."
+  }
 }
 
 variable "ssh_public_key" {
-  description  = "SSH public key"
-  type         = string
+  description = "SSH Public Key. Get your ssh key by running `ssh-key-gen` command"
+  type        = string
+  default     = ""
 }
 
-variable "instance_count" {
-  description = "Number of instances to launch"
-  type        = number
-  default     = 3
-}
-
-variable "tags" {
-  description = "A mapping of tags to assign to the resource"
-  type        = map(string)
-  default     = {"env": "aws"}
-}
-
-##################################################
-# Assign Host Variables
-##################################################
-
-variable "assign_host_count" {
-  type        = number
-  default     = 3
-}
-
-variable "host_zone" {
-  default = "us-east"
+variable "vm_prefix" {
+  description = "Name to be used on all aws resource as prefix"
+  type        = string
+  default     = "satellite-aws"
 }
