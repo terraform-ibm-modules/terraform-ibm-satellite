@@ -19,9 +19,16 @@ resource "ibm_is_subnet" "satellite_subnet" {
   zone                     = "${var.ibm_region}-${count.index + 1}"
 }
 
+resource "tls_private_key" "example" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "ibm_is_ssh_key" "satellite_ssh" {
-  name       = "${var.is_prefix}-ssh"
-  public_key = var.public_key
+  depends_on  = [module.satellite-location]
+
+  name        = "${var.is_prefix}-ssh"
+  public_key  = var.public_key != "" ? var.public_key : tls_private_key.example.public_key_openssh
 }
 
 resource "ibm_is_instance" "satellite_instance" {
@@ -34,7 +41,7 @@ resource "ibm_is_instance" "satellite_instance" {
   profile        = "mx2-8x64"
   keys           = [ibm_is_ssh_key.satellite_ssh.id]
   resource_group = data.ibm_resource_group.resource_group.id
-  user_data      = file(replace("${path.module}/addhost.sh*${module.satellite-location.module_id}", "/[*].*/", ""))
+  user_data      = file(replace("/tmp/.schematics/addhost.sh*${ibm_is_ssh_key.satellite_ssh.id}", "/[*].*/", ""))
 
   primary_network_interface {
     subnet = ibm_is_subnet.satellite_subnet[count.index].id

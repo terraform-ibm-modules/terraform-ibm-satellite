@@ -62,17 +62,18 @@ module "satellite_host" {
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
 | ibmcloud_api_key                      | IBM Cloud API Key.                                                | string   | n/a     | yes      |
-| resource_group                        | Resource Group Name that has to be targeted.                      | string   | Defult  | yes      |
+| resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | no       |
 | ibm_region                            | The location or the region in which VM instance exists.           | string   | us-east | yes      |
-| location_name                         | Name of teh Location that has to be created                       | string   | n/a     | yes      |
+| location_name                         | Name of the Location that has to be created                       | string   | n/a     | yes      |
 | location_label                        | Label to create location                                          | string   |prod=true| yes      |
 | is_prefix                             | Prefix to the Names of all VSI Resources                          | string   | n/a     | yes      |
-| public_key                            | Public SSH key used to provision Host/VSI                         | string   | n/a     | yes      |
+| public_key                            | Public SSH key used to provision Host/VSI                         | string   | n/a     | no       |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Note
 
 * All optional fields are given value `null` in varaible.tf file. User can configure the same by overwriting with appropriate values.
-
-* Satellite Location module download attach host script in the current directory and * appends respective permissions to the script..The modified script must be used in the `user_data` attribute of VSI instance
+* 'satellite-location' module download attach host script in the current directory and appends respective permissions to the script.
+  The modified script must be used in the `user_data` attribute of VSI instance.
+* If your running 'satellite-location' module locally. User has to create '/tmp/.schematics' directory for downloading attach host script.   
 

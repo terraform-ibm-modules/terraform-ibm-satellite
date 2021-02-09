@@ -25,8 +25,11 @@ variable "ibmcloud_api_key" {
 
 variable "resource_group" {
   description = "Name of the resource group on which location has to be created"
-  type        = string
-  default     = "Default"
+
+  validation {
+    condition     = var.resource_group != ""
+    error_message = "Sorry, please provide value for resource_group variable."
+  }
 }
 
 variable "ibm_region" {
