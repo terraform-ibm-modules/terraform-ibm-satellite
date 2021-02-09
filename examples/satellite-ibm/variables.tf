@@ -4,6 +4,11 @@
 variable "location_name" {
   description = "Location Name"
   default     = "satellite-ibm"
+
+  validation {
+    condition     = var.location_name != "" && length(var.location_name) <= 32
+    error_message = "Sorry, please provide value for location_name variable or check the length of name it should be less than 32 chars."
+  }
 }
 variable "location_label" {
   description = "Label to create location"
@@ -32,7 +37,11 @@ variable "ibm_region" {
 }
 variable "resource_group" {
   description = "Name of the resource group on which location has to be created"
-  default     = "Default"
+
+  validation {
+    condition     = var.resource_group != ""
+    error_message = "Sorry, please provide value for resource_group variable."
+  }
 }
 
 ##################################################
@@ -51,9 +60,10 @@ variable "host_count" {
 variable "is_prefix" {
   description = "Prefix to the Names of the VPC Infrastructure resources"
   type        = string
-  default="ibm-satellite-vsi"
+  default     ="ibm-satellite"
 }
 variable "public_key" {
-  description="SSH Public Key. Get your ssh key by running `ssh-key-gen` command"
-  type = string
+  description  = "SSH Public Key. Get your ssh key by running `ssh-key-gen` command"
+  type         = string
+  default      = ""
 }

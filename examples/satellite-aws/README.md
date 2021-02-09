@@ -108,25 +108,24 @@ module "satellite-host" {
 ...
 ...
 ```
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
 | ibmcloud_api_key                      | IBM Cloud API Key                                                 | string   | n/a     | yes      |
 | ibm_region                            | Region of the IBM Cloud account. Currently supported regions for satellite are `us-east` and `eu-gb` region.                                 | string   | us-east | yes      |
-| resource_group                        | Resource group name that has to be targeted                       | string   | Default | yes      |
+| resource_group                        | Resource group name that has to be targeted                       | string   | n/a     | no       |
 | aws_access_key                        | AWS access key                                                    | string   | n/a     | yes      |
 | aws_secret_key                        | AWS secret key                                                    | string   | n/a     | yes      |
-| aws_region                            | AWS cloud region                                                  | string   | us-east-1     | yes      |
+| aws_region                            | AWS cloud region                                                  | string   | us-east-1  | yes   |
 | location_name                         | Name of the location that has to be created                       | string   | satellite-aws     | yes |
 | location_label                        | Label to create location                                          | string   | env=dev |  yes     |
 | satellite_host_count                  | The total number of aws host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts                 | number   | 3 |  yes     |
 | addl_host_count                       | The total number of additional aws host                            | number   | 0 |  yes     |
 | instance_type                         | The type of aws instance to start, satellite only accepts `m5d.2xlarge` or `m5d.4xlarge` as instance type.                                   | string   | m5d.2xlarge     | yes |
 | ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a     | no |
-| vm_prefix                             | Name to be used on all aws resources as prefix                        | string   | satellite-aws     | yes |
-
+| resource_prefix                       | Name to be used on all aws resources as prefix                        | string   | satellite-aws     | yes |
 
 ## Outputs
 
@@ -135,7 +134,8 @@ module "satellite-host" {
 | satellite_location | satellite location value |
 | module_id | satellite-location module ID |
 
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Note
 
-* Satellite Location module download attach host script in the current directory and * appends respective permissions to the script..The modified script must be used in the `user_data` attribute of ec2 module.
+* satellite-location module download attach host script in the /tmp/.schematics directory and appends respective permissions to the script.
+* The modified attach host script will be used in the `user_data` attribute of EC2 module.
+* If your running 'satellite-location' module locally. User has to create '/tmp/.schematics' directory for downloading attach host script. 
