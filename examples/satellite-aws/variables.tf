@@ -4,6 +4,12 @@
 # The region variable is common across zones used to setup VSI Infrastructure and Satellite host.
 #################################################################################################
 
+variable "TF_VERSION" {
+  description = "terraform version"
+  type = string
+  default = "0.13"
+}
+
 variable "ibmcloud_api_key" {
   description  = "IBM Cloud API Key"
   type         = string
