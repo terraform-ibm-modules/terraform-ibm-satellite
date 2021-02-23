@@ -30,7 +30,7 @@ else
   if [[ $? != 0 ]]; then
     exit 1
   fi
-  sleep 200
+  sleep 60
   #Get satellite location ID
   loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')
   if [[ $loc_id != "" ]]; then
@@ -44,7 +44,7 @@ n=0
 path_out=""
 until [ "$n" -ge 5 ]
 do
-   path_out=`ibmcloud sat host attach --location $LOCATION -hl $LABEL` && break
+   path_out=`ibmcloud sat host attach --location $LOCATION -l $LABEL` && break
    echo "************* Failed with $n, waiting to retry *****************"
    n=$((n+1))
    sleep 10
