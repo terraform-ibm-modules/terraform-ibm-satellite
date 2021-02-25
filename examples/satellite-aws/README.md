@@ -64,7 +64,7 @@ module "satellite-location" {
   label             = var.location_label
   ibmcloud_api_key  = var.ibmcloud_api_key
   ibm_region        = var.ibm_region
-  endpoint          = "cloud.ibm.com"
+  endpoint          = var.environment
   resource_group    = var.resource_group
   host_provider     = "aws"
 }
@@ -74,7 +74,7 @@ module "ec2" {
   
   depends_on                  = [ module.satellite-location ]
   instance_count              = 4
-  name                        = "${var.vm_prefix}-host"
+  name                        = "${var.resource_prefix}-host"
   use_num_suffix              = true
   ami                         = data.aws_ami.redhat_linux.id
   instance_type               = var.instance_type
@@ -83,12 +83,7 @@ module "ec2" {
   vpc_security_group_ids      = [module.security_group.this_security_group_id]
   associate_public_ip_address = true
   placement_group             = aws_placement_group.web.id
-  user_data                   = file(replace("${path.module}/addhost.sh*${module.satellite-location.module_id}", "/[*].*/", ""))
- 
-  tags = {
-    "Name"  = "${var.vm_prefix}-host"
-  }
-
+  user_data                   = data.local_file.host_script.content
 }
 
 module "satellite-host" {
@@ -100,7 +95,7 @@ module "satellite-host" {
   location_name     = var.location_name
   ibmcloud_api_key  = var.ibmcloud_api_key
   ibm_region        = var.ibm_region
-  endpoint          = "cloud.ibm.com"
+  endpoint          = var.environment
   resource_group    = var.resource_group
   host_provider     = "aws"
 }
@@ -108,6 +103,17 @@ module "satellite-host" {
 ...
 ...
 ```
+
+## Note
+
+* satellite modules uses scripts based approach to provision resources which will be temporary. We are working on proper terraform resource support.
+* `satellite-location` module creates new location or use existing location ID to process.
+   If user pass the location name which is already exist, `satellite-location` module will error out and exit the module.
+   In such cases user has to pass location ID value to `location_name` parameter. so that module will use existing location for processing.
+* satellite-location module doesn't support updating the location name.
+* satellite-location module download attach host script in the /tmp/.schematics directory and appends respective permissions to the script.
+* The modified attach host script will be used in the `user_data` attribute of EC2 module.
+
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
@@ -116,6 +122,7 @@ module "satellite-host" {
 | ibmcloud_api_key                      | IBM Cloud API Key                                                 | string   | n/a     | yes      |
 | ibm_region                            | Region of the IBM Cloud account. Currently supported regions for satellite are `us-east` and `eu-gb` region.                                 | string   | us-east | yes      |
 | resource_group                        | Resource group name that has to be targeted                       | string   | n/a     | no       |
+| environment                           | Enter `prod` or `stage` value to run satellite templates on respective environment | string   | prod  | no   |
 | aws_access_key                        | AWS access key                                                    | string   | n/a     | yes      |
 | aws_secret_key                        | AWS secret key                                                    | string   | n/a     | yes      |
 | aws_region                            | AWS cloud region                                                  | string   | us-east-1  | yes   |
@@ -132,10 +139,3 @@ module "satellite-host" {
 | Name | Description |
 |------|-------------|
 | satellite_location | satellite location value |
-| module_id | satellite-location module ID |
-
-## Note
-
-* satellite-location module download attach host script in the /tmp/.schematics directory and appends respective permissions to the script.
-* The modified attach host script will be used in the `user_data` attribute of EC2 module.
-* If your running 'satellite-location' module locally. User has to create '/tmp/.schematics' directory for downloading attach host script. 

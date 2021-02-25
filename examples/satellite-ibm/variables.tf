@@ -23,9 +23,6 @@ variable "location_label" {
 variable "ibmcloud_api_key" {
   description = "IBM Cloud API Key"
 }
-variable "endpoint" {
-  default = "cloud.ibm.com"
-}
 variable "ibm_region" {
   description = "Region of the IBM Cloud account. Currently supported regions for satellite are us-east and eu-gb region."
   default     = "us-east"
@@ -41,6 +38,16 @@ variable "resource_group" {
   validation {
     condition     = var.resource_group != ""
     error_message = "Sorry, please provide value for resource_group variable."
+  }
+}
+
+variable "environment" {
+  description = "Select prod or stage environemnet to run satellite templates"
+  default     = "prod"
+
+  validation {
+    condition     = var.environment == "prod" || var.environment == "stage"
+    error_message = "Sorry, please provide correct value for environment variable."
   }
 }
 
