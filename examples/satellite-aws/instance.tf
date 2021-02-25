@@ -123,6 +123,10 @@ resource "aws_key_pair" "keypair" {
   public_key  = var.ssh_public_key != "" ? var.ssh_public_key : tls_private_key.example.public_key_openssh
 }
 
+data "local_file" "host_script" {
+  filename = "/tmp/.schematics/addhost.sh"
+  depends_on = [ module.satellite-location ]
+}
 
 module "ec2" {
   source                      = "terraform-aws-modules/ec2-instance/aws"
@@ -138,6 +142,5 @@ module "ec2" {
   vpc_security_group_ids      = [module.security_group.this_security_group_id]
   associate_public_ip_address = true
   placement_group             = aws_placement_group.web.id
-  user_data                   = file(replace("/tmp/.schematics/addhost.sh*${aws_key_pair.keypair.id}", "/[*].*/", ""))
-
+  user_data                   = data.local_file.host_script.content
 }
