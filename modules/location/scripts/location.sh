@@ -44,7 +44,7 @@ n=0
 path_out=""
 until [ "$n" -ge 5 ]
 do
-   path_out=`ibmcloud sat host attach --location $LOCATION -l $LABEL` && break
+   path_out=`ibmcloud sat host attach --location $LOCATION -hl $LABEL` && break
    echo "************* Failed with $n, waiting to retry *****************"
    n=$((n+1))
    sleep 10
