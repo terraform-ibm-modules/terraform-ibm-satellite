@@ -41,7 +41,7 @@ module "satellite_location" {
   ibmcloud_api_key  = var.ibmcloud_api_key
   region            = var.region
   resource_group    = var.resource_group
-  endpoint          = "cloud.ibm.com"
+  endpoint          = var.environment
 }
 module "satellite_host" {
   source            = "../../modules/host"
@@ -51,11 +51,24 @@ module "satellite_host" {
   location          = var.location_name
   ibmcloud_api_key  = var.ibmcloud_api_key
   region            = var.region
-  endpoint          = "cloud.ibm.com"
+  endpoint          = var.environment
   host_provider     = "ibm"
   resource_group    = var.resource_group
 }
 ```
+
+## Note
+
+* satellite modules uses scripts based approach to provision resources which will be temporary. We are working on proper terraform resource support.
+* `satellite-location` module creates new location or use existing location ID to process.
+   If user pass the location name which is already exist, `satellite-location` module will error out and exit the module.
+   In such cases user has to pass location ID value to `location_name` parameter. so that module will use existing location for processing.
+* satellite-location module doesn't support updating the location name.
+* All optional fields are given value `null` in varaible.tf file. User can configure the same by overwriting with appropriate values.
+* 'satellite-location' module download attach host script in the current directory and appends respective permissions to the script.
+  The modified script must be used in the `user_data` attribute of VSI instance.
+
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
@@ -64,16 +77,10 @@ module "satellite_host" {
 | ibmcloud_api_key                      | IBM Cloud API Key.                                                | string   | n/a     | yes      |
 | resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | no       |
 | ibm_region                            | The location or the region in which VM instance exists.           | string   | us-east | yes      |
+| environment                           | Enter `prod` or `stage` value to run satellite templates on respective environment | string   | prod  | no   |
 | location_name                         | Name of the Location that has to be created                       | string   | n/a     | yes      |
 | location_label                        | Label to create location                                          | string   |prod=true| yes      |
 | is_prefix                             | Prefix to the Names of all VSI Resources                          | string   | n/a     | yes      |
 | public_key                            | Public SSH key used to provision Host/VSI                         | string   | n/a     | no       |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Note
-
-* All optional fields are given value `null` in varaible.tf file. User can configure the same by overwriting with appropriate values.
-* 'satellite-location' module download attach host script in the current directory and appends respective permissions to the script.
-  The modified script must be used in the `user_data` attribute of VSI instance.
-* If your running 'satellite-location' module locally. User has to create '/tmp/.schematics' directory for downloading attach host script.   
-

@@ -7,7 +7,7 @@ module "satellite-host" {
   location_name     = var.location_name
   ibmcloud_api_key  = var.ibmcloud_api_key
   ibm_region        = var.ibm_region
-  endpoint          = "cloud.ibm.com"
+  endpoint          = var.environment == "prod" ? "cloud.ibm.com" : "test.cloud.ibm.com"
   resource_group    = var.resource_group
   host_provider     = "aws"
 }

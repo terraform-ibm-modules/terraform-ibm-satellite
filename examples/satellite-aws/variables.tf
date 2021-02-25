@@ -19,6 +19,12 @@ variable "aws_secret_key" {
   type         = string
 }
 
+variable "aws_region" {
+  description  = "AWS region"
+  type         = string
+  default      = "us-east-1"
+}
+
 variable "ibm_region" {
   description = "Region of the IBM Cloud account. Currently supported regions for satellite are `us-east` and `eu-gb` region."
   default     = "us-east"
@@ -29,18 +35,22 @@ variable "ibm_region" {
   }
 }
 
-variable "aws_region" {
-  description  = "AWS region"
-  type         = string
-  default      = "us-east-1"
-}
-
 variable "resource_group" {
   description = "Name of the resource group on which location has to be created"
 
   validation {
     condition     = var.resource_group != ""
     error_message = "Sorry, please provide value for resource_group variable."
+  }
+}
+
+variable "environment" {
+  description = "Enter `prod` or `stage` value to run satellite templates on respective environment"
+  default     = "prod"
+
+  validation {
+    condition     = var.environment == "prod" || var.environment == "stage"
+    error_message = "Sorry, please provide correct value for environment variable."
   }
 }
 
@@ -107,6 +117,6 @@ variable "resource_prefix" {
 
   validation {
     condition     = var.resource_prefix != "" && length(var.resource_prefix) <= 25
-    error_message = "Sorry, please provide value for vm_prefix variable or check the length of vm_prefix it should be less than 25 chars."
+    error_message = "Sorry, please provide value for resource_prefix variable or check the length of resource_prefix it should be less than 25 chars."
   }
 }

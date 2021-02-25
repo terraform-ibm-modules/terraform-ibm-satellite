@@ -106,11 +106,6 @@ module "security_group" {
 
 }
 
-resource "aws_placement_group" "web" {
-  name     = "${var.resource_prefix}-hunky-dory-pg"
-  strategy = "cluster"
-}
-
 resource "tls_private_key" "example" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -141,6 +136,5 @@ module "ec2" {
   subnet_id                   = tolist(data.aws_subnet_ids.all.ids)[0]
   vpc_security_group_ids      = [module.security_group.this_security_group_id]
   associate_public_ip_address = true
-  placement_group             = aws_placement_group.web.id
   user_data                   = data.local_file.host_script.content
 }

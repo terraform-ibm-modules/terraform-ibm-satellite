@@ -17,14 +17,14 @@ fi
 echo Location= $LOCATION
 out=$(ibmcloud sat location ls | grep -m 1 $LOCATION |  cut -d' ' -f1)
 if [[ $out != "" && $out == $LOCATION ]]; then
- echo "************* satellite location already exist *****************"
+ echo "************* satellite location already exist. Please provide new name or existing location ID as input to 'location_name' parameter and re-try. *****************"
  exit 1
 fi
 
 #Create new location or Use existing location ID
 out=$(ibmcloud sat location get --location $LOCATION 2>&1 | grep 'ID:')
 if [[ $out != "" && $out != *"Incident"* ]]; then
-  echo "*************  Using location ID for operations *************"
+  echo "*************  Uses existing location ID for operations *************"
 else
   ibmcloud sat location create --managed-from $ZONE --name $LOCATION
   if [[ $? != 0 ]]; then
@@ -35,6 +35,16 @@ else
   loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')
   if [[ $loc_id != "" ]]; then
     LOCATION=$loc_id
+  fi
+fi
+
+#Create /tmp/.schematics directory
+script_dir="/tmp/.schematics"
+if [ ! -d "$script_dir" ]; then
+  mkdir -p $script_dir
+  if [[ $? != 0 ]]; then
+    echo "*************  '$script_dir' directory creation failed. *************"
+    exit 1
   fi
 fi
 
