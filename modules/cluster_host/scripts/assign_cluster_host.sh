@@ -21,9 +21,18 @@ if [ "$PROVIDER" == "aws" ]; then
     hostname=$(echo $hostname | cut -d "." -f 1)
 fi
 
-host_out=`ibmcloud sat host ls --location $location | grep $hostname`
-HOST_ID=$(echo $host_out| cut -d' ' -f 2)
+tries=0
+status_code=1
+host_out=$(ibmcloud sat host ls --location "$location"| grep $hostname)
+while [ "$status_code" -ne 0 ]
+do
+  host_out=$(ibmcloud sat host ls --location "$location"| grep $hostname)
+  status_code=$?
+  echo "************* Sleeping until ${hostname} exists ************* "
+  sleep 10
+done
 
+HOST_ID=$(echo $host_out| cut -d' ' -f 2)
 
 echo hostout= $host_out
 echo hostid= $HOST_ID
