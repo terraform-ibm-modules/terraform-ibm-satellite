@@ -45,7 +45,7 @@ echo provider= $PROVIDER
 n=0
 until [ "$n" -ge 5 ]
 do
-  ibmcloud sat host assign --cluster $cluster_name --location $location --host $HOST_ID --zone $zone && break
+  ibmcloud sat host assign --cluster $cluster_name --location "$location" --host $HOST_ID --zone $zone && break
   echo "************* Failed with $n, waiting to retry *****************"
   n=$((n+1))
   sleep 10
@@ -55,7 +55,7 @@ status='Not Ready'
 echo $status
 while [ "$status" != "Ready" ]
 do
-   if [[ $(ibmcloud sat host ls --location $location | grep $hostname) == *"Ready"* ]]; then
+   if [[ $(ibmcloud sat host ls --location "$location" | grep $hostname) == *"Ready"* ]]; then
     echo host $hostname Ready
     status="Ready"
     break

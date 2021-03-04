@@ -8,5 +8,5 @@ if [ "$PROVIDER" == "aws" ]; then
     hostname=$(echo $hostname | cut -d "." -f 1)
 fi
 
-ibmcloud sat host rm --location $location --host $hostname -f
+ibmcloud sat host rm --location "$location" --host $hostname -f
 sleep 60

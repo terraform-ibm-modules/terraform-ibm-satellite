@@ -22,18 +22,18 @@ while [ "$status" != "normal" ]
 do
     echo "************* Location not ready *****************"
     sleep 30
-   if [[ $(ibmcloud sat location get --location $LOCATION | grep State:) == *"normal"* ]]; then
+   if [[ $(ibmcloud sat location get --location "$LOCATION" | grep State:) == *"normal"* ]]; then
     echo location $LOCATION is normal
     status="normal"
     break
   fi
 done
 
-out=$(ibmcloud sat location get --location $LOCATION | grep ID)
+out=$(ibmcloud sat location get --location "$LOCATION" | grep ID)
 location_id=$(echo $out| cut -d' ' -f 2)
 echo "location id = $location_id"
 
-ibmcloud ks cluster create satellite --name $cluster_name --location $location_id --version 4.4_openshift
+ibmcloud ks cluster create satellite --name $cluster_name --location "$location_id" --version 4.4_openshift
 state="deploying"
 while [ "$status" != "warning" ]
 do

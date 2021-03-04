@@ -8,7 +8,7 @@ fi
 sleep 10
 
 # Check login status
-login_status=$(ibmcloud sat host ls --location $LOCATION 2>&1 | grep 'Log in to the IBM Cloud CLI')
+login_status=$(ibmcloud sat host ls --location "$LOCATION" 2>&1 | grep 'Log in to the IBM Cloud CLI')
 if [[ $login_status == *"Log in to the IBM Cloud CLI"* ]]; then
     echo "************* Login failure *****************"
     exit 1
@@ -16,9 +16,10 @@ fi
 sleep 10
 
 #Get location ID
-loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')
+loc_id=$(ibmcloud sat location ls 2>&1 | grep -w -m 1 "$LOCATION" | awk '{print $2}')
 if [[ $loc_id != "" ]]; then
     LOCATION=$loc_id
+    echo "*************  Using location ID '$LOCATION' for operations *************"
 else 
     echo "************* Location '$LOCATION' not found. Exiting *****************"
     exit 1   
@@ -34,7 +35,7 @@ status=0
 echo LOCATION= $LOCATION
 while [ $status -eq 0 ]
 do
-    host_out=`ibmcloud sat host ls --location $LOCATION | grep $hostname`
+    host_out=`ibmcloud sat host ls --location "$LOCATION" | grep $hostname`
     HOST_ID=$(echo $host_out| cut -d' ' -f 2)
     if [[ $HOST_ID != "" ]]; then
         echo host $hostname attached
@@ -46,7 +47,7 @@ do
 done
 
 #Get host zone
-host_zones=$(ibmcloud sat location get --location $LOCATION | grep 'Host Zones:' | awk '{print substr($0, index($0, $3))}')
+host_zones=$(ibmcloud sat location get --location "$LOCATION" | grep 'Host Zones:' | awk '{print substr($0, index($0, $3))}')
 echo host_zones= $host_zones
 if [[ $host_zones != "" ]]; then
     export IFS=","
@@ -78,14 +79,14 @@ echo location= $LOCATION
 n=0
 until [ "$n" -ge 5 ]
 do
-   ibmcloud sat host assign --cluster $LOCATION --location $LOCATION --host $HOST_ID --zone $zone && break
+   ibmcloud sat host assign --cluster $LOCATION --location "$LOCATION" --host $HOST_ID --zone $zone && break
    echo "************* Failed with $n, waiting to retry *****************"
    n=$((n+1))
    sleep 10
 done
 
 if [[ $? -ne 0 ]]; then
-    echo "************* Failed to assign host $HOST_ID to zone $zone  *************"
+    echo "************* Failed to assign host "$HOST_ID" to zone $zone  *************"
     exit 1
 fi
 
@@ -94,7 +95,7 @@ status='notready'
 echo $status
 while [ "$status" != "ready" ]
 do
-   if [[ $(ibmcloud sat host ls --location $LOCATION | grep $hostname) == *"Ready"* ]]; then
+   if [[ $(ibmcloud sat host ls --location "$LOCATION" | grep $hostname) == *"Ready"* ]]; then
     echo host $hostname ready
     status="ready"
     break

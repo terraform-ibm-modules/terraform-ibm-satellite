@@ -15,26 +15,28 @@ fi
 
 #Check location name exist
 echo Location= $LOCATION
-out=$(ibmcloud sat location ls | grep -m 1 $LOCATION |  cut -d' ' -f1)
+out=$(ibmcloud sat location ls | grep -m 1 "$LOCATION" |  cut -d' ' -f1)
 if [[ $out != "" && $out == $LOCATION ]]; then
  echo "************* satellite location already exist. Please provide new name or existing location ID as input to 'location_name' parameter and re-try. *****************"
  exit 1
 fi
 
 #Create new location or Use existing location ID
-out=$(ibmcloud sat location get --location $LOCATION 2>&1 | grep 'ID:')
+out=$(ibmcloud sat location get --location "$LOCATION" 2>&1 | grep 'ID:')
 if [[ $out != "" && $out != *"Incident"* ]]; then
   echo "*************  Uses existing location ID for operations *************"
 else
-  ibmcloud sat location create --managed-from $ZONE --name $LOCATION
+  ibmcloud sat location create --managed-from "$ZONE" --name "$LOCATION"
   if [[ $? != 0 ]]; then
     exit 1
   fi
   sleep 60
+  
   #Get satellite location ID
-  loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')
+  loc_id=$(ibmcloud sat location ls 2>&1 | grep -w -m 1 "$LOCATION" | awk '{print $2}')
   if [[ $loc_id != "" ]]; then
     LOCATION=$loc_id
+    echo "*************  Using location ID '$LOCATION' for operations *************"
   fi
 fi
 
@@ -54,7 +56,7 @@ n=0
 path_out=""
 until [ "$n" -ge 5 ]
 do
-   path_out=`ibmcloud sat host attach --location $LOCATION -hl $LABEL` && break
+   path_out=`ibmcloud sat host attach --location "$LOCATION" -hl "$LABEL"` && break
    echo "************* Failed with $n, waiting to retry *****************"
    n=$((n+1))
    sleep 10
