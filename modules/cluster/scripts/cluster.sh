@@ -33,7 +33,7 @@ out=$(ibmcloud sat location get --location $LOCATION | grep ID)
 location_id=$(echo $out| cut -d' ' -f 2)
 echo "location id = $location_id"
 
-ibmcloud ks cluster create satellite --name $cluster_name --location $location_id --version 4.4_openshift
+ibmcloud ks cluster create satellite --name $cluster_name --location $location_id 
 state="deploying"
 while [ "$status" != "warning" ]
 do
