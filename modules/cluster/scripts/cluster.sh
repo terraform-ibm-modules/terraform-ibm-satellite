@@ -16,9 +16,6 @@ if [[ $? -ne 0 ]]; then
 fi
 
 ibmcloud iam oauth-tokens
-out=`ibmcloud sat location get --location $LOCATION | grep ID`
-location_id=$(echo $out| cut -d' ' -f 2)
-echo $location_id
 
 status="action_required"
 while [ "$status" != "normal" ]
@@ -31,6 +28,10 @@ do
     break
   fi
 done
+
+out=$(ibmcloud sat location get --location $LOCATION | grep ID)
+location_id=$(echo $out| cut -d' ' -f 2)
+echo "location id = $location_id"
 
 ibmcloud ks cluster create satellite --name $cluster_name --location $location_id --version 4.4_openshift
 state="deploying"
