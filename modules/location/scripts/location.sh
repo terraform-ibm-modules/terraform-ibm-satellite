@@ -1,17 +1,21 @@
-#!/bin/bash -x
+#!/bin/bash
 
-# ibmcloud cli login
-ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
-if [[ $? != 0 ]]; then
-  exit 1
-fi
+function ibmCloudLogin() {
+  # ibmcloud cli login
+  ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
+  if [[ $? != 0 ]]; then
+    exit 1
+  fi
+}
 
 ZONE=""
-if [[ $REGION == "us-east" ]]; then
-  ZONE="wdc06"
-elif [[ $REGION == "eu-gb" ]]; then
-  ZONE="lon04"  
-fi
+function setZone() {
+  if [[ $REGION == "us-east" ]]; then
+    ZONE="wdc06"
+  elif [[ $REGION == "eu-gb" ]]; then
+    ZONE="lon04"  
+  fi
+}
 
 function checkLocationNameExists() {
   echo Location="$LOCATION"
@@ -23,32 +27,34 @@ function checkLocationNameExists() {
   fi
 }
 
-function createLocation() {
-  #Check location name exist
-  echo Location= $LOCATION
-  out=$(ibmcloud sat location ls | grep -m 1 $LOCATION |  cut -d' ' -f1)
-  if [[ $out != "" && $out == $LOCATION ]]; then
-  echo "************* satellite location already exist. Please provide new name or existing location ID as input to 'location_name' parameter and re-try. *****************"
-  exit 1
-  fi
-
+function createLocationIfNeeded() {
   #Create new location or Use existing location ID
-  out=$(ibmcloud sat location get --location $LOCATION 2>&1 | grep 'ID:')
-  if [[ $out != "" && $out != *"Incident"* ]]; then
-    echo "*************  Uses existing location ID for operations *************"
+  # Work around Satellite defect https://github.ibm.com/alchemy-containers/satellite-planning/issues/1331
+  # out=$(ibmcloud sat location get --location $LOCATION 2>&1 | grep 'ID:')
+  # if [[ $out != "" && $out != *"Incident"* ]]; then
+  if checkLocationNameExists; then
+    echo "*************  Using existing location ID for operations *************"
   else
     ibmcloud sat location create --managed-from $ZONE --name $LOCATION
     if [[ $? != 0 ]]; then
       exit 1
     fi
     sleep 60
-    #Get satellite location ID
-    loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')
-    if [[ $loc_id != "" ]]; then
-      LOCATION=$loc_id
-    fi
   fi
+}
 
+LOCATION_ID=""
+function getLocationID() {
+  #Get satellite location ID
+  local loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')
+  if [[ $loc_id != "" ]]; then
+    LOCATION_ID=$loc_id
+  else
+    exit 1
+  fi
+}
+
+function createTempScriptDirectoryIfNeeded() {
   #Create /tmp/.schematics directory
   script_dir="/tmp/.schematics"
   if [ ! -d "$script_dir" ]; then
@@ -58,14 +64,16 @@ function createLocation() {
       exit 1
     fi
   fi
+}
 
+function generateHostAttachScript() {
   # Generate attach host script
-  echo location= $LOCATION
+  echo location=$LOCATION_ID
   n=0
   path_out=""
   until [ "$n" -ge 5 ]
   do
-    path_out=`ibmcloud sat host attach --location $LOCATION -hl $LABEL` && break
+    path_out=`ibmcloud sat host attach --location $LOCATION_ID -hl $LABEL` && break
     echo "************* Failed with $n, waiting to retry *****************"
     n=$((n+1))
     sleep 10
@@ -89,8 +97,15 @@ function createLocation() {
   fi
 }
 
-if checkLocationNameExists; then
-    exit 0
-else
-    createLocation
-fi
+function main() {
+  #Main
+  createTempScriptDirectoryIfNeeded
+  setZone
+  ibmCloudLogin
+  createLocationIfNeeded
+  getLocationID
+  generateHostAttachScript
+}
+
+# Execute
+main
