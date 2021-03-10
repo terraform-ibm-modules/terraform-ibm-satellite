@@ -54,18 +54,6 @@ function getLocationID() {
   fi
 }
 
-function createTempScriptDirectoryIfNeeded() {
-  #Create /tmp/.schematics directory
-  script_dir="/tmp/.schematics"
-  if [ ! -d "$script_dir" ]; then
-    mkdir -p $script_dir
-    if [[ $? != 0 ]]; then
-      echo "*************  '$script_dir' directory creation failed. *************"
-      exit 1
-    fi
-  fi
-}
-
 function generateHostAttachScript() {
   # Generate attach host script
   echo location=$LOCATION_ID
@@ -96,7 +84,6 @@ function generateHostAttachScript() {
 
 function main() {
   #Main
-  # createTempScriptDirectoryIfNeeded
   setZone
   ibmCloudLogin
   createLocationIfNeeded
