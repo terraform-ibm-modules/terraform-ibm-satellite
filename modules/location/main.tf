@@ -11,9 +11,9 @@ resource "null_resource" "satellite_location" {
   # }
 
   provisioner "local-exec" {
-    when = create
-    command = ". ${path.module}/../../modules/location/scripts/location.sh"
-    
+    when    = create
+    command = ". ${path.module}/scripts/location.sh"
+
     environment = {
       LOCATION       = var.location_name
       LABEL          = var.location_label
@@ -26,9 +26,9 @@ resource "null_resource" "satellite_location" {
   }
 
   provisioner "local-exec" {
-    when = destroy
-    command = ". ${path.module}/../../modules/location/scripts/destroy.sh"
-    
+    when    = destroy
+    command = ". ${path.module}/scripts/destroy.sh"
+
     environment = {
       LOCATION       = self.triggers.LOCATION
       API_KEY        = self.triggers.API_KEY
@@ -39,10 +39,19 @@ resource "null_resource" "satellite_location" {
   }
 }
 
+# data "local_file" "hack" {
+#   filename   = "/addhost.sh"
+#   depends_on = [module.satellite-location]
+# }
+
 output "satellite_location" {
   value = null_resource.satellite_location
 }
 
 output "module_id" {
   value = null_resource.satellite_location.id
+}
+
+output "addhost_path" {
+  value = "${path.module}/addhost.sh"
 }

@@ -13,13 +13,13 @@ function setZone() {
   if [[ $REGION == "us-east" ]]; then
     ZONE="wdc06"
   elif [[ $REGION == "eu-gb" ]]; then
-    ZONE="lon04"  
+    ZONE="lon04"
   fi
 }
 
 function checkLocationNameExists() {
   echo Location="$LOCATION"
-  out=$(ibmcloud sat location ls | grep -m 1 $LOCATION |  cut -d' ' -f1)
+  out=$(ibmcloud sat location ls | grep -m 1 $LOCATION | cut -d' ' -f1)
   if [[ $out != "" && $out == $LOCATION ]]; then
     return 0 # True
   else
@@ -71,35 +71,32 @@ function generateHostAttachScript() {
   echo location=$LOCATION_ID
   n=0
   path_out=""
-  until [ "$n" -ge 5 ]
-  do
-    path_out=`ibmcloud sat host attach --location $LOCATION_ID -hl $LABEL` && break
+  until [ "$n" -ge 5 ]; do
+    path_out=$(ibmcloud sat host attach --location $LOCATION_ID -hl $LABEL) && break
     echo "************* Failed with $n, waiting to retry *****************"
-    n=$((n+1))
+    n=$((n + 1))
     sleep 10
   done
 
   echo $path_out
-  path=$(echo $path_out| cut -d' ' -f 21)
+  path=$(echo $path_out | cut -d' ' -f 21)
   echo path= $path
   if [[ $path == "" ]]; then
     echo "************* Failed to generate registration script *****************"
     exit 1
   fi
 
-  #Update host registration script 
-  if [[ $PROVIDER == "ibm" ]];
-  then
-    awk '1;/API_URL=/{ print "subscription-manager refresh"; print "subscription-manager repos --enable=*";}' $path  > /tmp/.schematics/addhost.sh
-  elif [[ $PROVIDER == "aws" ]];
-  then
-    awk '1;/API_URL=/{ print "yum update -y"; print "yum-config-manager --enable \x27*\x27"; print "yum repolist all"; print "yum install container-selinux -y";}' $path  > /tmp/.schematics/addhost.sh
+  #Update host registration script
+  if [[ $PROVIDER == "ibm" ]]; then
+    awk '1;/API_URL=/{ print "subscription-manager refresh"; print "subscription-manager repos --enable=*";}' $path >./addhost.sh
+  elif [[ $PROVIDER == "aws" ]]; then
+    awk '1;/API_URL=/{ print "yum update -y"; print "yum-config-manager --enable \x27*\x27"; print "yum repolist all"; print "yum install container-selinux -y";}' $path >./addhost.sh
   fi
 }
 
 function main() {
   #Main
-  createTempScriptDirectoryIfNeeded
+  # createTempScriptDirectoryIfNeeded
   setZone
   ibmCloudLogin
   createLocationIfNeeded
