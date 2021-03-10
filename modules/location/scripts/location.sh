@@ -88,9 +88,9 @@ function generateHostAttachScript() {
 
   #Update host registration script
   if [[ $PROVIDER == "ibm" ]]; then
-    awk '1;/API_URL=/{ print "subscription-manager refresh"; print "subscription-manager repos --enable=*";}' $path >./addhost.sh
+    awk '1;/API_URL=/{ print "subscription-manager refresh"; print "subscription-manager repos --enable=*";}' $path >$ADDHOST_PATH/addhost.sh
   elif [[ $PROVIDER == "aws" ]]; then
-    awk '1;/API_URL=/{ print "yum update -y"; print "yum-config-manager --enable \x27*\x27"; print "yum repolist all"; print "yum install container-selinux -y";}' $path >./addhost.sh
+    awk '1;/API_URL=/{ print "yum update -y"; print "yum-config-manager --enable \x27*\x27"; print "yum repolist all"; print "yum install container-selinux -y";}' $path >$ADDHOST_PATH/addhost.sh
   fi
 }
 
