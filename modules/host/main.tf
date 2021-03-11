@@ -34,18 +34,5 @@ resource "null_resource" "assign_host" {
     }
   }
 
-  provisioner "local-exec" {
-    when    = destroy
-    command = ". ${path.module}/scripts/destroy.sh"
-
-    environment = {
-      hostname       = element(split(",", self.triggers.host_vms_joined), count.index)
-      LOCATION       = self.triggers.LOCATION
-      API_KEY        = self.triggers.API_KEY
-      REGION         = self.triggers.REGION
-      RESOURCE_GROUP = self.triggers.RESOURCE_GROUP
-      ENDPOINT       = self.triggers.ENDPOINT
-    }
-  }
 }
 
