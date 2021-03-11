@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 echo ************* Deleting location *****************
 echo LOCATION= $LOCATION
@@ -14,7 +14,7 @@ else
 fi
 
 # While hosts remain in the location
-while [ ibmcloud sat host ls --location $LOCATION | wc -l -ge 4 ]; do
+while [ $(ibmcloud sat host ls --location $LOCATION | wc -l) -ge 4 ]; do
     echo "************* Location '$LOCATION' still has control plain hosts attached. Trying again in 10 seconds *****************"
     sleep 10
 done
