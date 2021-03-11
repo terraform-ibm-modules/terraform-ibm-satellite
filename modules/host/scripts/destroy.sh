@@ -1,6 +1,8 @@
 #!/bin/bash -x
 
 echo "************* Deleting Hosts *****************"
+echo "location $LOCATION"
+ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION
 ibmcloud plugin list
 loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')
 hostname=$(echo $hostname | cut -d'.' -f1)
