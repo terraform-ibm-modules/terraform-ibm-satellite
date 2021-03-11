@@ -1,13 +1,19 @@
 
 resource "null_resource" "satellite_location" {
 
+  lifecycle {
+    ignore_changes = [
+      triggers,
+    ]
+  }
+
   triggers = {
     LOCATION       = var.location_name
-  #   API_KEY        = var.ibmcloud_api_key
-  #   REGION         = var.ibm_region
-  #   RESOURCE_GROUP = var.resource_group
-  #   ENDPOINT       = var.endpoint
-  #   PROVIDER       = var.host_provider
+    API_KEY        = var.ibmcloud_api_key
+    REGION         = var.ibm_region
+    RESOURCE_GROUP = var.resource_group
+    ENDPOINT       = var.endpoint
+    PROVIDER       = var.host_provider
   }
 
   provisioner "local-exec" {
@@ -39,11 +45,6 @@ resource "null_resource" "satellite_location" {
     }
   }
 }
-
-# data "local_file" "hack" {
-#   filename   = "/addhost.sh"
-#   depends_on = [module.satellite-location]
-# }
 
 output "satellite_location" {
   value = null_resource.satellite_location
