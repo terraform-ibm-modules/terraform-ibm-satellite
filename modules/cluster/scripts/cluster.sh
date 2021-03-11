@@ -1,49 +1,86 @@
-#!/bin/bash -x
+#!/bin/bash -e
 
+function wait() {
+  sleep 30
+}
 
-echo "************* ibmcloud cli login *****************"
-ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
-ibmcloud iam oauth-tokens
-if [[ $? -ne 0 ]]; then
+function ibmCloudLogin() {
+  echo "************* ibmcloud cli login *****************"
   n=0
-  until [ "$n" -ge 5 ]
-  do
-    ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP  && break
+  max=5
+  until [ "$n" -ge $max ]; do
+    ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP && break
     echo "************* Failed with $n, waiting to retry *****************"
-    n=$((n+1))
-    sleep 30
+    n=$((n + 1))
+    wait
+    if [ "$n" -ge $max ]; then
+      echo "************* Failed to login *****************"
+      exit 1
+    fi
   done
-fi
+}
 
-ibmcloud iam oauth-tokens
+function getSatLocation() {
+  out=$(ibmcloud sat location get --location "$LOCATION" | grep ID)
+  location_id=$(echo $out | cut -d' ' -f 2)
+  echo "location id = $location_id"
+}
 
-status="action_required"
-while [ "$status" != "normal" ]
-do
-    echo "************* Location not ready *****************"
-    sleep 30
-   if [[ $(ibmcloud sat location get --location $LOCATION | grep State:) == *"normal"* ]]; then
-    echo location $LOCATION is normal
-    status="normal"
-    break
+function getLocationState() {
+  LOCATION_STATE=$(ibmcloud sat location get --location "$LOCATION" | awk '/State/{print $2;exit;}')
+  echo "location $LOCATION status: $LOCATION_STATE"
+}
+
+function ensureLocationIsNormal() {
+  getLocationState
+  while [ $LOCATION_STATE != "normal" ]; do
+    echo "************* Location NOT ready *****************"
+    wait
+    getLocationState
+  done
+  echo "************* Location ready *****************"
+}
+
+function checkClusterNameExists() {
+  out=$(ibmcloud ks cluster ls | grep -m 1 "$cluster_name" | cut -d' ' -f1)
+  if [[ $out != "" && $out == $cluster_name ]]; then
+    return 0 # True
+  else
+    return 1 # False
   fi
-done
+}
 
-out=$(ibmcloud sat location get --location $LOCATION | grep ID)
-location_id=$(echo $out| cut -d' ' -f 2)
-echo "location id = $location_id"
+function getClusterState() {
+  CLUSTER_STATE=$(ibmcloud ks cluster get --cluster "$cluster_name" | awk '/State/{print $2;exit;}')
+  echo "cluster $cluster_name status: $CLUSTER_STATE"
+}
 
-ibmcloud ks cluster create satellite --name $cluster_name --location $location_id 
-state="deploying"
-while [ "$status" != "warning" ]
-do
+function validateClusterCreation() {
+  getClusterState
+  while [ $CLUSTER_STATE != "warning" ]; do
     echo "************* cluster not ready *****************"
-    sleep 30
-   if [[ $(ibmcloud ks cluster get --cluster $cluster_name | grep State:) == *"warning"* ]]; then
-    echo location $cluster_name is warning
-    status="warning"
-    break
-  fi
-done
+    wait
+    getClusterState
+  done
+  echo "Satellite UX shows Active when the cluster is in warning so we assume creation completed"
+  echo "**************** cluster creation done ****************"
+}
 
-echo "**************** cluster creation done ****************"
+function createClusterIfNeeded() {
+  if checkClusterNameExists; then
+    echo "*************  Using existing cluster ID for operations *************"
+    exit 0
+  else
+    ibmcloud ks cluster create satellite --name $cluster_name --location $location_id --version 4.5.31_openshift
+    validateClusterCreation
+  fi
+}
+
+function main() {
+  ibmCloudLogin
+  getSatLocation
+  ensureLocationIsNormal
+  createClusterIfNeeded
+}
+
+main

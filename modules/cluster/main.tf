@@ -10,7 +10,7 @@ resource "null_resource" "create_cluster" {
 
 
   provisioner "local-exec" {
-    when = create
+    when    = create
     command = ". ${path.module}/../../modules/cluster/scripts/cluster.sh"
     environment = {
       LOCATION       = var.location_name
@@ -23,7 +23,7 @@ resource "null_resource" "create_cluster" {
   }
 
   provisioner "local-exec" {
-    when = destroy
+    when    = destroy
     command = ". ${path.module}/../../modules/cluster/scripts/destroy.sh"
     environment = {
       cluster_name   = self.triggers.cluster_name
@@ -33,6 +33,4 @@ resource "null_resource" "create_cluster" {
       ENDPOINT       = self.triggers.ENDPOINT
     }
   }
-
-
 }
