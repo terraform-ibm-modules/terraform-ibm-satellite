@@ -1,14 +1,20 @@
 
 resource "null_resource" "satellite_location" {
 
-  # triggers = {
-  #   LOCATION       = var.location_name
-  #   API_KEY        = var.ibmcloud_api_key
-  #   REGION         = var.ibm_region
-  #   RESOURCE_GROUP = var.resource_group
-  #   ENDPOINT       = var.endpoint
-  #   PROVIDER       = var.host_provider
-  # }
+  lifecycle {
+    ignore_changes = [
+      triggers,
+    ]
+  }
+
+  triggers = {
+    LOCATION       = var.location_name
+    API_KEY        = var.ibmcloud_api_key
+    REGION         = var.ibm_region
+    RESOURCE_GROUP = var.resource_group
+    ENDPOINT       = var.endpoint
+    PROVIDER       = var.host_provider
+  }
 
   provisioner "local-exec" {
     when    = create

@@ -1,9 +1,9 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # ibmcloud cli login
 ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
 if [[ $? != 0 ]]; then
-  exit 1
+    exit 1
 fi
 sleep 10
 
@@ -19,9 +19,9 @@ sleep 10
 loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')
 if [[ $loc_id != "" ]]; then
     LOCATION=$loc_id
-else 
+else
     echo "************* Location '$LOCATION' not found. Exiting *****************"
-    exit 1   
+    exit 1
 fi
 
 # Get proper hostname for AWS provider
@@ -29,13 +29,12 @@ if [ "$PROVIDER" == "aws" ]; then
     hostname=$(echo $hostname | cut -d "." -f 1)
 fi
 
-# Check host attached to location 
+# Check host attached to location
 status=0
 echo LOCATION= $LOCATION
-while [ $status -eq 0 ]
-do
-    host_out=`ibmcloud sat host ls --location $LOCATION | grep $hostname`
-    HOST_ID=$(echo $host_out| cut -d' ' -f 2)
+while [ $status -eq 0 ]; do
+    host_out=$(ibmcloud sat host ls --location $LOCATION | grep $hostname)
+    HOST_ID=$(echo $host_out | cut -d' ' -f 2)
     if [[ $HOST_ID != "" ]]; then
         echo host $hostname attached
         status=1
@@ -52,17 +51,17 @@ if [[ $host_zones != "" ]]; then
     export IFS=","
     i=0
     for z in $host_zones; do
-        if [[  $(( $index % 3 )) == 0 && $i == 0 ]]; then
+        if [[ $(($index % 3)) == 0 && $i == 0 ]]; then
             zone=$(echo $z | tr -d ' ')
             break
-        elif [[ $(( $index % 3 )) == 1  && $i == 1 ]]; then
+        elif [[ $(($index % 3)) == 1 && $i == 1 ]]; then
             zone=$(echo $z | tr -d ' ')
             break
-        elif [[ $(( $index % 3 )) == 2  && $i == 2 ]]; then
+        elif [[ $(($index % 3)) == 2 && $i == 2 ]]; then
             zone=$(echo $z | tr -d ' ')
             break
         fi
-        i=$((i+1))
+        i=$((i + 1))
     done
 else
     echo "************* Location zones not found. Exiting *****************"
@@ -76,12 +75,11 @@ echo zone= $zone
 echo hostname= $hostname
 echo location= $LOCATION
 n=0
-until [ "$n" -ge 5 ]
-do
-   ibmcloud sat host assign --cluster $LOCATION --location $LOCATION --host $HOST_ID --zone $zone && break
-   echo "************* Failed with $n, waiting to retry *****************"
-   n=$((n+1))
-   sleep 10
+until [ "$n" -ge 5 ]; do
+    ibmcloud sat host assign --cluster $LOCATION --location $LOCATION --host $HOST_ID --zone $zone && break
+    echo "************* Failed with $n, waiting to retry *****************"
+    n=$((n + 1))
+    sleep 10
 done
 
 if [[ $? -ne 0 ]]; then
@@ -92,13 +90,12 @@ fi
 # Wait for host to get normal state
 status='notready'
 echo $status
-while [ "$status" != "ready" ]
-do
-   if [[ $(ibmcloud sat host ls --location $LOCATION | grep $hostname) == *"Ready"* ]]; then
-    echo host $hostname ready
-    status="ready"
-    break
-  fi
+while [ "$status" != "ready" ]; do
+    if [[ $(ibmcloud sat host ls --location $LOCATION | grep $hostname) == *"Ready"* ]]; then
+        echo host $hostname ready
+        status="ready"
+        break
+    fi
     echo "************* hosts not ready *****************"
     sleep 10
 done
