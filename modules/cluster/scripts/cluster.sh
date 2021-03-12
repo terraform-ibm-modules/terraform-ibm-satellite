@@ -1,5 +1,13 @@
 #!/bin/bash -e
 
+function exitOnFail() {
+  exitStatus=$?
+  if [ ! $exitStatus -eq 0 ]; then
+    echo "Exit status: " $exitStatus
+    exit $exitStatus
+  fi
+}
+
 function wait() {
   sleep 30
 }
@@ -33,7 +41,7 @@ function getLocationState() {
 
 function ensureLocationIsNormal() {
   getLocationState
-  while [ $LOCATION_STATE != "normal" ]; do
+  while [[ $LOCATION_STATE != "normal" ]]; do
     echo "************* Location NOT ready *****************"
     wait
     getLocationState
@@ -71,7 +79,8 @@ function createClusterIfNeeded() {
     echo "*************  Using existing cluster ID for operations *************"
     exit 0
   else
-    ibmcloud ks cluster create satellite --name $cluster_name --location $location_id --version 4.5.31_openshift
+    ibmcloud ks cluster create satellite --enable-config-admin --name $cluster_name --location $location_id --version 4.5.31_openshift
+    exitOnFail
     validateClusterCreation
   fi
 }
