@@ -29,7 +29,7 @@ until [ "$n" -ge 5 ]; do
 done
 sleep 120
 
-#Wait for location to get deleted
+# Wait for location to get deleted
 status=0
 echo LOCATION= $LOCATION
 while [ $status -eq 0 ]; do

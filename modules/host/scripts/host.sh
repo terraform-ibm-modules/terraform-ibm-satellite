@@ -87,7 +87,7 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-# Wait for host to get normal state
+# wait for host to get normal state
 status='notready'
 echo $status
 while [ "$status" != "ready" ]; do

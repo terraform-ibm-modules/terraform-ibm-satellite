@@ -8,7 +8,7 @@ function exitOnFail() {
   fi
 }
 
-function wait() {
+function snooze() {
   sleep 30
 }
 
@@ -20,7 +20,7 @@ function ibmCloudLogin() {
     ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP && break
     echo "************* Failed with $n, waiting to retry *****************"
     n=$((n + 1))
-    wait
+    snooze
     if [ "$n" -ge $max ]; then
       echo "************* Failed to login *****************"
       exit 1
@@ -43,7 +43,7 @@ function ensureLocationIsNormal() {
   getLocationState
   while [[ $LOCATION_STATE != "normal" ]]; do
     echo "************* Location NOT ready *****************"
-    wait
+    snooze
     getLocationState
   done
   echo "************* Location ready *****************"
@@ -67,7 +67,7 @@ function validateClusterCreation() {
   getClusterState
   while [ $CLUSTER_STATE != "warning" ]; do
     echo "************* cluster not ready *****************"
-    wait
+    snooze
     getClusterState
   done
   echo "Satellite UX shows Active when the cluster is in warning so we assume creation completed"

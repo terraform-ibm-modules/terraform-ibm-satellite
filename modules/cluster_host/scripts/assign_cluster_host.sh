@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function wait() {
+function snooze() {
   sleep 10
 }
 
@@ -12,7 +12,7 @@ function ibmCloudLogin() {
     ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP && break
     echo "************* Failed with $n, waiting to retry *****************"
     n=$((n + 1))
-    wait
+    snooze
     if [ "$n" -ge $max ]; then
       echo "************* Failed to login *****************"
       exit 1
@@ -34,7 +34,7 @@ function lsSatelliteHost() {
     LSOUT=$(ibmcloud sat host ls --location "$location") && break
     echo "************* Failed with $n, waiting to retry *****************"
     n=$((n + 1))
-    wait
+    snooze
     if [ "$n" -ge $max ]; then
       echo "************* Failed to list hosts *****************"
       exit 1
@@ -53,7 +53,7 @@ function checkHostExists() {
   getHostID
   while [ "$HOST_ID" == "" ]; do
     echo "************* Sleeping until ${hostname} exists ************* "
-    wait
+    snooze
     getHostID
   done
 }
@@ -79,7 +79,7 @@ function assignHostToCluster() {
     #ibmcloud sat host assign --cluster "$cluster_name" --location "$location" --host "$HOST_ID" --zone "$zone" && break
     echo "************* Failed with $n, waiting to retry *****************"
     n=$((n + 1))
-    wait
+    snooze
     if [ "$n" -ge $max ]; then
       echo "************* Failed to assign cluster *****************"
       exit 1
@@ -91,7 +91,7 @@ function validateHostAssignment() {
   lsSatelliteHost
   while [ $(echo "$LSOUT" | grep "$HOSTNAME" | awk '{print $3}') == "unassigned" ]; do
     echo "************* hosts NOT assigned *****************"
-    wait
+    snooze
     lsSatelliteHost
   done
   echo "************* Assigning host $hostname to cluster completed.. *************"
