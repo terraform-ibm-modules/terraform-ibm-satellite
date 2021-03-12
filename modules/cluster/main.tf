@@ -1,13 +1,18 @@
 resource "null_resource" "create_cluster" {
 
-  # triggers = {
-  #     cluster_name   = var.cluster_name
-  #     API_KEY        = var.ibmcloud_api_key
-  #     REGION         = var.ibm_region
-  #     RESOURCE_GROUP = var.resource_group
-  #     ENDPOINT       = var.endpoint
-  # }
+  lifecycle {
+    ignore_changes = [
+      triggers,
+    ]
+  }
 
+  triggers = {
+    cluster_name   = var.cluster_name
+    API_KEY        = var.ibmcloud_api_key
+    REGION         = var.ibm_region
+    RESOURCE_GROUP = var.resource_group
+    ENDPOINT       = var.endpoint
+  }
 
   provisioner "local-exec" {
     when    = create
