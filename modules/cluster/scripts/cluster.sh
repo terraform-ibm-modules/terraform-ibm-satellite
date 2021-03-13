@@ -1,56 +1,59 @@
-#!/bin/bash -e
+#!/bin/bash
 
-function exitOnFail() {
-  exitStatus=$?
-  if [ ! $exitStatus -eq 0 ]; then
-    echo "Exit status: " $exitStatus
-    exit $exitStatus
-  fi
-}
+MAX_RETRY=10
 
-function wait() {
+function snooze() {
   sleep 30
 }
 
-function ibmCloudLogin() {
-  echo "************* ibmcloud cli login *****************"
-  n=0
-  max=5
-  until [ "$n" -ge $max ]; do
-    ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP && break
-    echo "************* Failed with $n, waiting to retry *****************"
+function retryCmd() {
+  local cmd=$*
+  local n=1
+  until [ "$n" -ge $MAX_RETRY ]; do
+    echo ">>>>>>>>>> ATTEMPT $n"
+    CMDOUT=$(${cmd}) && break
+    echo $CMDOUT
     n=$((n + 1))
-    wait
-    if [ "$n" -ge $max ]; then
-      echo "************* Failed to login *****************"
+    if [ "$n" -ge $MAX_RETRY ]; then
+      echo ">>>>>>>>>> FAILED"
       exit 1
     fi
+    sleep 1
   done
 }
 
-function getSatLocation() {
-  out=$(ibmcloud sat location get --location "$LOCATION" | grep ID)
-  location_id=$(echo $out | cut -d' ' -f 2)
+function ibmCloudLogin() {
+  echo
+  echo "********** ibmcloud cli login **********"
+  retryCmd "ibmcloud login --apikey=${API_KEY} -a ${ENDPOINT} -r ${REGION} -g ${RESOURCE_GROUP}"
+  echo "$CMDOUT"
+}
+
+function getSatLocationID() {
+  retryCmd "ibmcloud sat location get --location ${LOCATION}"
+  location_id=$(echo "$CMDOUT" | awk '/ID:/{print $2;exit;}')
   echo "location id = $location_id"
 }
 
 function getLocationState() {
-  LOCATION_STATE=$(ibmcloud sat location get --location "$LOCATION" | awk '/State/{print $2;exit;}')
+  retryCmd "ibmcloud sat location get --location ${LOCATION}"
+  LOCATION_STATE=$(echo "$CMDOUT" | awk '/State/{print $2;exit;}')
   echo "location $LOCATION status: $LOCATION_STATE"
 }
 
 function ensureLocationIsNormal() {
   getLocationState
   while [[ $LOCATION_STATE != "normal" ]]; do
-    echo "************* Location NOT ready *****************"
-    wait
+    echo "********** Location NOT ready **********"
+    snooze
     getLocationState
   done
-  echo "************* Location ready *****************"
+  echo "********** Location ready **********"
 }
 
-function checkClusterNameExists() {
-  out=$(ibmcloud ks cluster ls | grep -m 1 "$cluster_name" | cut -d' ' -f1)
+function clusterNameExists() {
+  retryCmd "ibmcloud ks cluster ls"
+  out=$(echo "$CMDOUT" | grep -m 1 "$cluster_name" | awk '{print $1}')
   if [[ $out != "" && $out == $cluster_name ]]; then
     return 0 # True
   else
@@ -59,37 +62,41 @@ function checkClusterNameExists() {
 }
 
 function getClusterState() {
-  CLUSTER_STATE=$(ibmcloud ks cluster get --cluster "$cluster_name" | awk '/State/{print $2;exit;}')
+  retryCmd "ibmcloud ks cluster get --cluster ${cluster_name}"
+  CLUSTER_STATE=$(echo "$CMDOUT" | awk '/State/{print $2;exit;}')
   echo "cluster $cluster_name status: $CLUSTER_STATE"
+}
+
+function createCluster() {
+  getSatLocationID
+  retryCmd "ibmcloud ks cluster create satellite --enable-config-admin --name $cluster_name --location $location_id --version 4.5.31_openshift"
 }
 
 function validateClusterCreation() {
   getClusterState
   while [ $CLUSTER_STATE != "warning" ]; do
-    echo "************* cluster not ready *****************"
-    wait
+    echo "********** cluster not ready **********"
+    snooze
     getClusterState
   done
   echo "Satellite UX shows Active when the cluster is in warning so we assume creation completed"
-  echo "**************** cluster creation done ****************"
+  echo "********** cluster creation done **********"
 }
 
 function createClusterIfNeeded() {
-  if checkClusterNameExists; then
-    echo "*************  Using existing cluster ID for operations *************"
+  if clusterNameExists; then
+    echo "**********  Using existing cluster for operations **********"
     exit 0
   else
-    ibmcloud ks cluster create satellite --enable-config-admin --name $cluster_name --location $location_id --version 4.5.31_openshift
-    exitOnFail
+    createCluster
     validateClusterCreation
   fi
 }
 
-function main() {
+function apply() {
   ibmCloudLogin
-  getSatLocation
   ensureLocationIsNormal
   createClusterIfNeeded
 }
 
-main
+apply
