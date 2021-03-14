@@ -2,17 +2,6 @@
 
 MAX_RETRY=10
 
-function debugValues() {
-  echo "********** Input Values **********"
-  echo location= $location
-  echo cluster= $cluster_name
-  echo provider= $PROVIDER
-  echo hostname= $hostname
-  echo HOSTNAME= $HOSTNAME
-  echo HOST_ID= $HOST_ID
-  echo zone= $zone
-}
-
 function snooze() {
   sleep 30
 }
@@ -41,6 +30,7 @@ function ibmCloudLogin() {
 }
 
 function extractHostName() {
+  HOSTNAME=$hostname
   if [ "$PROVIDER" == "aws" ]; then
     HOSTNAME=$(echo $hostname | cut -d "." -f 1)
   fi
@@ -53,10 +43,22 @@ function lsSatelliteHosts() {
 }
 
 function getHostID() {
+  extractHostName
   lsSatelliteHosts
   echo "$CMDOUT"
-  extractHostName
   HOST_ID=$(echo "$CMDOUT" | grep "$HOSTNAME" | awk '{print $2}')
+}
+
+function debugValues() {
+  extractHostName
+  echo "********** Input Values **********"
+  echo location= $location
+  echo cluster= $cluster_name
+  echo provider= $PROVIDER
+  echo hostname= $hostname
+  echo HOSTNAME= $HOSTNAME
+  echo HOST_ID= $HOST_ID
+  echo zone= $zone
 }
 
 function checkHostExists() {
@@ -64,12 +66,12 @@ function checkHostExists() {
   echo "********** Checking host ${hostname} exists **********"
   getHostID
   while [[ "$HOST_ID" == "" ]]; do
-    echo "********** Sleeping until ${hostname}(${HOST_ID}) exists **********"
+    echo "********** Sleeping until Host ${hostname} / ID ${HOST_ID}) exists **********"
     snooze
     getHostID
   done
   echo
-  echo "********** Host ${hostname}(${HOST_ID}) found **********"
+  echo "********** Host ${hostname} / ID ${HOST_ID} found **********"
 }
 
 # Get all cluster zones in default worker pool
@@ -77,20 +79,24 @@ function getClusterZones() {
   echo
   echo "********** Getting cluster default worker pool zones **********"
   echo
-  echo "********** ibmcloud ks worker-pool get --worker-pool default --cluster ${cluster_name} **********"
+  echo "********** ibmcloud ks worker-pool zones --worker-pool default --cluster ${cluster_name} **********"
   echo
-  retryCmd "ibmcloud ks worker-pool get --worker-pool default --cluster ${cluster_name}"
+  retryCmd "ibmcloud ks worker-pool zones --worker-pool default --cluster ${cluster_name}"
   echo
   echo "$CMDOUT"
 }
 
 # Check if the zone already exists in default worker pool
 function checkZoneExists() {
+  echo
+  echo "Looking for zone $zone"
   getClusterZones
-  zoneout=$(echo "$CMDOUT" | grep "$zone" | awk '{print $1}')
+  zoneout=$(echo "$CMDOUT" | grep -m 1 "$zone" | awk '{print $1}')
   if [[ $zoneout != "" && $zoneout == $zone ]]; then
+    echo ">>>>>>>>>> Zone $zone found"
     return 0 # True
   else
+    echo ">>>>>>>>>> Zone $zone NOT found"
     return 1 # False
   fi
 }
@@ -165,8 +171,8 @@ function assignHostToClusterIfNeeded() {
 
 function apply() {
   ibmCloudLogin
+  debugValues
   checkHostExists
-  # debugValues
   assignZoneToClusterIfNeeded
   assignHostToClusterIfNeeded
 }
