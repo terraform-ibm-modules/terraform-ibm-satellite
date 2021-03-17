@@ -1,7 +1,5 @@
 #!/bin/bash
 
-MAX_RETRY=10
-
 function snooze() {
   sleep 30
 }
@@ -9,6 +7,7 @@ function snooze() {
 function retryCmd() {
   local cmd=$*
   local n=1
+  local MAX_RETRY=10
   until [ "$n" -ge $MAX_RETRY ]; do
     echo ">>>>>>>>>> ATTEMPT $n"
     CMDOUT=$(${cmd}) && break
@@ -88,16 +87,45 @@ function getClusterZones() {
 
 # Check if the zone already exists in default worker pool
 function checkZoneExists() {
+  local testZone=$1
   echo
-  echo "Looking for zone $zone"
+  echo "Looking for zone $testZone"
   getClusterZones
-  zoneout=$(echo "$CMDOUT" | grep -m 1 "$zone" | awk '{print $1}')
-  if [[ $zoneout != "" && $zoneout == $zone ]]; then
-    echo ">>>>>>>>>> Zone $zone found"
+  # Produce empty string when there are no zones assigned
+  # (I'm not happy with this hack but we are running out of time so it will have to be that way for now)
+  local data=$(echo "$CMDOUT" | grep -v "Retrieving" | grep -v "OK" | grep -v "Subnet")
+  # Input is either empty or contains one or more zones
+  zoneout=$(echo "$data" | grep -m 1 "$testZone" | awk '{print $1}')
+  # Output is either empty or contains only one zone
+  if [[ $zoneout != "" && $zoneout == $testZone ]]; then
+    echo ">>>>>>>>>> Zone $testZone found"
     return 0 # True
   else
-    echo ">>>>>>>>>> Zone $zone NOT found"
+    echo ">>>>>>>>>> Zone $testZone NOT found"
     return 1 # False
+  fi
+}
+
+function removeDefaultZone() {
+  local defaultZone="zone-1"
+  echo
+  echo "************* Remove ${defaultZone} from cluster's default worker pool *************"
+  echo
+  echo "************* ibmcloud ks zone rm -f --worker-pool default --cluster ${cluster_name} --zone ${defaultZone} *************"
+  retryCmd "ibmcloud ks zone rm -f --worker-pool default --cluster ${cluster_name} --zone ${defaultZone}"
+  echo "$CMDOUT"
+}
+
+function removeDefaultZoneIfNeeded() {
+  echo
+  echo "********** Remove default zone-1 if needed **********"
+  checkZoneExists "zone-1"
+  if [[ $? -eq 0 ]]; then
+    echo
+    echo "********** Removing default zone-1 **********"
+    removeDefaultZone
+  else
+    echo "********** Default zone-1 not found **********"
   fi
 }
 
@@ -115,7 +143,8 @@ function assignZoneToCluster() {
 function assignZoneToClusterIfNeeded() {
   echo
   echo "********** Assign zone to cluster if needed **********"
-  if checkZoneExists; then
+  checkZoneExists $zone
+  if [[ $? -eq 0 ]]; then
     echo
     echo "**********  Using existing ${zone} zone **********"
   else
@@ -173,6 +202,7 @@ function apply() {
   ibmCloudLogin
   debugValues
   checkHostExists
+  removeDefaultZoneIfNeeded
   assignZoneToClusterIfNeeded
   assignHostToClusterIfNeeded
 }
