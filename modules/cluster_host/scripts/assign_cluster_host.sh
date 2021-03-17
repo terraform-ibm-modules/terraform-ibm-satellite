@@ -107,11 +107,12 @@ function checkZoneExists() {
 }
 
 function removeDefaultZone() {
+  local defaultZone="zone-1"
   echo
-  echo "************* Remove zone-1 from cluster's default worker pool *************"
+  echo "************* Remove ${defaultZone} from cluster's default worker pool *************"
   echo
-  echo "************* ibmcloud ks zone rm -f --worker-pool default --cluster ${cluster_name} --zone zone-1 *************"
-  retryCmd "ibmcloud ks zone rm -f --worker-pool default --cluster ${cluster_name} --zone zone-1"
+  echo "************* ibmcloud ks zone rm -f --worker-pool default --cluster ${cluster_name} --zone ${defaultZone} *************"
+  retryCmd "ibmcloud ks zone rm -f --worker-pool default --cluster ${cluster_name} --zone ${defaultZone}"
   echo "$CMDOUT"
 }
 
