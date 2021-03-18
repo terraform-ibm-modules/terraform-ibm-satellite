@@ -1,10 +1,20 @@
 
 variable "location_name" {
-  type         = string
+  type = string
 }
 
 variable "cluster_name" {
-  type         = string
+  type = string
+}
+
+variable "availability_zones" {
+  description = "List of availability zones names in the region"
+  type        = list(string)
+  default     = []
+  validation {
+    condition     = length(var.availability_zones) >= 3
+    error_message = "You must have at least 3 availability_zones."
+  }
 }
 
 #################################################################################################
@@ -12,8 +22,8 @@ variable "cluster_name" {
 #################################################################################################
 
 variable "ibmcloud_api_key" {
-  description  = "IBM Cloud API Key"
-  type         = string
+  description = "IBM Cloud API Key"
+  type        = string
 }
 
 variable "resource_group" {
@@ -27,12 +37,12 @@ variable "resource_group" {
 
 variable "ibm_region" {
   description = "Region of the IBM Cloud account"
-  type         = string
+  type        = string
   default     = "us-east"
 }
 
 variable "endpoint" {
-    description  = "Endpoint of production/stage environment of IBM Cloud "
-    type         = string
-    default      = "cloud.ibm.com"
+  description = "Endpoint of production/stage environment of IBM Cloud "
+  type        = string
+  default     = "cloud.ibm.com"
 }
