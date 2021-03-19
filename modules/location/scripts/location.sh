@@ -1,8 +1,11 @@
-#!/bin/bash -x
+#!/bin/bash
 
 function ibmCloudLogin() {
   # ibmcloud cli login
+  set +x 
   ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
+  set -x
+  
   if [[ $? != 0 ]]; then
     exit 1
   fi

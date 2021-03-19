@@ -24,7 +24,9 @@ function retryCmd() {
 function ibmCloudLogin() {
   echo
   echo "********** ibmcloud cli login **********"
+  set +x
   retryCmd "ibmcloud login --apikey=${API_KEY} -a ${ENDPOINT} -r ${REGION} -g ${RESOURCE_GROUP}"
+  set -x
   echo "$CMDOUT"
 }
 
