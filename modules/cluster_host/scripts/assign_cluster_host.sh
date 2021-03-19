@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 function snooze() {
   sleep 30

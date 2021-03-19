@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # ibmcloud cli login
 ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP

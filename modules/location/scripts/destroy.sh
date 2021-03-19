@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 echo ************* Deleting location *****************
 echo LOCATION= $LOCATION
