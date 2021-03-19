@@ -40,16 +40,16 @@ resource "null_resource" "assign_host_to_cluster" {
     when    = destroy
     command = ". ${path.module}/../../modules/cluster_host/scripts/destroy.sh"
     environment = {
-      API_KEY        = self.triggers.ibmcloud_api_key
-      REGION         = self.triggers.ibm_region
-      RESOURCE_GROUP = self.triggers.resource_group
-      ENDPOINT       = self.triggers.endpoint
+      API_KEY        = self.triggers.API_KEY
+      REGION         = self.triggers.REGION
+      RESOURCE_GROUP = self.triggers.RESOURCE_GROUP
+      ENDPOINT       = self.triggers.ENDPOINT
 
-      location     = self.triggers.location_name
+      location     = self.triggers.location
       cluster_name = self.triggers.cluster_name
-      hostname     = self.triggers.host_vm
-      zone         = self.triggers.host_zone
-      PROVIDER     = self.triggers.host_provider
+      hostname     = self.triggers.hostname
+      zone         = self.triggers.zone
+      PROVIDER     = self.triggers.PROVIDER
     }
   }
 
