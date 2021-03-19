@@ -19,7 +19,8 @@ function setZone() {
 
 function checkLocationNameExists() {
   echo Location="$LOCATION"
-  out=$(ibmcloud sat location ls | grep -m 1 $LOCATION | cut -d' ' -f1)
+  # out=$(ibmcloud sat location ls | grep -m 1 $LOCATION | cut -d' ' -f1)
+  out=$(ibmcloud sat location ls | awk -v loc="$LOCATION" '$1==loc' | awk '{print $1}')
   if [[ $out != "" && $out == $LOCATION ]]; then
     return 0 # True
   else
