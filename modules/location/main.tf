@@ -1,48 +1,36 @@
+data "ibm_resource_group" "res_group" {
+  name = var.resource_group
+}	 
 
-resource "null_resource" "satellite_location" {
+resource "ibm_satellite_location" "create_location" {
+  count             = var.is_location_exist == false ? 1 : 0
 
-  triggers = {
-      LOCATION       = var.location_name
-      API_KEY        = var.ibmcloud_api_key
-      REGION         = var.ibm_region
-      RESOURCE_GROUP = var.resource_group
-      ENDPOINT       = var.endpoint
-      PROVIDER       = var.host_provider
-  }
+  location          = var.location
+  managed_from      = var.managed_from
+  zones             = var.location_zones
+  resource_group_id = data.ibm_resource_group.res_group.id
 
-  provisioner "local-exec" {
-    when = create
-    command = ". ${path.module}/../../modules/location/scripts/location.sh"
-    
-    environment = {
-      LOCATION       = var.location_name
-      LABEL          = var.location_label
-      API_KEY        = var.ibmcloud_api_key
-      REGION         = var.ibm_region
-      RESOURCE_GROUP = var.resource_group
-      PROVIDER       = var.host_provider
-      ENDPOINT       = var.endpoint
-    }
-  }
-
-  provisioner "local-exec" {
-    when = destroy
-    command = ". ${path.module}/../../modules/location/scripts/destroy.sh"
-    
-    environment = {
-      LOCATION       = self.triggers.LOCATION
-      API_KEY        = self.triggers.API_KEY
-      REGION         = self.triggers.REGION
-      RESOURCE_GROUP = self.triggers.RESOURCE_GROUP
-      ENDPOINT       = self.triggers.ENDPOINT
-    }
+  cos_config {
+    bucket  = var.location_bucket
+    region  = var.ibm_region
   }
 }
 
-output "satellite_location" {
-  value = null_resource.satellite_location
+data "ibm_satellite_location" "location" {
+  location       = var.location
+  depends_on     = [ ibm_satellite_location.create_location ]
 }
 
-output "module_id" {
-  value = null_resource.satellite_location.id
+data "ibm_satellite_attach_host_script" "script" {
+  location          = data.ibm_satellite_location.location.id
+  labels            = var.host_labels
+  host_provider     = var.host_provider
+}
+
+output "location_id" {
+  value  = data.ibm_satellite_location.location.id
+}
+
+output "host_script" {
+  value  = data.ibm_satellite_attach_host_script.script.host_script
 }

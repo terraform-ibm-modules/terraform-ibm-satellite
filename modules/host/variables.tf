@@ -1,45 +1,22 @@
-
-#################################################################################################
-# IBMCLOUD -  Authentication , Target Variables.
-#################################################################################################
-
-variable "ibmcloud_api_key" {
-  description  = "IBM Cloud API Key"
-  type         = string
-}
-
-variable "ibm_region" {
-  description = "Region of the IBM Cloud account. Currently supported regions for satellite are us-east and eu-gb region."
-  default     = "us-east"
-
-  validation {
-    condition     = var.ibm_region == "us-east" || var.ibm_region == "eu-gb"
-    error_message = "Sorry, satellite only accepts us-east or eu-gb region."
-  }
-}
-
-variable "resource_group" {
-  description = "Name of the resource group on which location has to be created"
-
-  validation {
-    condition     = var.resource_group != ""
-    error_message = "Sorry, please provide value for resource_group variable."
-  }
-}
-
-variable "endpoint" {
-    description  = "Endpoint of production/stage environment of IBM Cloud "
-    type         = string
-    default      = "cloud.ibm.com"
-}
-
-#################################################################################################
-# IBMCLOUD -  satellite variables
-#################################################################################################
-
-variable "location_name" {
+variable "location" {
   description = "Satellite Location Name"
   type         = string
+}
+
+variable "host_labels" {
+  description = "Host labels to assign host to control plane "
+  type        = list(string)
+
+  validation {
+      condition     = can([for s in var.host_labels : regex("^[a-zA-Z0-9:]+$", s)])
+      error_message = "Label must be of the form `key:value`."
+  }
+}
+
+variable "location_zones" {
+  description = "Allocate your hosts across these three zones"
+  type        = list(string)
+  default     = ["us-east-1", "us-east-2", "us-east-3"]
 }
 
 variable "host_vms" {
@@ -53,14 +30,10 @@ variable "host_count" {
   type           = number
   default        = 3
 
-  validation {
-    condition     = (var.host_count % 3) == 0 &&  var.host_count > 0
-    error_message = "Sorry, host_count value should always be multiple of 3."
-  }
 }
 
 variable "host_provider" {
     description  = "The cloud provider of host/vms"
     type         = string
-    default      = "aws"
+    default      = "ibm"
 }

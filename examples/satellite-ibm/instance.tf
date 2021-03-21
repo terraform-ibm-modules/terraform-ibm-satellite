@@ -1,10 +1,9 @@
-provider "ibm" {
-  ibmcloud_api_key = var.ibmcloud_api_key
-  region           = var.ibm_region
-}
-
 data "ibm_resource_group" "resource_group" {
   name = var.resource_group
+}
+
+data "ibm_is_image" "rhel7" {
+  name = "ibm-redhat-7-6-minimal-amd64-1"
 }
 
 resource "ibm_is_vpc" "satellite_vpc" {
@@ -13,11 +12,18 @@ resource "ibm_is_vpc" "satellite_vpc" {
 
 resource "ibm_is_subnet" "satellite_subnet" {
   count                    = 3
+  
   name                     = "${var.is_prefix}-subnet-${count.index}"
   vpc                      = ibm_is_vpc.satellite_vpc.id
   total_ipv4_address_count = 256
   zone                     = "${var.ibm_region}-${count.index + 1}"
 }
+
+resource ibm_is_security_group "sg" {
+  name = "${var.is_prefix}-sg"
+  vpc  = ibm_is_vpc.satellite_vpc.id
+}
+
 
 resource "tls_private_key" "example" {
   algorithm = "RSA"
@@ -25,16 +31,12 @@ resource "tls_private_key" "example" {
 }
 
 resource "ibm_is_ssh_key" "satellite_ssh" {
-  depends_on  = [module.satellite-location]
+  depends_on = [module.satellite-location]
 
   name        = "${var.is_prefix}-ssh"
   public_key  = var.public_key != "" ? var.public_key : tls_private_key.example.public_key_openssh
 }
 
-data "local_file" "host_script" {
-  filename = "/tmp/.schematics/addhost.sh"
-  depends_on = [ module.satellite-location ]
-}
 
 locals {
   zones = ["${var.ibm_region}-1", "${var.ibm_region}-2" ,"${var.ibm_region}-3"]
@@ -42,16 +44,17 @@ locals {
 }
 
 resource "ibm_is_instance" "satellite_instance" {
-  depends_on     = [module.satellite-location.satellite_location]
   count          = var.host_count + var.addl_host_count
+
+  depends_on     = [module.satellite-location.satellite_location]
   name           = "${var.is_prefix}-instance-${count.index}"
   vpc            = ibm_is_vpc.satellite_vpc.id
   zone           = element(local.zones, count.index)
-  image          = "r014-931515d2-fcc3-11e9-896d-3baa2797200f"
+  image          = data.ibm_is_image.rhel7.id
   profile        = "mx2-8x64"
   keys           = [ibm_is_ssh_key.satellite_ssh.id]
   resource_group = data.ibm_resource_group.resource_group.id
-  user_data      = data.local_file.host_script.content
+  user_data      = module.satellite-location.host_script
 
   primary_network_interface {
     subnet = element(local.subnet_ids, count.index)
@@ -60,6 +63,7 @@ resource "ibm_is_instance" "satellite_instance" {
 
 resource "ibm_is_floating_ip" "satellite_ip" {
   count  = var.host_count + var.addl_host_count
+  
   name   = "${var.is_prefix}-fip-${count.index}"
   target = ibm_is_instance.satellite_instance[count.index].primary_network_interface[0].id
 }

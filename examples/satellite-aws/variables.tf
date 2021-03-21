@@ -1,4 +1,3 @@
-
 #################################################################################################
 # IBMCLOUD & AWS -  Authentication , Target Variables.
 # The region variable is common across zones used to setup VSI Infrastructure and Satellite host.
@@ -58,27 +57,61 @@ variable "environment" {
 # IBMCLOUD Satellite Location Variables
 ##################################################
 
-variable "location_name" {
+variable "location" {
   description = "Location Name"
   default     = "satellite-aws"
 
   validation {
-    condition     = var.location_name != "" && length(var.location_name) <= 32
+    condition     = var.location != "" && length(var.location) <= 32
     error_message = "Sorry, please provide value for location_name variable or check the length of name it should be less than 32 chars."
   }
 }
 
-variable "location_label" {
-  description = "Label to create location"
-  default     = "prod=true"
+variable "is_location_exist" {
+  description = "Determines if the location has to be created or not"
+  type         = bool
+  default      = false
 }
 
+variable "managed_from" {
+  description  = "The IBM Cloud region to manage your Satellite location from. Choose a region close to your on-prem data center for better performance."
+  type         = string
+  default      = "wdc04"
+}
+
+variable "location_zones" {
+  description = "Allocate your hosts across these three zones"
+  type        = list(string)
+  default     = []
+}
+
+variable "location_bucket" {
+  description = "COS bucket name"
+  default     = ""
+}
+
+variable "host_labels" {
+  description = "Labels to add to attach host script"
+  type        = list(string)
+  default     = ["env:prod"]
+
+  validation {
+      condition     = can([for s in var.host_labels : regex("^[a-zA-Z0-9:]+$", s)])
+      error_message = "Label must be of the form `key:value`."
+  }
+}
+
+variable "host_provider" {
+    description  = "The cloud provider of host|vms"
+    type         = string
+    default      = "aws"
+}
 
 ##################################################
 # AWS EC2 Variables
 ##################################################
 variable "satellite_host_count" {
-  description    = "The total number of aws host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts"
+  description    = "The total number of AWS host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts"
   type           = number
   default        = 3
   validation {
