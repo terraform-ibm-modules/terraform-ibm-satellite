@@ -1,27 +1,9 @@
-resource "null_resource" "assign_host" {
-  count      = var.host_count
+resource "ibm_satellite_host" "assign_host" {
+  count         = var.host_count
 
-  triggers = {
-      LOCATION       = var.location_name
-      API_KEY        = var.ibmcloud_api_key
-      REGION         = var.ibm_region
-      RESOURCE_GROUP = var.resource_group
-      ENDPOINT       = var.endpoint
-      PROVIDER       = var.host_provider
-  }
-
-  provisioner "local-exec" {
-    command = ". ${path.module}/../../modules/host/scripts/host.sh"
-    environment = {
-      hostname       = element(var.host_vms, count.index)
-      index          = count.index
-      LOCATION       = var.location_name
-      API_KEY        = var.ibmcloud_api_key
-      REGION         = var.ibm_region
-      RESOURCE_GROUP = var.resource_group
-      ENDPOINT       = var.endpoint
-      PROVIDER       = var.host_provider
-    }
-  }
+  location      = var.location
+  host_id       = element(split(".",var.host_vms[count.index]),0)
+  labels        = var.host_labels
+  zone          = element(var.location_zones, count.index)
+  host_provider = var.host_provider
 }
-

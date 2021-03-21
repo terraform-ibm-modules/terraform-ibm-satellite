@@ -1,18 +1,43 @@
 ##################################################
 # IBMCLOUD Satellite Location and Host Variables
 ##################################################
-variable "location_name" {
+variable "location" {
   description = "Location Name"
   default     = "satellite-ibm"
+}
+
+variable "managed_from" {
+  description  = "The IBM Cloud region to manage your Satellite location from. Choose a region close to your on-prem data center for better performance."
+  type         = string
+  default      = "wdc04"
+}
+
+variable "location_zones" {
+  description = "Allocate your hosts across these three zones"
+  type        = list(string)
+  default     = ["us-east-1", "us-east-2", "us-east-3"]
+}
+
+variable "location_bucket" {
+  description = "COS bucket name"
+  default     = ""
+}
+
+variable "is_location_exist" {
+  description = "Determines if the location has to be created or not"
+  type         = bool
+  default      = false
+}
+
+variable "host_labels" {
+  description = "Labels to add to attach host script"
+  type        = list(string)
+  default     = ["env:prod"]
 
   validation {
-    condition     = var.location_name != "" && length(var.location_name) <= 32
-    error_message = "Sorry, please provide value for location_name variable or check the length of name it should be less than 32 chars."
+      condition     = can([for s in var.host_labels : regex("^[a-zA-Z0-9:]+$", s)])
+      error_message = "Label must be of the form `key:value`."
   }
-}
-variable "location_label" {
-  description = "Label to create location"
-  default     = "prod=true"
 }
 
 #################################################################################################
@@ -23,32 +48,19 @@ variable "location_label" {
 variable "ibmcloud_api_key" {
   description = "IBM Cloud API Key"
 }
+
 variable "ibm_region" {
   description = "Region of the IBM Cloud account. Currently supported regions for satellite are us-east and eu-gb region."
   default     = "us-east"
-
-  validation {
-    condition     = var.ibm_region == "us-east" || var.ibm_region == "eu-gb"
-    error_message = "Sorry, satellite only accepts `us-east` or `eu-gb` region."
-  }
 }
+
 variable "resource_group" {
   description = "Name of the resource group on which location has to be created"
-
-  validation {
-    condition     = var.resource_group != ""
-    error_message = "Sorry, please provide value for resource_group variable."
-  }
 }
 
 variable "environment" {
   description = "Select prod or stage environemnet to run satellite templates"
   default     = "prod"
-
-  validation {
-    condition     = var.environment == "prod" || var.environment == "stage"
-    error_message = "Sorry, please provide correct value for environment variable."
-  }
 }
 
 ##################################################
@@ -58,11 +70,6 @@ variable "host_count" {
   description    = "The total number of ibm host to create for control plane"
   type           = number
   default        = 3
-
-  validation {
-    condition     = (var.host_count % 3) == 0 &&  var.host_count > 0
-    error_message = "Sorry, host_count value should always be in multiples of 3, such as 6, 9, or 12 hosts."
-  }
 }
 
 variable "addl_host_count" {
@@ -74,8 +81,9 @@ variable "addl_host_count" {
 variable "is_prefix" {
   description = "Prefix to the Names of the VPC Infrastructure resources"
   type        = string
-  default     ="ibm-satellite"
+  default     = "satellite-ibm"
 }
+
 variable "public_key" {
   description  = "SSH Public Key. Get your ssh key by running `ssh-key-gen` command"
   type         = string

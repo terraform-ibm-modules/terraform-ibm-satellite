@@ -3,14 +3,14 @@
 Use this terrafrom automation to set up satellite location on IBM cloud with AWS host.
 
 This example cover end-to-end functionality of IBM cloud satellite by creating satellite location on specified zone. 
-It will provision 3 aws host and assign it to setup location control plane.
+It will provision AWS host and assign it to setup location control plane.
 
 
 #### Example uses below 3 terraform modules to set up the satellite on AWS:
 
-1. [satellite-location](location.tf) This module `creates satellite location` for the specified zone|location|region and `generates script` named addhost.sh in the working directory.
+1. [satellite-location](main.tf) This module `creates satellite location` for the specified zone|location|region and `generates script` named addhost.sh in the home directory.
 2. [ec2](instance.tf) This module will provision AWS EC2 instance and use the generated script in module as `user_data` and runs the script. At this stage all the VMs that has run addhost.sh will be attached to the satellite location and will be in unassigned state.
-3. [satellite-host](host.tf) This module assigns 3 aws hosts to the location control plane.
+3. [satellite-host](host.tf) This module assigns AWS hosts to the location control plane.
 
 ## Compatibility
 
@@ -59,60 +59,57 @@ terraform destroy
 module "satellite-location" {
   source            = "../../modules/location"
 
-  location          = var.location_name
-  zone              = var.location_zone
-  label             = var.location_label
-  ibmcloud_api_key  = var.ibmcloud_api_key
-  ibm_region        = var.ibm_region
-  endpoint          = var.environment
-  resource_group    = var.resource_group
-  host_provider     = "aws"
+  is_location_exist   = var.is_location_exist
+  location            = var.location
+  managed_from        = var.managed_from
+  location_zones      = local.azs
+  host_labels         = var.host_labels
+  ibmcloud_api_key    = var.ibmcloud_api_key
+  ibm_region          = var.ibm_region
+  resource_group      = var.resource_group
+  host_provider       = "aws"
 }
 
 module "ec2" {
   source                      = "terraform-aws-modules/ec2-instance/aws"
   
   depends_on                  = [ module.satellite-location ]
-  instance_count              = 4
+  instance_count              = var.satellite_host_count + var.addl_host_count
   name                        = "${var.resource_prefix}-host"
   use_num_suffix              = true
   ami                         = data.aws_ami.redhat_linux.id
   instance_type               = var.instance_type
   key_name                    = aws_key_pair.keypair.key_name
-  subnet_id                   = tolist(data.aws_subnet_ids.all.ids)[0]
+  subnet_ids                  = module.vpc.public_subnets
   vpc_security_group_ids      = [module.security_group.this_security_group_id]
   associate_public_ip_address = true
-  placement_group             = aws_placement_group.web.id
-  user_data                   = data.local_file.host_script.content
+  placement_group             = aws_placement_group.satellite-group.id
+  user_data                   = data.ibm_satellite_attach_host_script.script.host_script
+
+  tags = {
+    ibm-satellite = var.resource_prefix
+  }
+
 }
 
 module "satellite-host" {
   source            = "../../modules/host"
-  
-  module_depends_on = module.ec2
+
   host_count        = var.satellite_host_count
-  host_vm           = module.ec2.private_dns
-  location_name     = var.location_name
-  ibmcloud_api_key  = var.ibmcloud_api_key
-  ibm_region        = var.ibm_region
-  endpoint          = var.environment
-  resource_group    = var.resource_group
+  location          = module.satellite-location.location_id
+  host_vms          = module.ec2.private_dns
+  location_zones    = var.location_zones
+  host_labels       = var.host_labels
   host_provider     = "aws"
 }
-
-...
 ...
 ```
 
 ## Note
 
-* satellite modules uses scripts based approach to provision resources which will be temporary. We are working on proper terraform resource support.
-* `satellite-location` module creates new location or use existing location ID to process.
-   If user pass the location name which is already exist, `satellite-location` module will error out and exit the module.
-   In such cases user has to pass location ID value to `location_name` parameter. so that module will use existing location for processing.
-* satellite-location module doesn't support updating the location name.
-* satellite-location module download attach host script in the /tmp/.schematics directory and appends respective permissions to the script.
-* The modified attach host script will be used in the `user_data` attribute of EC2 module.
+* `satellite-location` module creates new location or use existing location ID/name to process. If user pass the location which is already exist,   satellite-location module will error out and exit the module. In such cases user has to set `is_location_exist` value to true. So that module will use existing location for processing.
+* `satellite-location` module download attach host script to the $HOME directory and appends respective permissions to the script.
+* `satellite-location` module will update the attach host script and will be used in the `user_data` attribute of EC2 module.
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
@@ -126,8 +123,13 @@ module "satellite-host" {
 | aws_access_key                        | AWS access key                                                    | string   | n/a     | yes      |
 | aws_secret_key                        | AWS secret key                                                    | string   | n/a     | yes      |
 | aws_region                            | AWS cloud region                                                  | string   | us-east-1  | yes   |
-| location_name                         | Name of the location that has to be created                       | string   | satellite-aws     | yes |
-| location_label                        | Label to create location                                          | string   | env=dev |  yes     |
+| location                              | Name of the Location that has to be created                       | string   | n/a     | yes      |
+| is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | yes      |
+| managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc04   | yes      |
+| location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | n/a     | no       | 
+| labels                                | Add labels to attach host script                                  | list     | [env:prod]  | no   |
+| location_bucket                       | COS bucket name                                                   | string   | n/a     | no       |
+| host_provider                         | The cloud provider of host/vms.                                   | string   | ibm     | no       |
 | satellite_host_count                  | The total number of aws host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts                 | number   | 3 |  yes     |
 | addl_host_count                       | The total number of additional aws host                            | number   | 0 |  yes     |
 | instance_type                         | The type of aws instance to start, satellite only accepts `m5d.2xlarge` or `m5d.4xlarge` as instance type.                                   | string   | m5d.2xlarge     | yes |
@@ -138,4 +140,5 @@ module "satellite-host" {
 
 | Name | Description |
 |------|-------------|
-| satellite_location | satellite location value |
+| location_id | location ID value |
+| host_script | Raw content of attach host script |

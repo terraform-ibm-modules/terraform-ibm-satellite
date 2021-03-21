@@ -23,35 +23,36 @@ terraform apply
 ```
 terraform destroy
 ```
-## Example Usage
-``` hcl
 
+## Example Usage
+
+``` hcl
 module "satellite-host" {
   source            = "../../modules/host"
-  
-  module_depends_on = module.ec2
-  ip_count          = 3
-  host_vm           = module.ec2.private_dns
-  location_name     = var.location_name
-  host_zone         = var.ibm_region
-  ibmcloud_api_key  = var.ibmcloud_api_key
-  ibm_region        = var.ibm_region
-  endpoint          = "cloud.ibm.com"
-  resource_group    = var.resource_group
-  host_provider     = "aws"
+
+  host_count        = var.host_count
+  location          = module.satellite-location.location_id
+  host_vms          = ibm_is_instance.satellite_instance[*].name
+  location_zones    = var.location_zones
+  host_labels       = var.host_labels
+  host_provider     = "ibm"
 }
 ```
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
-| location_name                         | Name of the Location that has to be created                       | string   | n/a     | yes      |
-| resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | yes      |
 | ibmcloud_api_key                      | IBM Cloud API Key.                                                | string   | n/a     | yes      |
+| resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | yes      |
 | ibm_region                            | The location or the region in which VM instance exists.           | string   | n/a     | yes      |
-| endpoint                              | Endpoint of production environment of IBM Cloud                   | string   |cloud.ibm.com| yes  |
-| host_provider                         | The cloud provider of host/vms.                                   | string   | ibm     | yes      |
+| endpoint                              | Endpoint of production environment of IBM Cloud                   | string   |cloud.ibm.com| no  |
+| location                              | Name of the Location                                              | string   | n/a     | yes      |
+| host_vms                              | List of host names to assign to satellite control plane           | list     | n/a     | yes      |
+| location_zones                        | List of high availablity zones for host                           | list     | n/a     | no       |
+| host_labels                           | Host labels to assign host to control plane                       | list     | n/a     | no       |
+| host_provider                         | The cloud provider of host/vms.                                   | string   | ibm     | no       |
 
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
