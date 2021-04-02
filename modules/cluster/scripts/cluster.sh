@@ -71,7 +71,7 @@ function getClusterState() {
 
 function createCluster() {
   getSatLocationID
-  retryCmd "ibmcloud ks cluster create satellite --enable-config-admin --name $cluster_name --location $location_id --version 4.5.31_openshift"
+  retryCmd "ibmcloud ks cluster create satellite --enable-config-admin --name $cluster_name --location $location_id --version 4.5_openshift"
 }
 
 function validateClusterCreation() {
