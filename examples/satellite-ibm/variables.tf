@@ -64,6 +64,13 @@ variable "host_count" {
     error_message = "Sorry, host_count value should always be in multiples of 3, such as 6, 9, or 12 hosts."
   }
 }
+
+variable "addl_host_count" {
+  description    = "The total number of additional aws host"
+  type           = number
+  default        = 0
+}
+
 variable "is_prefix" {
   description = "Prefix to the Names of the VPC Infrastructure resources"
   type        = string

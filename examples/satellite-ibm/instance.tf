@@ -36,12 +36,17 @@ data "local_file" "host_script" {
   depends_on = [ module.satellite-location ]
 }
 
+locals {
+  zones = ["${var.ibm_region}-1", "${var.ibm_region}-2" ,"${var.ibm_region}-3"]
+  subnet_ids = [ibm_is_subnet.satellite_subnet[0].id, ibm_is_subnet.satellite_subnet[1].id ,ibm_is_subnet.satellite_subnet[2].id]
+}
+
 resource "ibm_is_instance" "satellite_instance" {
   depends_on     = [module.satellite-location.satellite_location]
-  count          = 3
+  count          = var.host_count + var.addl_host_count
   name           = "${var.is_prefix}-instance-${count.index}"
   vpc            = ibm_is_vpc.satellite_vpc.id
-  zone           = "${var.ibm_region}-${count.index + 1}"
+  zone           = element(local.zones, count.index)
   image          = "r014-931515d2-fcc3-11e9-896d-3baa2797200f"
   profile        = "mx2-8x64"
   keys           = [ibm_is_ssh_key.satellite_ssh.id]
@@ -49,12 +54,12 @@ resource "ibm_is_instance" "satellite_instance" {
   user_data      = data.local_file.host_script.content
 
   primary_network_interface {
-    subnet = ibm_is_subnet.satellite_subnet[count.index].id
+    subnet = element(local.subnet_ids, count.index)
   }
 }
 
 resource "ibm_is_floating_ip" "satellite_ip" {
-  count  = 3
+  count  = var.host_count + var.addl_host_count
   name   = "${var.is_prefix}-fip-${count.index}"
   target = ibm_is_instance.satellite_instance[count.index].primary_network_interface[0].id
 }
