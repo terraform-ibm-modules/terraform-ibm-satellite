@@ -12,7 +12,7 @@ Resources: (Using these resources because no standard azure module was found tha
 
 // Azure Resource Group 
 resource "azurerm_resource_group" "resource_group" {
-  name     = var.az_resource_group
+  name     = var.az_resource_prefix
   location = var.az_region
 }
 
@@ -57,7 +57,7 @@ module "network-security-group" {
 
 
 locals {
-  zones   = [1, 2, 3]
+  zones = [1, 2, 3]
 }
 
 # module to create vpc, subnets and attach security group to subnet
@@ -83,7 +83,7 @@ module "vnet" {
 // Creates network interface for the subnets that are been created
 resource "azurerm_network_interface" "az_nic" {
   depends_on          = [azurerm_resource_group.resource_group]
-  count               = var.satellite_host_count+var.addl_host_count
+  count               = var.satellite_host_count + var.addl_host_count
   name                = "${var.az_resource_prefix}-nic-${count.index}"
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = azurerm_resource_group.resource_group.location
@@ -98,23 +98,28 @@ resource "azurerm_network_interface" "az_nic" {
     ibm-satellite = var.az_resource_prefix
   }
 }
+resource "tls_private_key" "rsa_key" {
+  count     = (var.ssh_public_key == null ? 1 : 0)
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
 
 // Creates Linux Virtual Machines and attaches host to the location..
 resource "azurerm_linux_virtual_machine" "az_host" {
   depends_on            = [azurerm_resource_group.resource_group, module.satellite-location]
-  count                 = var.satellite_host_count+var.addl_host_count
+  count                 = var.satellite_host_count + var.addl_host_count
   name                  = "${var.az_resource_prefix}-vm-${count.index}"
   resource_group_name   = azurerm_resource_group.resource_group.name
   location              = azurerm_resource_group.resource_group.location
-  size                  = "Standard_D4s_v3"
+  size                  = var.instance_type
   admin_username        = "adminuser"
-  custom_data           = base64encode(module.satellite-location.host_script) 
+  custom_data           = base64encode(module.satellite-location.host_script)
   network_interface_ids = [azurerm_network_interface.az_nic[count.index].id]
 
   zone = element(local.zones, count.index)
   admin_ssh_key {
     username   = "adminuser"
-    public_key = var.ssh_public_key
+    public_key = var.ssh_public_key != null ? var.ssh_public_key : tls_private_key.rsa_key.0.public_key_openssh
   }
   os_disk {
     caching              = "ReadWrite"
@@ -128,54 +133,3 @@ resource "azurerm_linux_virtual_machine" "az_host" {
     version   = "latest"
   }
 }
-
-// There was no issue while creating and attaching hosts to the location using `azurerm_linux_virtual_machine_scale_set` resource..
-// But we had to avoid this resource as we dont have a way to get details of vms that are been created in scale set..
-// There is neither a datasource that lists vm details of scaleset nor this resource gives any details..
-// We need vm details in order to assign hosts using `ibm_satellite_host` resource and hence we had to shift to azurerm_linux_virtual_machine resource
-
-
-# resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
-#   name                = "sat-vmss" //variable
-#   computer_name_prefix="az-vm"
-#   resource_group_name = azurerm_resource_group.resource_group.name
-#   location            = azurerm_resource_group.resource_group.location
-#   instances           = 4
-#   admin_username      = "adminuser"
-# sku              = "Standard_D4s_v3"
-# zones           = [ "1","2","3",]
-# admin_ssh_key {
-#   username   = "adminuser"
-#   public_key = file("~/.ssh/id_rsa.pub") //variable
-# }
-# #source_image_id="RedHat:RHEL:7.8:7.8.2020111309"
-# source_image_reference {
-#   publisher = "RedHat"
-#   offer     = "RHEL"
-#   sku       = "7.8"
-#   version   = "7.8.2020111309"
-# }
-# custom_data= data.local_file.file.content_base64
-# os_disk {
-#       caching                   = "ReadWrite"
-#       storage_account_type      = "Premium_LRS"
-#   }
-# data_disk {
-#       caching                   = "None"
-#       disk_size_gb              = 64
-#       lun = 0
-#       storage_account_type      = "Premium_LRS"
-#   }
-# network_interface {
-#   name    = "sat-nic-01" //variable
-#   primary = true
-#   network_security_group_id=module.network-security-group.network_security_group_id
-
-#   ip_configuration {
-#     name      = "sat-nic-o1-defaultIpConfiguration" 
-#     primary   = true
-#     subnet_id = module.vnet.vnet_subnets[0]
-#     version    = "IPv4"
-#   }
-# }
-# }

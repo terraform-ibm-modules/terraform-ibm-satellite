@@ -19,17 +19,15 @@ variable "client_secret" {
   description = "Client Secret of Azure Account"
   type        = string
 }
-variable "az_resource_group" {
-  description = "Name of the resource Group"
-  type        = string
-}
+
 variable "az_region" {
   description = "Azure Region"
   type        = string
+  default     = "eastus"
 }
 variable "ibmcloud_api_key" {
-  description  = "IBM Cloud API Key"
-  type         = string
+  description = "IBM Cloud API Key"
+  type        = string
 }
 variable "ibm_region" {
   description = "Region of the IBM Cloud account. Currently supported regions for satellite are `us-east` and `eu-gb` region."
@@ -57,6 +55,12 @@ variable "az_resource_prefix" {
 variable "ssh_public_key" {
   description = "SSH Public Key. Get your ssh key by running `ssh-key-gen` command"
   type        = string
+  default     = null
+}
+variable "instance_type" {
+  description = "The type of azure instance to start"
+  type        = string
+  default     = "Standard_D4s_v3"
 }
 variable "satellite_host_count" {
   description = "The total number of Azure host to create for control plane. "
