@@ -84,7 +84,7 @@ resource "azurerm_linux_virtual_machine" "az_host" {
   name                  = "azu-vm-${count.index}"
   resource_group_name   = azurerm_resource_group.resource_group.name
   location              = azurerm_resource_group.resource_group.location
-  size                  = "Standard_D4s_v3"
+  size                  = var.instance_type
   admin_username        = "adminuser"
   custom_data           = base64encode(module.satellite-location.host_script)
   network_interface_ids = [azurerm_network_interface.az_nic[count.index].id]
@@ -138,7 +138,6 @@ module "satellite-host" {
 | client_id                             | Client id of Azure Account                                        | string   | n/a     | yes      |
 | tenant_id                             | Tenent id of Azure Account                                        | string   | n/a     | yes   |
 | client_secret                         | Client Secret of Azure Account                                    | string   | n/a     | yes      |
-| az_resource_group                     | Name of the resource Group                                        | string   | n/a     | yes      |
 | az_region                             | Azure Region                                                      | string   | eastus  | yes   |
 | location                              | Name of the Location that has to be created                       | string   | n/a     | yes      |
 | is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | yes      |
@@ -149,10 +148,8 @@ module "satellite-host" {
 | az_resource_prefix                       | Name to be used on all azure resources as prefix                        | string   | satellite-azure     | yes |
 | satellite_host_count                  | The total number of azure host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts                 | number   | 3 |  yes     |
 | addl_host_count                       | The total number of additional azure host                            | number   | 0 |  yes     |
-| subnets                         | List of Azure subnet names that has to be created              | list(string)   | n/a   | yes |
-| az_zones                         | List of Azure Zones in which instance has to be created.              | list(number)   | [1,2,3]   | yes |
-| tags                         | Map of tags taht are to be attached to resources             | map   | n/a   | yes |
-| ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a     | yes |
+|instance_type|The type of azure instance to start|string|Standard_D4s_v3|yes|
+| ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a     | no |
 
 
 ## Outputs
