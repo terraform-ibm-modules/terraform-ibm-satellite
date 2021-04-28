@@ -40,8 +40,9 @@ variable "ibm_region" {
   }
 }
 variable "ibm_resource_group" {
-  description = "Region of the IBM Cloud account. Currently supported regions for satellite are `us-east` and `eu-gb` region."
+  description = "Resource group name of the IBM Cloud account."
   type        = string
+  default     = "default"
 }
 
 # ##################################################
@@ -67,7 +68,7 @@ variable "satellite_host_count" {
   }
 }
 variable "addl_host_count" {
-  description = "The total number of additional aws host"
+  description = "The total number of additional azure vm's"
   type        = number
   default     = 0
 }
