@@ -91,8 +91,8 @@ function main() {
   setZone
   ibmCloudLogin
   createLocationIfNeeded
-  getLocationID
-  generateHostAttachScript
+  # getLocationID             ##### REFACTOR OUT GENERATING HOST SCRIPT TO HCL ####
+  # generateHostAttachScript  ##### REFACTOR OUT GENERATING HOST SCRIPT TO HCL ####
 }
 
 # Execute
