@@ -79,11 +79,11 @@ module "satellite-location" {
 }
 
 resource "azurerm_linux_virtual_machine" "az_host" {
-  depends_on            = [azurerm_resource_group.resource_group, module.satellite-location]
-  count                 = var.satellite_host_count
-  name                  = "azu-vm-${count.index}"
-  resource_group_name   = azurerm_resource_group.resource_group.name
-  location              = azurerm_resource_group.resource_group.location
+  depends_on            = [data.azurerm_resource_group.resource_group, module.satellite-location]
+  count                 = var.satellite_host_count + var.addl_host_count
+  name                  = "${var.az_resource_prefix}-vm-${count.index}"
+  resource_group_name   = data.azurerm_resource_group.resource_group.name
+  location              = data.azurerm_resource_group.resource_group.location
   size                  = var.instance_type
   admin_username        = "adminuser"
   custom_data           = base64encode(module.satellite-location.host_script)
@@ -92,7 +92,7 @@ resource "azurerm_linux_virtual_machine" "az_host" {
   zone = element(local.zones, count.index)
   admin_ssh_key {
     username   = "adminuser"
-    public_key = var.ssh_public_key
+    public_key = var.ssh_public_key != null ? var.ssh_public_key : tls_private_key.rsa_key.0.public_key_openssh
   }
   os_disk {
     caching              = "ReadWrite"
@@ -124,7 +124,7 @@ module "satellite-host" {
 
 * `satellite-location` module creates new location or use existing location ID/name to process. If user pass the location which is already exist,   satellite-location module will error out and exit the module. In such cases user has to set `is_location_exist` value to true. So that module will use existing location for processing.
 * `satellite-location` module download attach host script to the $HOME directory and appends respective permissions to the script.
-* `satellite-location` module will update the attach host script and will be used in the `user_data` attribute of EC2 module.
+* `satellite-location` module will update the attach host script and will be used in the `custom_data` attribute of `azurerm_linux_virtual_machine` resource.
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
@@ -138,8 +138,10 @@ module "satellite-host" {
 | client_id                             | Client id of Azure Account                                        | string   | n/a     | yes      |
 | tenant_id                             | Tenent id of Azure Account                                        | string   | n/a     | yes   |
 | client_secret                         | Client Secret of Azure Account                                    | string   | n/a     | yes      |
+| is_az_resource_group_exist            | "If false, resource group (az_resource_group) will be created. If true, existing resource group (az_resource_group) will be read"| bool   | false  | yes   |
+| az_resource_group                     | Azure Resource Group                                              | string  | satellite-azure  | yes   |
 | az_region                             | Azure Region                                                      | string   | eastus  | yes   |
-| location                              | Name of the Location that has to be created                       | string   | n/a     | yes      |
+| location                              | Name of the Location that has to be created                       | string   | satellite-azure | yes   |
 | is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | yes      |
 | managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc   | yes      |
 | location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | ["us-east-1", "us-east-2", "us-east-3"]    | yes      | 
@@ -157,4 +159,4 @@ module "satellite-host" {
 | Name | Description |
 |------|-------------|
 | location_id | location ID value |
-| host_script | Raw content of attach host script |
+| host_ids | ID's of Azure Hosts |

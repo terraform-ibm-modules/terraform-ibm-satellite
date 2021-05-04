@@ -12,15 +12,21 @@ Resources: (Using these resources because no standard azure module was found tha
 
 // Azure Resource Group 
 resource "azurerm_resource_group" "resource_group" {
-  name     = var.az_resource_prefix
+  count    = var.is_az_resource_group_exist == false ? 1 : 0
+  name     = var.az_resource_group
   location = var.az_region
 }
+data "azurerm_resource_group" "resource_group" {
+  name       = var.is_az_resource_group_exist == false ? azurerm_resource_group.resource_group.0.name : var.az_resource_group
+  depends_on = [azurerm_resource_group.resource_group]
+}
+
 
 //Module to create security group and security group rules
 module "network-security-group" {
   source                = "Azure/network-security-group/azurerm"
-  resource_group_name   = azurerm_resource_group.resource_group.name
-  location              = azurerm_resource_group.resource_group.location # Optional; if not provided, will use Resource Group location
+  resource_group_name   = data.azurerm_resource_group.resource_group.name
+  location              = data.azurerm_resource_group.resource_group.location # Optional; if not provided, will use Resource Group location
   security_group_name   = "${var.az_resource_prefix}-sg"
   source_address_prefix = ["*"]
   custom_rules = [
@@ -52,7 +58,7 @@ module "network-security-group" {
   tags = {
     ibm-satellite = var.az_resource_prefix
   }
-  depends_on = [azurerm_resource_group.resource_group]
+  depends_on = [data.azurerm_resource_group.resource_group]
 }
 
 
@@ -62,9 +68,9 @@ locals {
 
 # module to create vpc, subnets and attach security group to subnet
 module "vnet" {
-  depends_on          = [azurerm_resource_group.resource_group]
+  depends_on          = [data.azurerm_resource_group.resource_group]
   source              = "Azure/vnet/azurerm"
-  resource_group_name = azurerm_resource_group.resource_group.name
+  resource_group_name = data.azurerm_resource_group.resource_group.name
   vnet_name           = "${var.az_resource_prefix}-vpc"
   address_space       = ["10.0.0.0/16"]
   subnet_prefixes     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
@@ -82,11 +88,11 @@ module "vnet" {
 
 // Creates network interface for the subnets that are been created
 resource "azurerm_network_interface" "az_nic" {
-  depends_on          = [azurerm_resource_group.resource_group]
+  depends_on          = [data.azurerm_resource_group.resource_group]
   count               = var.satellite_host_count + var.addl_host_count
   name                = "${var.az_resource_prefix}-nic-${count.index}"
-  resource_group_name = azurerm_resource_group.resource_group.name
-  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = data.azurerm_resource_group.resource_group.name
+  location            = data.azurerm_resource_group.resource_group.location
 
   ip_configuration {
     name                          = "${var.az_resource_prefix}-nic-internal"
@@ -106,11 +112,11 @@ resource "tls_private_key" "rsa_key" {
 
 // Creates Linux Virtual Machines and attaches host to the location..
 resource "azurerm_linux_virtual_machine" "az_host" {
-  depends_on            = [azurerm_resource_group.resource_group, module.satellite-location]
+  depends_on            = [data.azurerm_resource_group.resource_group, module.satellite-location]
   count                 = var.satellite_host_count + var.addl_host_count
   name                  = "${var.az_resource_prefix}-vm-${count.index}"
-  resource_group_name   = azurerm_resource_group.resource_group.name
-  location              = azurerm_resource_group.resource_group.location
+  resource_group_name   = data.azurerm_resource_group.resource_group.name
+  location              = data.azurerm_resource_group.resource_group.location
   size                  = var.instance_type
   admin_username        = "adminuser"
   custom_data           = base64encode(module.satellite-location.host_script)
