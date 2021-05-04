@@ -19,7 +19,17 @@ variable "client_secret" {
   description = "Client Secret of Azure Account"
   type        = string
 }
+variable "is_az_resource_group_exist" {
+  default     = false
+  description = "If false, resource group (az_resource_group) will be created. If true, existing resource group (az_resource_group) will be read"
+  type        = bool
+}
 
+variable "az_resource_group" {
+  description = "Name of the resource Group"
+  type        = string
+  default     = "satellite-azure"
+}
 variable "az_region" {
   description = "Azure Region"
   type        = string
