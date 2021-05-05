@@ -5,8 +5,8 @@
 
 variable "TF_VERSION" {
   description = "terraform version"
-  type = string
-  default = "0.13"
+  type        = string
+  default     = "0.13"
 }
 
 variable "subscription_id" {

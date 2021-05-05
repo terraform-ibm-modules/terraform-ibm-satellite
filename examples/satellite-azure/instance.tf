@@ -1,16 +1,21 @@
+#####################################################
+# IBM Cloud Satellite -  Azure Example
+# Copyright 2021 IBM
+#####################################################
+
 /*
 This template uses following
-Modules: 
+Modules:
   Azure/network-security-group/azurerm - Security group and Security group rules
   Azure/vnet/azurerm                   - vpc, subnets, Attach security group to subnets
 Resources: (Using these resources because no standard azure module was found that meets our requirement)
-  azurerm_resource_group                - Resource Group 
+  azurerm_resource_group                - Resource Group
   azurerm_network_interface             - Network interfaces for the Azure Instance
   azurerm_linux_virtual_machine         - Linux Virtual Machines, Attaches host to the Satellite location
 */
 
 
-// Azure Resource Group 
+// Azure Resource Group
 resource "azurerm_resource_group" "resource_group" {
   count    = var.is_az_resource_group_exist == false ? 1 : 0
   name     = var.az_resource_group

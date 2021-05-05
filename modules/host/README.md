@@ -1,7 +1,7 @@
 # This Module is used to assign hosts to the Satellite location control plane.
 
 This module depends on `satellite_location` module..To use this module the hosts in the control plane should be in unassigned state.
- 
+
 ## Prerequisite
 
 * Set up the IBM Cloud command line interface (CLI), the Satellite plug-in, and other related CLIs.
@@ -9,6 +9,7 @@ This module depends on `satellite_location` module..To use this module the hosts
 ```console
     ibmcloud plugin install container-service
 ```
+
 ## Usage
 
 ```
@@ -44,16 +45,13 @@ module "satellite-host" {
 
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
-| ibmcloud_api_key                      | IBM Cloud API Key.                                                | string   | n/a     | yes      |
+| ibm_region                            | The location or the region in which VM instance exists.           | string   | n/a     | no       |
 | resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | yes      |
-| ibm_region                            | The location or the region in which VM instance exists.           | string   | n/a     | yes      |
-| endpoint                              | Endpoint of production environment of IBM Cloud                   | string   |cloud.ibm.com| no  |
-| location                              | Name of the Location                                              | string   | n/a     | yes      |
+| location                              | Name of the Location that has to be created                       | string   | n/a     | yes      |
+| location_zones                        | Allocate your hosts across three zones for Higher availablity     | list     | n/a     | no       |
+| host_labels                           | Add labels to attach host script                                  | list     | n/a     | no       |
+| host_provider                         | The cloud provider of host|vms.                                   | string   | ibm     | no       |
 | host_vms                              | List of host names to assign to satellite control plane           | list     | n/a     | yes      |
-| location_zones                        | List of high availablity zones for host                           | list     | n/a     | no       |
-| host_labels                           | Host labels to assign host to control plane                       | list     | n/a     | no       |
-| host_provider                         | The cloud provider of host/vms.                                   | string   | ibm     | no       |
-
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Note

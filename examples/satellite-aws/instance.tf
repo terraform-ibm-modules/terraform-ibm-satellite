@@ -12,8 +12,8 @@ data "aws_ami" "redhat_linux" {
 }
 
 module "security_group" {
-  source      = "terraform-aws-modules/security-group/aws"
-  version     = "~> 3.0"
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "~> 3.0"
 
   name        = "${var.resource_prefix}-sg"
   description = "Security group for satellite usage with EC2 instance"
@@ -23,7 +23,7 @@ module "security_group" {
     ibm-satellite = var.resource_prefix
   }
 
-  ingress_with_cidr_blocks    = [
+  ingress_with_cidr_blocks = [
     {
       from_port   = 30000
       to_port     = 32767
@@ -64,9 +64,9 @@ module "security_group" {
   ingress_with_self = [
     {
       from_port = 0
-      to_port = 0
-      protocol = -1
-      self = true
+      to_port   = 0
+      protocol  = -1
+      self      = true
     },
   ]
 
@@ -81,6 +81,10 @@ resource "aws_placement_group" "satellite-group" {
   }
 
 }
+#####################################################
+# IBM Cloud Satellite -  AWS Example
+# Copyright 2021 IBM
+#####################################################
 
 resource "tls_private_key" "example" {
   algorithm = "RSA"
@@ -88,10 +92,10 @@ resource "tls_private_key" "example" {
 }
 
 resource "aws_key_pair" "keypair" {
-  depends_on = [ module.satellite-location ]
+  depends_on = [module.satellite-location]
 
-  key_name    = "${var.resource_prefix}-ssh"
-  public_key  = var.ssh_public_key != "" ? var.ssh_public_key : tls_private_key.example.public_key_openssh
+  key_name   = "${var.resource_prefix}-ssh"
+  public_key = var.ssh_public_key != null ? var.ssh_public_key : tls_private_key.example.public_key_openssh
 
   tags = {
     ibm-satellite = var.resource_prefix
@@ -101,9 +105,9 @@ resource "aws_key_pair" "keypair" {
 
 
 module "ec2" {
-  source                      = "terraform-aws-modules/ec2-instance/aws"
-  
-  depends_on                  = [ module.satellite-location ]
+  source = "terraform-aws-modules/ec2-instance/aws"
+
+  depends_on                  = [module.satellite-location]
   instance_count              = var.satellite_host_count + var.addl_host_count
   name                        = "${var.resource_prefix}-host"
   use_num_suffix              = true
