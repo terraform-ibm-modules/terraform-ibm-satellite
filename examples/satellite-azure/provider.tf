@@ -6,6 +6,5 @@ provider "azurerm" {
   client_secret   = var.client_secret
 }
 provider "ibm" {
-  region           = var.ibm_region
   ibmcloud_api_key = var.ibmcloud_api_key
 }

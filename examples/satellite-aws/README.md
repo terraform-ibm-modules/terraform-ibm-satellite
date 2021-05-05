@@ -64,8 +64,6 @@ module "satellite-location" {
   managed_from        = var.managed_from
   location_zones      = local.azs
   host_labels         = var.host_labels
-  ibmcloud_api_key    = var.ibmcloud_api_key
-  ibm_region          = var.ibm_region
   resource_group      = var.resource_group
   host_provider       = "aws"
 }
@@ -117,7 +115,6 @@ module "satellite-host" {
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
 | ibmcloud_api_key                      | IBM Cloud API Key                                                 | string   | n/a     | yes      |
-| ibm_region                            | Region of the IBM Cloud account. Currently supported regions for satellite are `us-east` and `eu-gb` region.                                 | string   | us-east | yes      |
 | resource_group                        | Resource group name that has to be targeted                       | string   | n/a     | no       |
 | environment                           | Enter `prod` or `stage` value to run satellite templates on respective environment | string   | prod  | no   |
 | aws_access_key                        | AWS access key                                                    | string   | n/a     | yes      |
@@ -125,7 +122,7 @@ module "satellite-host" {
 | aws_region                            | AWS cloud region                                                  | string   | us-east-1  | yes   |
 | location                              | Name of the Location that has to be created                       | string   | n/a     | yes      |
 | is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | yes      |
-| managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc04   | yes      |
+| managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc     | yes      |
 | location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | n/a     | no       | 
 | labels                                | Add labels to attach host script                                  | list     | [env:prod]  | no   |
 | location_bucket                       | COS bucket name                                                   | string   | n/a     | no       |

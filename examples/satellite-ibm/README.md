@@ -74,7 +74,6 @@ module "satellite-host" {
 | ibmcloud_api_key                      | IBM Cloud API Key.                                                | string   | n/a     | yes      |
 | resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | no       |
 | ibm_region                            | The location or the region in which VM instance exists.           | string   | us-east | yes      |
-| environment                           | Enter `prod` or `stage` value to run satellite templates on respective environment | string   | prod  | no   |
 | location                              | Name of the Location that has to be created                       | string   | n/a     | yes      |
 | is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | yes      |
 | managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc04   | yes      |

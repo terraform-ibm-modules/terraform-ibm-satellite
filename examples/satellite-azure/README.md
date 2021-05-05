@@ -72,10 +72,8 @@ module "satellite-location" {
   managed_from      = var.managed_from
   location_zones    = var.location_zones
   host_labels       = var.host_labels
-  ibm_region        = var.ibm_region
   resource_group    = var.ibm_resource_group
   host_provider     = "azure"
-  ibmcloud_api_key  = ""
 }
 
 resource "azurerm_linux_virtual_machine" "az_host" {
@@ -132,7 +130,6 @@ module "satellite-host" {
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
 | ibmcloud_api_key                      | IBM Cloud API Key                                                 | string   | n/a     | yes      |
-| ibm_region                            | Region of the IBM Cloud account. Currently supported regions for satellite are `us-east` and `eu-gb` region. | string   | us-east | yes      |
 | ibm_resource_group                    | IBM Resource group name that has to be targeted                   | string   | n/a     | yes       |
 | subscription_id                       | Subscription id of Azure Account                                  | string   | n/a     | yes      |
 | client_id                             | Client id of Azure Account                                        | string   | n/a     | yes      |

@@ -43,13 +43,12 @@ module "satellite-location" {
 
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
-| ibmcloud_api_key                      | IBM Cloud API Key.                                                | string   | n/a     | yes      |
 | ibm_region                            | The location or the region in which VM instance exists.           | string   | us-east | yes      |
 | resource_group                        | Resource Group Name that has to be targeted.                      | string   | Default | yes      |
 | endpoint                              | Endpoint of production environment of IBM Cloud                   | string   |cloud.ibm.com| yes  |
 | location                              | Name of the Location that has to be created                       | string   | n/a     | yes      |
 | is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | yes      |
-| managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc04   | yes      |
+| managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc     | yes      |
 | location_zones                        | Allocate your hosts across three zones for Higher availablity     | list     | n/a     | no       |
 | host_labels                           | Add labels to attach host script                                  | list     | [env:prod]  | no   |
 | location_bucket                       | COS bucket name                                                   | string   | n/a     | no       |
