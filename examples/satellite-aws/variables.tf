@@ -24,32 +24,12 @@ variable "aws_region" {
   default      = "us-east-1"
 }
 
-variable "ibm_region" {
-  description = "Region of the IBM Cloud account. Currently supported regions for satellite are `us-east` and `eu-gb` region."
-  default     = "us-east"
-
-  validation {
-    condition     = var.ibm_region == "us-east" || var.ibm_region == "eu-gb"
-    error_message = "Sorry, satellite only accepts us-east or eu-gb region."
-  }
-}
-
 variable "resource_group" {
   description = "Name of the resource group on which location has to be created"
 
   validation {
     condition     = var.resource_group != ""
     error_message = "Sorry, please provide value for resource_group variable."
-  }
-}
-
-variable "environment" {
-  description = "Enter `prod` or `stage` value to run satellite templates on respective environment"
-  default     = "prod"
-
-  validation {
-    condition     = var.environment == "prod" || var.environment == "stage"
-    error_message = "Sorry, please provide correct value for environment variable."
   }
 }
 
@@ -76,7 +56,7 @@ variable "is_location_exist" {
 variable "managed_from" {
   description  = "The IBM Cloud region to manage your Satellite location from. Choose a region close to your on-prem data center for better performance."
   type         = string
-  default      = "wdc04"
+  default      = "wdc"
 }
 
 variable "location_zones" {

@@ -11,8 +11,8 @@ resource "ibm_satellite_location" "create_location" {
   resource_group_id = data.ibm_resource_group.res_group.id
 
   cos_config {
-    bucket  = var.location_bucket
-    region  = var.ibm_region
+    bucket  = var.location_bucket != "" ? var.location_bucket : ""
+    region  = var.ibm_region != "" ? var.ibm_region : ""
   }
 }
 

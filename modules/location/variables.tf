@@ -2,19 +2,13 @@
 # IBMCLOUD -  Authentication , Target Variables.
 #################################################################################################
 
-variable "ibmcloud_api_key" {
-  description  = "IBM Cloud API Key"
-  type         = string
-}
-
 variable "resource_group" {
   description = "Name of the resource group on which location has to be created"
-
 }
 
 variable "ibm_region" {
   description = "Region of the IBM Cloud account. Currently supported regions for satellite are us-east and eu-gb region."
-  default     = "us-east"
+  default     = ""
 }
 
 ##################################################
