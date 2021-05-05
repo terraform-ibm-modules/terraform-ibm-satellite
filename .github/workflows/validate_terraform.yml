@@ -1,0 +1,39 @@
+name: ci
+
+on: [ push, pull_request ]
+
+jobs:
+  terraform_validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: prepare
+        # tfswitch command line tool lets you switch between different versions of terraform.
+        # If you do not have a particular version of terraform installed, tfswitch will download the version you desire.
+        run: |
+          echo "$HOME/.bin" >> $GITHUB_PATH
+          curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh > /tmp/tfswitch-install.sh
+          chmod +x /tmp/tfswitch-install.sh
+          /tmp/tfswitch-install.sh -b $HOME/.bin
+      -
+        name: checkout                      # action checks-out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
+        uses: actions/checkout@v2
+      -
+        name: setup terraform
+        uses: hashicorp/setup-terraform@v1  # sets up Terraform CLI in your GitHub Actions workflow
+        with:
+          terraform_version: 0.13.0
+      -
+        name: Install pre-commit
+        run: pip install pre-commit
+      -
+        name: Run pre-commit command
+        run: pre-commit run -a
+      -
+        name: terraform init                # initialize a working directory containing Terraform configuration files.
+        run: find . -type f -name "*.tf" -exec dirname {} \;|sort -u | while read m; do (cd "$m" && echo "$m - init" && terraform init -input=false -backend=false) || exit 1; done
+      -
+        name: terraform validate            # validates the configuration files in a directory
+        run: find . -name ".terraform" -prune -o -type f -name "*.tf" -exec dirname {} \;|sort -u | while read m; do (cd "$m" && echo "$m - validate" && terraform validate && echo "√ $m") || exit 1 ; done
+      -
+        name: terraform fmt check           # perform format checks
+        run: terraform fmt -list=true -write=false -check -recursive

@@ -2,7 +2,7 @@
 
 Use this terrafrom automation to set up satellite location on IBM cloud with AWS host.
 
-This example cover end-to-end functionality of IBM cloud satellite by creating satellite location on specified zone. 
+This example cover end-to-end functionality of IBM cloud satellite by creating satellite location on specified zone.
 It will provision AWS host and assign it to setup location control plane.
 
 
@@ -14,14 +14,14 @@ It will provision AWS host and assign it to setup location control plane.
 
 ## Compatibility
 
-This module is meant for use with Terraform 0.13 or later. 
+This module is meant for use with Terraform 0.13 or later.
 
 ## Requirements
 
 ### Terraform plugins
 
-- [Terraform](https://www.terraform.io/downloads.html) 0.13 or later. 
-- [terraform-provider-ibm](https://github.com/IBM-Cloud/terraform-provider-ibm) 
+- [Terraform](https://www.terraform.io/downloads.html) 0.13 or later.
+- [terraform-provider-ibm](https://github.com/IBM-Cloud/terraform-provider-ibm)
 
 ## Install
 
@@ -39,7 +39,7 @@ Be sure you have the correct Terraform version ( 0.13 or later), you can choose 
 
 Be sure you have the compiled plugins on $HOME/.terraform.d/plugins/
 
-- [terraform-provider-ibm](https://github.com/IBM-Cloud/terraform-provider-ibm) 
+- [terraform-provider-ibm](https://github.com/IBM-Cloud/terraform-provider-ibm)
 ## Usage
 
 ```
@@ -57,20 +57,23 @@ terraform destroy
 ## Example Usage
 ``` hcl
 module "satellite-location" {
-  source            = "../../modules/location"
+  //Uncomment following line to point the source to registry level module
+  //source = "terraform-ibm-modules/satellite/ibm//modules/location"
 
-  is_location_exist   = var.is_location_exist
-  location            = var.location
-  managed_from        = var.managed_from
-  location_zones      = local.azs
-  host_labels         = var.host_labels
-  resource_group      = var.resource_group
-  host_provider       = "aws"
+  source            = "../../modules/location"
+  is_location_exist = var.is_location_exist
+  location          = var.location
+  managed_from      = var.managed_from
+  location_zones    = local.azs
+  location_bucket   = var.location_bucket
+  host_labels       = var.host_labels
+  resource_group    = var.resource_group
+  host_provider     = "aws"
 }
 
 module "ec2" {
   source                      = "terraform-aws-modules/ec2-instance/aws"
-  
+
   depends_on                  = [ module.satellite-location ]
   instance_count              = var.satellite_host_count + var.addl_host_count
   name                        = "${var.resource_prefix}-host"
@@ -91,14 +94,16 @@ module "ec2" {
 }
 
 module "satellite-host" {
-  source            = "../../modules/host"
+  //Uncomment following line to point the source to registry level module
+  //source = "terraform-ibm-modules/satellite/ibm//modules/host"
 
-  host_count        = var.satellite_host_count
-  location          = module.satellite-location.location_id
-  host_vms          = module.ec2.private_dns
-  location_zones    = var.location_zones
-  host_labels       = var.host_labels
-  host_provider     = "aws"
+  source         = "../../modules/host"
+  host_count     = var.satellite_host_count
+  location       = module.satellite-location.location_id
+  host_vms       = module.ec2.private_dns
+  location_zones = length(var.location_zones) == 0 ? local.azs : var.location_zones
+  host_labels    = var.host_labels
+  host_provider  = "aws"
 }
 ...
 ```
@@ -116,20 +121,19 @@ module "satellite-host" {
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
 | ibmcloud_api_key                      | IBM Cloud API Key                                                 | string   | n/a     | yes      |
 | resource_group                        | Resource group name that has to be targeted                       | string   | n/a     | no       |
-| environment                           | Enter `prod` or `stage` value to run satellite templates on respective environment | string   | prod  | no   |
 | aws_access_key                        | AWS access key                                                    | string   | n/a     | yes      |
 | aws_secret_key                        | AWS secret key                                                    | string   | n/a     | yes      |
 | aws_region                            | AWS cloud region                                                  | string   | us-east-1  | yes   |
-| location                              | Name of the Location that has to be created                       | string   | n/a     | yes      |
+| location                              | Name of the Location that has to be created                       | string   | satellite-aws  | yes   |
 | is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | yes      |
 | managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc     | yes      |
-| location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | n/a     | no       | 
+| location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | []      | no       |
 | labels                                | Add labels to attach host script                                  | list     | [env:prod]  | no   |
 | location_bucket                       | COS bucket name                                                   | string   | n/a     | no       |
-| host_provider                         | The cloud provider of host/vms.                                   | string   | ibm     | no       |
-| satellite_host_count                  | The total number of aws host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts                 | number   | 3 |  yes     |
+| host_provider                         | The cloud provider of host/vms.                                   | string   | aws     | no       |
+| satellite_host_count                  | The total number of aws host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts   | number   | 3 |  yes     |
 | addl_host_count                       | The total number of additional aws host                            | number   | 0 |  yes     |
-| instance_type                         | The type of aws instance to start, satellite only accepts `m5d.2xlarge` or `m5d.4xlarge` as instance type.                                   | string   | m5d.2xlarge     | yes |
+| instance_type                         | The type of aws instance to start, satellite only accepts `m5d.2xlarge` or `m5d.4xlarge` as instance type.     | string   | m5d.2xlarge     | yes |
 | ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a     | no |
 | resource_prefix                       | Name to be used on all aws resources as prefix                        | string   | satellite-aws     | yes |
 

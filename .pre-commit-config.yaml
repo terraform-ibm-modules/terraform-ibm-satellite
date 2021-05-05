@@ -1,0 +1,17 @@
+default_stages: [commit]
+# TFLint             : Checks for possible errors, best practices, etc. It will also help identify provider-specific issues before errors occur during a Terraform run.
+# TFSec              : Uses static analysis of your Terraform templates to spot potential security issues. TFSec checks for sensitive data inclusion
+# Terraform Docs     : Utility to automatically generate documentation from Terraform modules and base repositories in various output formats.
+# Terraform Fmt      : Used to rewrite Terraform configuration files to a canonical format and style.
+# Terraform Validate : Validates the configuration files in a directory, referring only to the configuration and not accessing any remote services such as remote state, provider APIs, etc
+repos:
+- repo: git://github.com/antonbabenko/pre-commit-terraform
+  rev: v1.45.0
+  hooks:
+    - id: terraform_fmt
+- repo: git://github.com/pre-commit/pre-commit-hooks
+  rev: v3.4.0
+  hooks:
+      - id: check-merge-conflict
+      - id: trailing-whitespace
+      - id: detect-private-key
