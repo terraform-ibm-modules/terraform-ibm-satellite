@@ -1,6 +1,11 @@
 ##################################################
 # IBMCLOUD Satellite Location and Host Variables
 ##################################################
+variable "TF_VERSION" {
+  description = "terraform version"
+  type = string
+  default = "0.13"
+}
 variable "location" {
   description = "Location Name"
   default     = "satellite-ibm"

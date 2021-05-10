@@ -7,7 +7,7 @@ variable "ibmcloud_api_key" {
   type         = string
 }
 
-variable "resource_group" {
+variable "resource_group_id" {
   description = "Name of the resource group on which location has to be created"
 
 }
