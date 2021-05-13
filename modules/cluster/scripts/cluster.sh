@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 MAX_RETRY=10
 
@@ -23,9 +23,11 @@ function retryCmd() {
 }
 
 function ibmCloudLogin() {
+  set +x 
   echo
   echo "********** ibmcloud cli login **********"
   retryCmd "ibmcloud login --apikey=${API_KEY} -a ${ENDPOINT} -r ${REGION} -g ${RESOURCE_GROUP}"
+  set -x
   echo "$CMDOUT"
 }
 
