@@ -46,3 +46,7 @@ variable "endpoint" {
   type        = string
   default     = "cloud.ibm.com"
 }
+
+variable "host_zones" {
+  type = string
+}
