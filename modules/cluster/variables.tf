@@ -7,16 +7,6 @@ variable "cluster_name" {
   type = string
 }
 
-variable "availability_zones" {
-  description = "List of availability zones names in the region"
-  type        = list(string)
-  default     = []
-  validation {
-    condition     = length(var.availability_zones) >= 3
-    error_message = "You must have at least 3 availability_zones."
-  }
-}
-
 #################################################################################################
 # IBMCLOUD -  Authentication , Target Variables.
 #################################################################################################
