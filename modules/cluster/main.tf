@@ -23,7 +23,7 @@ resource "null_resource" "create_cluster" {
     environment = {
       LOCATION       = var.location_name
       cluster_name   = var.cluster_name
-      host_zones     = self.triggers.host_zones
+      host_zones     = var.host_zones
       API_KEY        = var.ibmcloud_api_key
       REGION         = var.ibm_region
       RESOURCE_GROUP = var.resource_group
