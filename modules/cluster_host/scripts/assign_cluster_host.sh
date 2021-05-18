@@ -75,87 +75,6 @@ function checkHostExists() {
   echo "********** Host ${hostname} / ID ${HOST_ID} found **********"
 }
 
-# Get all cluster zones in default worker pool
-function getClusterZones() {
-  echo
-  echo "********** Getting cluster default worker pool zones **********"
-  echo
-  echo "********** ibmcloud ks worker-pool zones --worker-pool default --cluster ${cluster_name} **********"
-  echo
-  retryCmd "ibmcloud ks worker-pool zones --worker-pool default --cluster ${cluster_name}"
-  echo
-  echo "$CMDOUT"
-}
-
-# Check if the zone already exists in default worker pool
-function checkZoneExists() {
-  local testZone=$1
-  echo
-  echo "Looking for zone $testZone"
-  getClusterZones
-  # Produce empty string when there are no zones assigned
-  # (I'm not happy with this hack but we are running out of time so it will have to be that way for now)
-  local data=$(echo "$CMDOUT" | grep -v "Retrieving" | grep -v "OK" | grep -v "Subnet")
-  # Input is either empty or contains one or more zones
-  zoneout=$(echo "$data" | grep -m 1 "$testZone" | awk '{print $1}')
-  # Output is either empty or contains only one zone
-  if [[ $zoneout != "" && $zoneout == $testZone ]]; then
-    echo ">>>>>>>>>> Zone $testZone found"
-    return 0 # True
-  else
-    echo ">>>>>>>>>> Zone $testZone NOT found"
-    return 1 # False
-  fi
-}
-
-function removeDefaultZone() {
-  local defaultZone="zone-1"
-  echo
-  echo "************* Remove ${defaultZone} from cluster's default worker pool *************"
-  echo
-  echo "************* ibmcloud ks zone rm -f --worker-pool default --cluster ${cluster_name} --zone ${defaultZone} *************"
-  retryCmd "ibmcloud ks zone rm -f --worker-pool default --cluster ${cluster_name} --zone ${defaultZone}"
-  echo "$CMDOUT"
-}
-
-function removeDefaultZoneIfNeeded() {
-  echo
-  echo "********** Remove default zone-1 if needed **********"
-  checkZoneExists "zone-1"
-  if [[ $? -eq 0 ]]; then
-    echo
-    echo "********** Removing default zone-1 **********"
-    removeDefaultZone
-  else
-    echo "********** Default zone-1 not found **********"
-  fi
-}
-
-# Assign zone to cluster's default worker pool
-function assignZoneToCluster() {
-  echo
-  echo "************* Assigning zone to cluster's default worker pool *************"
-  echo
-  echo "************* ibmcloud ks zone add satellite --worker-pool default --cluster ${cluster_name} --zone ${zone} *************"
-  retryCmd "ibmcloud ks zone add satellite --worker-pool default --cluster ${cluster_name} --zone ${zone}"
-  echo "$CMDOUT"
-}
-
-# Assign zone to cluster only if it doesn't already exist
-function assignZoneToClusterIfNeeded() {
-  echo
-  echo "********** Assign zone to cluster if needed **********"
-  checkZoneExists $zone
-  if [[ $? -eq 0 ]]; then
-    echo
-    echo "**********  Using existing ${zone} zone **********"
-  else
-    assignZoneToCluster
-    echo
-    echo "********** Cluster ${zone} zone assigned **********"
-  fi
-}
-
 function checkHostIsAlreadyAssigned() {
   lsSatelliteHosts
   if [[ $(echo "$CMDOUT" | grep "$HOSTNAME" | awk '{print $3}') == "assigned" ]]; then
@@ -204,8 +123,6 @@ function apply() {
   ibmCloudLogin
   debugValues
   checkHostExists
-  removeDefaultZoneIfNeeded
-  assignZoneToClusterIfNeeded
   assignHostToClusterIfNeeded
 }
 

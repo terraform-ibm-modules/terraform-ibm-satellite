@@ -49,6 +49,10 @@ variable "host_zone" {
   default = ""
 }
 
+variable "host_zones" {
+  type = string
+}
+
 variable "host_provider" {
   type    = string
   default = "aws"

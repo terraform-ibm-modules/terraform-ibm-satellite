@@ -1,10 +1,10 @@
 
 variable "location_name" {
-  type         = string
+  type = string
 }
 
 variable "cluster_name" {
-  type         = string
+  type = string
 }
 
 #################################################################################################
@@ -12,8 +12,8 @@ variable "cluster_name" {
 #################################################################################################
 
 variable "ibmcloud_api_key" {
-  description  = "IBM Cloud API Key"
-  type         = string
+  description = "IBM Cloud API Key"
+  type        = string
 }
 
 variable "resource_group" {
@@ -27,12 +27,16 @@ variable "resource_group" {
 
 variable "ibm_region" {
   description = "Region of the IBM Cloud account"
-  type         = string
+  type        = string
   default     = "us-east"
 }
 
 variable "endpoint" {
-    description  = "Endpoint of production/stage environment of IBM Cloud "
-    type         = string
-    default      = "cloud.ibm.com"
+  description = "Endpoint of production/stage environment of IBM Cloud "
+  type        = string
+  default     = "cloud.ibm.com"
+}
+
+variable "host_zones" {
+  type = string
 }
