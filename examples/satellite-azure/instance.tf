@@ -139,3 +139,21 @@ resource "azurerm_linux_virtual_machine" "az_host" {
     version   = "latest"
   }
 }
+resource "azurerm_managed_disk" "data_disk" {
+  count                = var.satellite_host_count + var.addl_host_count
+  name                 = "${var.az_resource_prefix}-disk-${count.index}"
+  location             = data.azurerm_resource_group.resource_group.location
+  resource_group_name  = data.azurerm_resource_group.resource_group.name
+  storage_account_type = "Premium_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = 128
+  zones                = [element(local.zones, count.index)]
+}
+
+resource "azurerm_virtual_machine_data_disk_attachment" "disk_attach" {
+  count              = var.satellite_host_count + var.addl_host_count
+  managed_disk_id    = azurerm_managed_disk.data_disk[count.index].id
+  virtual_machine_id = azurerm_linux_virtual_machine.az_host[count.index].id
+  lun                = "10"
+  caching            = "ReadWrite"
+}
