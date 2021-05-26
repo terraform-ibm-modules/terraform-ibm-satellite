@@ -1,9 +1,13 @@
-#!/bin/bash -x
+#!/bin/bash
 
 MAX_RETRY=10
 
 function snooze() {
   sleep 30
+}
+
+function debugIfNeeded() {
+  [[ $DEBUG_CLI == "true" ]] && set -x
 }
 
 function retryCmd() {
@@ -23,11 +27,9 @@ function retryCmd() {
 }
 
 function ibmCloudLogin() {
-  set +x 
   echo
   echo "********** ibmcloud cli login **********"
   retryCmd "ibmcloud login --apikey=${API_KEY} -a ${ENDPOINT} -r ${REGION} -g ${RESOURCE_GROUP}"
-  set -x
   echo "$CMDOUT"
 }
 
@@ -172,6 +174,7 @@ function assignZonesToCluster() {
 
 function apply() {
   ibmCloudLogin
+  debugIfNeeded
   ensureLocationIsNormal
   createClusterIfNeeded
   assignZonesToCluster

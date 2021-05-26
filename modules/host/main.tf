@@ -16,6 +16,7 @@ resource "null_resource" "assign_host" {
     RESOURCE_GROUP  = var.resource_group
     ENDPOINT        = var.endpoint
     PROVIDER        = var.host_provider
+    DEBUG_CLI       = var.debug_cli
   }
 
   provisioner "local-exec" {
@@ -31,6 +32,7 @@ resource "null_resource" "assign_host" {
       RESOURCE_GROUP = self.triggers.RESOURCE_GROUP
       ENDPOINT       = self.triggers.ENDPOINT
       PROVIDER       = self.triggers.PROVIDER
+      DEBUG_CLI      = self.triggers.DEBUG_CLI
     }
   }
 
@@ -45,6 +47,7 @@ resource "null_resource" "assign_host" {
       REGION         = self.triggers.REGION
       RESOURCE_GROUP = self.triggers.RESOURCE_GROUP
       ENDPOINT       = self.triggers.ENDPOINT
+      DEBUG_CLI      = self.triggers.DEBUG_CLI
     }
   }
 }

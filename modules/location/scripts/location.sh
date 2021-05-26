@@ -1,10 +1,12 @@
 #!/bin/bash
 
+function debugIfNeeded() {
+  [[ $DEBUG_CLI == "true" ]] && set -x
+}
+
 function ibmCloudLogin() {
   # ibmcloud cli login
-  set +x 
   ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
-  set -x
   
   if [[ $? != 0 ]]; then
     exit 1
@@ -49,8 +51,9 @@ function createLocationIfNeeded() {
 
 function main() {
   # Main
-  setZone
   ibmCloudLogin
+  debugIfNeeded
+  setZone  
   createLocationIfNeeded
 }
 

@@ -17,6 +17,7 @@ resource "null_resource" "assign_host_to_cluster" {
     hostname     = var.host_vm
     zone         = var.host_zone
     PROVIDER     = var.host_provider
+    DEBUG_CLI    = var.debug_cli
   }
 
   provisioner "local-exec" {
@@ -33,6 +34,8 @@ resource "null_resource" "assign_host_to_cluster" {
       hostname     = var.host_vm
       zone         = var.host_zone
       PROVIDER     = var.host_provider
+
+      DEBUG_CLI    = var.debug_cli
     }
   }
 
@@ -50,6 +53,7 @@ resource "null_resource" "assign_host_to_cluster" {
       hostname     = self.triggers.hostname
       zone         = self.triggers.zone
       PROVIDER     = self.triggers.PROVIDER
+      DEBUG_CLI    = self.triggers.debug_cli
     }
   }
 

@@ -1,10 +1,15 @@
-#!/bin/bash -x 
+#!/bin/bash 
+
+function debugIfNeeded() {
+  [[ $DEBUG_CLI == "true" ]] && set -x
+}
 
 echo ************* Deleting Hosts and location *****************
-set +x 
 ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
 ibmcloud iam oauth-tokens
-set -x
+
+debugIfNeeded
+
 ibmcloud ks cluster rm --cluster $cluster_name -f
 sleep 30
 

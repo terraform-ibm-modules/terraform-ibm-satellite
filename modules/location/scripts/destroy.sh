@@ -1,11 +1,15 @@
 #!/bin/bash
 
+function debugIfNeeded() {
+  [[ $DEBUG_CLI == "true" ]] && set -x
+}
+
+ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
+
+debugIfNeeded
+
 echo ************* Deleting location *****************
 echo LOCATION= $LOCATION
-
-set +x 
-ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
-set -x
 
 #Get location ID
 loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')

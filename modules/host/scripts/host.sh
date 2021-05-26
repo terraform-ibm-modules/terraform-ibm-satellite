@@ -1,14 +1,18 @@
-#!/bin/bash -x
+#!/bin/bash
+
+function debugIfNeeded() {
+  [[ $DEBUG_CLI == "true" ]] && set -x
+}
 
 # ibmcloud cli login
-set +x 
 ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
-set -x
 
 if [[ $? != 0 ]]; then
     exit 1
 fi
 sleep 10
+
+debugIfNeeded
 
 # Check login status
 login_status=$(ibmcloud sat host ls --location $LOCATION 2>&1 | grep 'Log in to the IBM Cloud CLI')
