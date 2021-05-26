@@ -81,7 +81,7 @@ function getDefaultZone() {
 function createCluster() {
   getSatLocationID
   getDefaultZone
-  retryCmd "ibmcloud ks cluster create satellite --enable-config-admin --name $cluster_name --location $location_id --version 4.6.23_openshift --zone ${DEFAULT_ZONE}"
+  retryCmd "ibmcloud ks cluster create satellite --enable-config-admin --name $cluster_name --location $location_id --version 4.6_openshift --zone ${DEFAULT_ZONE}"
 }
 
 function validateClusterCreation() {
