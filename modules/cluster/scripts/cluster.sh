@@ -2,12 +2,19 @@
 
 MAX_RETRY=10
 
+TF_LOG_TRUE_VAR=true
+TF_LOG_FALSE_VAR=false
+
 function snooze() {
   sleep 30
 }
 
 function debugIfNeeded() {
-  [[ $DEBUG_CLI == "true" ]] && set -x
+  case $DEBUG_SHELL in
+    "$TF_LOG_TRUE_VAR") echo "** Shell debugging enabled **"; set -x; ;;
+    "$TF_LOG_FALSE_VAR") echo "**S hell debugging disabled **"; ;;
+    *) echo "** Shell debugging error ** - Unknown boolean value \"$DEBUG_SHELL\"" ;;
+   esac
 }
 
 function retryCmd() {

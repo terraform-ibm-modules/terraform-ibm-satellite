@@ -54,7 +54,7 @@ variable "endpoint" {
     default      = "cloud.ibm.com"
 }
 
-variable "debug_cli" {
+variable "debug_shell" {
   description = "Set to true to enable shell set -x debugging"
   type = bool
   default = false

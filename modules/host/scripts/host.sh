@@ -1,7 +1,14 @@
 #!/bin/bash
 
+TF_LOG_TRUE_VAR=true
+TF_LOG_FALSE_VAR=false
+
 function debugIfNeeded() {
-  [[ $DEBUG_CLI == "true" ]] && set -x
+  case $DEBUG_SHELL in
+    "$TF_LOG_TRUE_VAR") echo "** Shell debugging enabled **"; set -x; ;;
+    "$TF_LOG_FALSE_VAR") echo "**S hell debugging disabled **"; ;;
+    *) echo "** Shell debugging error ** - Unknown boolean value \"$DEBUG_SHELL\"" ;;
+   esac
 }
 
 # ibmcloud cli login
