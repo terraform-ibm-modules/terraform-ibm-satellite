@@ -1,9 +1,20 @@
 #!/bin/bash
 
+TF_LOG_TRUE_VAR=true
+TF_LOG_FALSE_VAR=false
+
+function debugIfNeeded() {
+  case $DEBUG_SHELL in
+    "$TF_LOG_TRUE_VAR") echo "** Shell debugging enabled **"; set -x; ;;
+    "$TF_LOG_FALSE_VAR") echo "**S hell debugging disabled **"; ;;
+    *) echo "** Shell debugging error ** - Unknown boolean value \"$DEBUG_SHELL\"" ;;
+   esac
+}
+
 echo "************* Deleting Hosts *****************"
-set +x 
 ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
-set -x 
+
+debugIfNeeded
 
 loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')
 hostname=$(echo $hostname | cut -d'.' -f1)

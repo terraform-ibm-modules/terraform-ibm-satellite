@@ -1,7 +1,18 @@
-#!/bin/bash -x
+#!/bin/bash
 
 function snooze() {
   sleep 30
+}
+
+TF_LOG_TRUE_VAR=true
+TF_LOG_FALSE_VAR=false
+
+function debugIfNeeded() {
+  case $DEBUG_SHELL in
+    "$TF_LOG_TRUE_VAR") echo "** Shell debugging enabled **"; set -x; ;;
+    "$TF_LOG_FALSE_VAR") echo "**S hell debugging disabled **"; ;;
+    *) echo "** Shell debugging error ** - Unknown boolean value \"$DEBUG_SHELL\"" ;;
+   esac
 }
 
 function retryCmd() {
@@ -24,9 +35,7 @@ function retryCmd() {
 function ibmCloudLogin() {
   echo
   echo "********** ibmcloud cli login **********"
-  set +x
   retryCmd "ibmcloud login --apikey=${API_KEY} -a ${ENDPOINT} -r ${REGION} -g ${RESOURCE_GROUP}"
-  set -x
   echo "$CMDOUT"
 }
 
@@ -122,6 +131,7 @@ function assignHostToClusterIfNeeded() {
 function apply() {
   ibmCloudLogin
   debugValues
+  debugIfNeeded
   checkHostExists
   assignHostToClusterIfNeeded
 }

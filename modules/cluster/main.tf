@@ -15,6 +15,7 @@ resource "null_resource" "create_cluster" {
     REGION         = var.ibm_region
     RESOURCE_GROUP = var.resource_group
     ENDPOINT       = var.endpoint
+    DEBUG_SHELL    = var.debug_shell
   }
 
   provisioner "local-exec" {
@@ -28,6 +29,8 @@ resource "null_resource" "create_cluster" {
       REGION         = var.ibm_region
       RESOURCE_GROUP = var.resource_group
       ENDPOINT       = var.endpoint
+
+      DEBUG_SHELL    = var.debug_shell
     }
   }
 
@@ -41,6 +44,8 @@ resource "null_resource" "create_cluster" {
       REGION         = self.triggers.REGION
       RESOURCE_GROUP = self.triggers.RESOURCE_GROUP
       ENDPOINT       = self.triggers.ENDPOINT
+
+      DEBUG_SHELL    = self.triggers.DEBUG_SHELL
     }
   }
 }

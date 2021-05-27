@@ -40,3 +40,9 @@ variable "endpoint" {
 variable "host_zones" {
   type = string
 }
+
+variable "debug_shell" {
+  description = "Set to true to enable shell set -x debugging"
+  type = bool
+  default = false
+}

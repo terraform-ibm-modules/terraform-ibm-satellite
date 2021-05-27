@@ -1,11 +1,22 @@
-#!/bin/bash -x
+#!/bin/bash
+
+TF_LOG_TRUE_VAR=true
+TF_LOG_FALSE_VAR=false
+
+function debugIfNeeded() {
+  case $DEBUG_SHELL in
+    "$TF_LOG_TRUE_VAR") echo "** Shell debugging enabled **"; set -x; ;;
+    "$TF_LOG_FALSE_VAR") echo "**S hell debugging disabled **"; ;;
+    *) echo "** Shell debugging error ** - Unknown boolean value \"$DEBUG_SHELL\"" ;;
+   esac
+}
 
 echo ************* Deleting Hosts and location *****************
 
-set +x 
 ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
 ibmcloud iam oauth-tokens
-set -x
+
+debugIfNeeded
 
 if [ "$PROVIDER" == "aws" ]; then
     hostname=$(echo $hostname | cut -d "." -f 1)

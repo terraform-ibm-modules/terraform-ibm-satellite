@@ -1,11 +1,22 @@
 #!/bin/bash
 
+TF_LOG_TRUE_VAR=true
+TF_LOG_FALSE_VAR=false
+
+function debugIfNeeded() {
+  case $DEBUG_SHELL in
+    "$TF_LOG_TRUE_VAR") echo "** Shell debugging enabled **"; set -x; ;;
+    "$TF_LOG_FALSE_VAR") echo "**S hell debugging disabled **"; ;;
+    *) echo "** Shell debugging error ** - Unknown boolean value \"$DEBUG_SHELL\"" ;;
+   esac
+}
+
+ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
+
+debugIfNeeded
+
 echo ************* Deleting location *****************
 echo LOCATION= $LOCATION
-
-set +x 
-ibmcloud login --apikey=$API_KEY -a $ENDPOINT -r $REGION -g $RESOURCE_GROUP
-set -x
 
 #Get location ID
 loc_id=$(ibmcloud sat location ls 2>&1 | grep -m 1 $LOCATION | awk '{print $2}')

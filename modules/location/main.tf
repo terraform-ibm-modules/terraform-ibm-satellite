@@ -14,6 +14,7 @@ resource "null_resource" "satellite_location" {
     RESOURCE_GROUP = var.resource_group
     ENDPOINT       = var.endpoint
     PROVIDER       = var.host_provider
+    DEBUG_SHELL    = var.debug_shell
   }
 
   provisioner "local-exec" {
@@ -29,6 +30,7 @@ resource "null_resource" "satellite_location" {
       PROVIDER       = var.host_provider
       ENDPOINT       = var.endpoint
       ADDHOST_PATH   = path.module
+      debug_shell    = var.debug_shell
     }
   }
 
@@ -42,6 +44,7 @@ resource "null_resource" "satellite_location" {
       REGION         = self.triggers.REGION
       RESOURCE_GROUP = self.triggers.RESOURCE_GROUP
       ENDPOINT       = self.triggers.ENDPOINT
+      DEBUG_SHELL    = self.triggers.DEBUG_SHELL
     }
   }
 }
