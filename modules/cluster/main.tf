@@ -39,7 +39,7 @@ resource "null_resource" "create_cluster" {
     command = ". ${path.module}/../../modules/cluster/scripts/destroy.sh"
     environment = {
       cluster_name   = self.triggers.cluster_name
-      host_zones     = self.triggers.host_zones
+      host_zones     = lookup(self.triggers, "host_zones", "us-east-1;us-east-1b;us-east-1c") 
       API_KEY        = self.triggers.API_KEY
       REGION         = self.triggers.REGION
       RESOURCE_GROUP = self.triggers.RESOURCE_GROUP
