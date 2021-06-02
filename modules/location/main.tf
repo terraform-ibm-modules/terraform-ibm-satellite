@@ -44,7 +44,8 @@ resource "null_resource" "satellite_location" {
       REGION         = self.triggers.REGION
       RESOURCE_GROUP = self.triggers.RESOURCE_GROUP
       ENDPOINT       = self.triggers.ENDPOINT
-      DEBUG_SHELL    = self.triggers.DEBUG_SHELL
+      
+      DEBUG_SHELL    = lookup(self.triggers, "DEBUG_SHELL", false)
     }
   }
 }

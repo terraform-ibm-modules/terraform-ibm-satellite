@@ -30,7 +30,7 @@ resource "null_resource" "create_cluster" {
       RESOURCE_GROUP = var.resource_group
       ENDPOINT       = var.endpoint
 
-      DEBUG_SHELL    = var.debug_shell
+      DEBUG_SHELL    = true
     }
   }
 
@@ -45,7 +45,7 @@ resource "null_resource" "create_cluster" {
       RESOURCE_GROUP = self.triggers.RESOURCE_GROUP
       ENDPOINT       = self.triggers.ENDPOINT
 
-      DEBUG_SHELL    = self.triggers.DEBUG_SHELL
+      DEBUG_SHELL    = lookup(self.triggers, "DEBUG_SHELL", false)
     }
   }
 }

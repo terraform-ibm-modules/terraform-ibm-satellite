@@ -54,7 +54,7 @@ resource "null_resource" "assign_host_to_cluster" {
       zone         = self.triggers.zone
       PROVIDER     = self.triggers.PROVIDER
       
-      DEBUG_SHELL  = self.triggers.DEBUG_SHELL
+      DEBUG_SHELL    = lookup(self.triggers, "DEBUG_SHELL", false)
     }
   }
 
