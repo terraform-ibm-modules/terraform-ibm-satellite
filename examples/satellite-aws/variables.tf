@@ -107,13 +107,13 @@ variable "addl_host_count" {
 }
 
 variable "instance_type" {
-  description    = "The type of aws instance to start, satellite only accepts `m5d.2xlarge` or `m5d.4xlarge` as instance type."
+  description    = "The type of aws instance to start, satellite only accepts `m5d.xlarge`, `m5d.2xlarge`, or `m5d.4xlarge` as an instance type."
   type           = string
-  default        = "m5d.2xlarge"
+  default        = "m5d.xlarge"
 
   validation {
-    condition     = var.instance_type == "m5d.2xlarge" || var.instance_type == "m5d.4xlarge"
-    error_message = "Sorry, satellite only accepts m5d.2xlarge or m5d.4xlarge as instance type."
+    condition     = var.instance_type == "m5d.xlarge" || var.instance_type == "m5d.2xlarge" || var.instance_type == "m5d.4xlarge"
+    error_message = "Sorry, satellite only accepts m5d.xlarge, m5d.2xlarge, or m5d.4xlarge as an instance type."
   }
 }
 
