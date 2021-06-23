@@ -121,13 +121,16 @@ module "gcp_host-template" {
   machine_type         = var.instance_type
   can_ip_forward       = false
   source_image_project = "rhel-cloud"
-  source_image         = "rhel-7-v20201112"
   source_image_family  = "rhel-7"
   disk_size_gb         = 100
-  disk_type            = "pd-standard"
+  disk_type            = "pd-ssd"
   disk_labels = {
     ibm-satellite = var.gcp_resource_prefix
   }
+  access_config = [{
+    nat_ip       = null
+    network_tier = "PREMIUM"
+  }]
   auto_delete     = true
   service_account = { email = "", scopes = [] }
   depends_on      = [module.satellite-location, module.gcp_firewall-rules]
@@ -141,4 +144,8 @@ module "gcp_hosts" {
   num_instances      = var.satellite_host_count + var.addl_host_count
   hostname           = "${var.gcp_resource_prefix}-host"
   instance_template  = module.gcp_host-template.self_link
+  access_config = [{
+    nat_ip       = null
+    network_tier = "PREMIUM"
+  }]
 }

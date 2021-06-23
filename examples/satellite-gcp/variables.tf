@@ -115,3 +115,9 @@ variable "host_labels" {
     error_message = "Label must be of the form `key:value`."
   }
 }
+
+variable "TF_VERSION" {
+  description = "Terraform version"
+  type = string
+  default = "0.13"
+}
