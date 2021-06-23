@@ -171,4 +171,5 @@ module "satellite-host" {
 | Name | Description |
 |------|-------------|
 | location_id | location ID value |
-| host_ids | ID's of Google Hosts |
+| gcp_host_names | Names of Google Hosts |
+| gcp_host_links | Self Links of Google Hosts |
