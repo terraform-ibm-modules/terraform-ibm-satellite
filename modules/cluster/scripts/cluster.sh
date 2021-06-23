@@ -12,7 +12,7 @@ function snooze() {
 function debugIfNeeded() {
   case $DEBUG_SHELL in
     "$TF_LOG_TRUE_VAR") echo "** Shell debugging enabled **"; set -x; ;;
-    "$TF_LOG_FALSE_VAR") echo "**S hell debugging disabled **"; ;;
+    "$TF_LOG_FALSE_VAR") echo "** Shell debugging disabled **"; ;;
     *) echo "** Shell debugging error ** - Unknown boolean value \"$DEBUG_SHELL\"" ;;
    esac
 }
