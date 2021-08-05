@@ -187,4 +187,4 @@ function apply() {
   assignZonesToCluster
 }
 
-apply
+#apply 
