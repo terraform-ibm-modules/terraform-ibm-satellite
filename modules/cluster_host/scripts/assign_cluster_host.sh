@@ -136,4 +136,4 @@ function apply() {
   assignHostToClusterIfNeeded
 }
 
-apply
+#apply
