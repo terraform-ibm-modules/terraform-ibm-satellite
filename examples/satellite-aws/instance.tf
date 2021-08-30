@@ -106,6 +106,7 @@ resource "aws_key_pair" "keypair" {
 
 module "ec2" {
   source = "terraform-aws-modules/ec2-instance/aws"
+  version = "~> 2.21.0"
 
   depends_on                  = [module.satellite-location]
   instance_count              = var.satellite_host_count + var.addl_host_count
