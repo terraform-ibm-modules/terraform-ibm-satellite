@@ -1,0 +1,32 @@
+name: Make release
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Bump version and push tag
+          id: tag_version
+          uses: mathieudutour/github-tag-action@v5.6
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+        - name: Build aws tgz
+          run: bash make-release-satellite.sh --dirname gh --version ${{ steps.tag_version.outputs.new_tag }} --cloud aws
+        - name: Build azure tgz
+          run: bash make-release-satellite.sh --dirname gh --version ${{ steps.tag_version.outputs.new_tag }} --cloud azure
+        - name: Build gcp tgz
+          run: bash make-release-satellite.sh --dirname gh --version ${{ steps.tag_version.outputs.new_tag }} --cloud gcp
+        - name: Release
+          uses: softprops/action-gh-release@v1
+          with:
+              tag_name: ${{ steps.tag_version.outputs.new_tag }}
+              files: |
+                releases/aws-*.tgz
+                releases/azure-*.tgz
+                releases/gcp-*.tgz
