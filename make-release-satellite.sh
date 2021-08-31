@@ -35,7 +35,7 @@ if [ "$ERROR" = true ] ; then
   exit 1
 fi
 
-case $CLOUD in 
+case $CLOUD in
   aws)
     CATALOG_NAME='satellite-aws'
     ;;
