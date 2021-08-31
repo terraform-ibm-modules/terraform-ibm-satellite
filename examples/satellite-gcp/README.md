@@ -2,7 +2,7 @@
 
 Use this terrafrom automation to set up satellite location on IBM cloud with Google host.
 
-This example cover end-to-end functionality of IBM cloud satellite by creating satellite location on specified zone. 
+This example cover end-to-end functionality of IBM cloud satellite by creating satellite location on specified zone.
 It will provision Google host and assign it to setup location control plane.
 
 
@@ -14,13 +14,13 @@ It will provision Google host and assign it to setup location control plane.
 
 ## Compatibility
 
-This module is meant for use with Terraform 0.13 or later. 
+This module is meant for use with Terraform 0.13 or later.
 
 ## Requirements
 
 ### Terraform plugins
 
-- [Terraform](https://www.terraform.io/downloads.html) 0.13 or later. 
+- [Terraform](https://www.terraform.io/downloads.html) 0.13 or later.
 - [terraform-provider-ibm](https://github.com/IBM-Cloud/terraform-provider-ibm)
 - [terraform-provider-google](https://github.com/hashicorp/terraform-provider-google)
 - To authenticate google provider please refer [docs](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference)
@@ -154,7 +154,7 @@ module "satellite-host" {
 | location                              | Name of the Location that has to be created                       | string   | satellite-google | yes   |
 | is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | yes      |
 | managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc   | yes      |
-| location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | ["us-east-1", "us-east-2", "us-east-3"]    | yes      | 
+| location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | ["us-east-1", "us-east-2", "us-east-3"]    | yes      |
 | host_labels                                | Add labels to attach host script                                  | list     | [env:prod]  | no   |
 | location_bucket                       | COS bucket name                                                   | string   | n/a     | no       |
 | gcp_resource_prefix                       | Name to be used on all google resources as prefix                        | string   | satellite-google     | yes |
