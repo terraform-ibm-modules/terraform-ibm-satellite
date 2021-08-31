@@ -24,7 +24,7 @@ resource "ibm_is_subnet" "satellite_subnet" {
   zone                     = "${var.ibm_region}-${count.index + 1}"
 }
 
-resource ibm_is_security_group "sg" {
+resource "ibm_is_security_group" "sg" {
   name = "${var.is_prefix}-sg"
   vpc  = ibm_is_vpc.satellite_vpc.id
 }
