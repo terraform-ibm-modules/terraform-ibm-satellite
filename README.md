@@ -100,6 +100,7 @@ module "satellite-ibm" {
 
 | Name                                  | Description                                                       | Type     | Default | Required |
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
+| ibmcloud_api_key                      | IBM Cloud API Key                                                 | string   | n/a     | no       |
 | resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | yes      |
 | region                                | The location or the region in which VM instance exists.           | string   | us-east | no       |
 | location                              | Name of the Location that has to be created                       | string   | n/a     | satellite-ibm  |

@@ -23,6 +23,15 @@ root:
 # input_variables
 ###################################
     inputs:
+      - name: "ibmcloud_api_key"
+        type: string
+        is_required: false
+        description: "IBM Cloud API Key"
+        is_sensitive: true
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
       - name: "region"
         type: string
         is_required: false
