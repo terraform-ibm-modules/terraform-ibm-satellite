@@ -12,7 +12,8 @@ data "ibm_is_image" "rhel7" {
 }
 
 resource "ibm_is_vpc" "satellite_vpc" {
-  name = "${var.is_prefix}-vpc"
+  name           = "${var.is_prefix}-vpc"
+  resource_group = data.ibm_resource_group.resource_group.id
 }
 
 resource "ibm_is_subnet" "satellite_subnet" {
@@ -22,11 +23,13 @@ resource "ibm_is_subnet" "satellite_subnet" {
   vpc                      = ibm_is_vpc.satellite_vpc.id
   total_ipv4_address_count = 256
   zone                     = "${var.ibm_region}-${count.index + 1}"
+  resource_group           = data.ibm_resource_group.resource_group.id
 }
 
 resource "ibm_is_security_group" "sg" {
-  name = "${var.is_prefix}-sg"
-  vpc  = ibm_is_vpc.satellite_vpc.id
+  name           = "${var.is_prefix}-sg"
+  vpc            = ibm_is_vpc.satellite_vpc.id
+  resource_group = data.ibm_resource_group.resource_group.id
 }
 
 
@@ -38,8 +41,9 @@ resource "tls_private_key" "example" {
 resource "ibm_is_ssh_key" "satellite_ssh" {
   depends_on = [module.satellite-location]
 
-  name       = "${var.is_prefix}-ssh"
-  public_key = var.public_key != null ? var.public_key : tls_private_key.example.public_key_openssh
+  name           = "${var.is_prefix}-ssh"
+  resource_group = data.ibm_resource_group.resource_group.id
+  public_key     = var.public_key != null ? var.public_key : tls_private_key.example.public_key_openssh
 }
 
 
@@ -69,6 +73,7 @@ resource "ibm_is_instance" "satellite_instance" {
 resource "ibm_is_floating_ip" "satellite_ip" {
   count = var.host_count + var.addl_host_count
 
-  name   = "${var.is_prefix}-fip-${count.index}"
-  target = ibm_is_instance.satellite_instance[count.index].primary_network_interface[0].id
+  name           = "${var.is_prefix}-fip-${count.index}"
+  target         = ibm_is_instance.satellite_instance[count.index].primary_network_interface[0].id
+  resource_group = data.ibm_resource_group.resource_group.id
 }
