@@ -89,5 +89,6 @@ module "satellite-host" {
 | host_provider                         | The cloud provider of host/vms.                                   | string   | ibm     | no       |
 | is_prefix                             | Prefix to the Names of all VSI Resources                          | string   | satellite-ibm | yes      |
 | public_key                            | Public SSH key used to provision Host/VSI                         | string   | n/a     | no       |
+| profile                               | Instance profile information                                      | string   | mx2-8x64| no       |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
