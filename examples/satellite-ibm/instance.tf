@@ -56,7 +56,7 @@ resource "ibm_is_instance" "satellite_instance" {
   vpc            = ibm_is_vpc.satellite_vpc.id
   zone           = element(local.zones, count.index)
   image          = data.ibm_is_image.rhel7.id
-  profile        = "mx2-8x64"
+  profile        = var.profile
   keys           = [ibm_is_ssh_key.satellite_ssh.id]
   resource_group = data.ibm_resource_group.resource_group.id
   user_data      = module.satellite-location.host_script

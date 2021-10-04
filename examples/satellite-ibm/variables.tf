@@ -79,3 +79,9 @@ variable "public_key" {
   type        = string
   default     = null
 }
+
+variable "profile" {
+  description = "Instance profile information"
+  type        = string
+  default     = "mx2-8x64"
+}
