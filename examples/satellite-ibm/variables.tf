@@ -80,8 +80,14 @@ variable "public_key" {
   default     = null
 }
 
-variable "profile" {
-  description = "Instance profile information"
+variable "location_profile" {
+  description = "Profile information of location hosts"
+  type        = string
+  default     = "mx2-8x64"
+}
+
+variable "cluster_profile" {
+  description = "Profile information of Cluster hosts"
   type        = string
   default     = "mx2-8x64"
 }
