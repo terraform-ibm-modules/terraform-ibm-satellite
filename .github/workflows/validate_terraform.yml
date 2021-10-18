@@ -26,6 +26,9 @@ jobs:
         name: Install pre-commit
         run: pip install pre-commit
       -
+        name: Upgrade hooks
+        run: pre-commit autoupdate
+      -
         name: Run pre-commit command
         run: pre-commit run -a
       -

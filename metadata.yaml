@@ -1,0 +1,1215 @@
+id: "terraform-ibm-modules/satellite/ibm/1.0.8"
+name: "satellite"
+namespace: "terraform-ibm-modules"
+version: "1.0.8"
+providers: ["ibm"]
+provider_logo_url: "/images/providers/satellite.png"
+description: "Terraform modules to create and work with IBM Cloud Satellite resources"
+source: "https://github.com/terraform-ibm-modules/terraform-ibm-satellite"
+owner: "umarali.nagoor@in.ibm.com"
+published_at: "2021-11-17T14:54:28.979568Z"
+registry: "https://registry.terraform.io/modules/terraform-ibm-modules/satellite/ibm/latest"
+alias: "satellite"
+tags: ["satellite", "terraform", "ibm-cloud", "v1.0.8"]
+root:
+  - path: "github.com/terraform-ibm-modules/terraform-ibm-satellite"
+    name: "satellite"
+    provider_dependencies:
+      - name: "ibm"
+        namespace: "IBM-Cloud"
+        source: "IBM-Cloud/ibm"
+        version: ""
+###################################
+# input_variables
+###################################
+    inputs:
+      - name: "region"
+        type: string
+        is_required: false
+        default_value: "us-east"
+        description: "Region of the IBM Cloud account. Currently supported regions for satellite are us-east and eu-gb region"
+        example: "us-east"
+        is_sensitive: false
+        is_nullable: false
+        is_force_new: true
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "resource_group"
+        type: string
+        is_required: true
+        default_value: "default"
+        description: "Name of the resource group on which location has to be created"
+        example: "default"
+        is_sensitive: false
+        is_nullable: false
+        is_force_new: true
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "location"
+        type: string
+        is_required: false
+        default_value: "satellite-ibm"
+        description: "location name must begin and end with a letter and contain only letters, numbers, and - characters"
+        example: "satellite-ibm"
+        is_sensitive: false
+        related_to: ["satellite-location"]
+        is_nullable: false
+        is_force_new: false
+        regex: "^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$"
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "managed_from"
+        type: string
+        is_required: false
+        default_value: "wdc"
+        description: "The IBM Cloud region to manage your Satellite location from. Choose a region close to your on-prem data center for better performance"
+        example: "wdc"
+        is_sensitive: false
+        related_to: ["satellite-location"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "location_zones"
+        type: list(string)
+        is_required: false
+        default_value: ["us-east-1", "us-east-2", "us-east-3"]
+        description: "Allocate your hosts across these three zones"
+        example: ["us-east-1", "us-east-2", "us-east-3"]
+        is_sensitive: false
+        related_to: ["satellite-location"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "location_bucket"
+        type: string
+        is_required: false
+        description: "COS bucket name"
+        is_sensitive: false
+        related_to: ["satellite-location"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "is_location_exist"
+        type: bool
+        is_required: false
+        default_value: false
+        description: "Determines if the location has to be created or not"
+        example: false
+        is_sensitive: false
+        related_to: ["satellite-location"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: true
+        is_count_controller: true
+      - name: "host_labels"
+        type : list(string)
+        is_required: false
+        default_value: ["env:prod"]
+        description: "Labels to add to attach host script"
+        example: ["env:prod"]
+        is_sensitive: false
+        related_to: ["satellite-location", "host", "cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+  ##################################################
+  # IBMCLOUD VPC VSI Variables
+  ##################################################
+      - name: "host_count"
+        type: number
+        is_required: true
+        default_value: 3
+        description: "The total number of ibm host to create for control plane"
+        example: 3
+        is_sensitive: false
+        related_to: ["host"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: true
+        is_count_controller: false
+      - name: "addl_host_count"
+        type: number
+        is_required: true
+        default_value: 3
+        description: "The total number of additional aws host"
+        example: 3
+        is_sensitive: false
+        related_to: ["cluster"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: true
+        is_count_controller: false
+      - name: "is_prefix"
+        type: string
+        is_required: false
+        default_value: "satellite-ibm"
+        description: "Determines if the location has to be created or not"
+        example: "satellite-ibm"
+        is_sensitive: false
+        related_to: ["satellite-location", "satellite-host", "satellite-cluster", "ibm_is_vpc", "ibm_is_subnet", "default_sg_rules", "ibm_is_instance", "ibm_is_floating_ip"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "public_key"
+        type: string
+        is_required: false
+        description: "SSH Public Key. Get your ssh key by running `ssh-key-gen` command"
+        is_sensitive: false
+        related_to: ["satellite-location", "satellite-host", "satellite-cluster", "ibm_is_vpc"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "location_profile"
+        type: string
+        is_required: false
+        default_value: "mx2-8x64"
+        description: "Profile information of location hosts"
+        example: "mx2-8x64"
+        is_sensitive: false
+        related_to: ["ibm_is_vpc", "satellite-cluster"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "cluster_profile"
+        type: string
+        is_required: false
+        default_value: "mx2-8x64"
+        description: "Profile information of Cluster hosts"
+        example: "mx2-8x64"
+        is_sensitive: false
+        related_to: ["ibm_is_vpc", "satellite-cluster"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+  ##################################################
+  # satellite-cluster variables
+  ##################################################
+      - name: "create_cluster"
+        type: bool
+        is_required: false
+        default_value: true
+        description: "Create Cluster"
+        example: true
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: true
+        is_count_controller: true
+      - name: "cluster"
+        type: string
+        is_required: false
+        default_value: "satellite-ibm-cluster"
+        description: "Create Cluster"
+        example: "satellite-ibm-cluster"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+        is_nullable: true
+        is_force_new: false
+        regex: "^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$"
+        is_provision_controller: true
+        is_count_controller: false
+      - name: "kube_version"
+        type: string
+        is_required: false
+        default_value: "4.7_openshift"
+        description: "Kube Version"
+        example: "4.7_openshift"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "cluster_host_labels"
+        type: list(string)
+        is_required: false
+        default_value: ["env:prod"]
+        description: "Labels to add to attach host script"
+        example: ["env:prod"]
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "worker_count"
+        type: number
+        is_required: false
+        default_value: 1
+        description: "Worker Count for default pool"
+        example: 1
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "wait_for_worker_update"
+        type: bool
+        is_required: false
+        default_value: true
+        description: "Wait for worker update"
+        example: true
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "default_worker_pool_labels"
+        type: map(any)
+        is_required: false
+        description: "Label to add default worker pool"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "tags"
+        type: list(string)
+        is_required: false
+        description: "List of tags associated with cluster"
+        example: ["env:prod"]
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "create_timeout"
+        type : string
+        is_required: false
+        default_value: "10m"
+        description: "Timeout duration for create."
+        example: "10m"
+        is_sensitive: false
+        related_to: ["satellite-cluster","satellite-cluster-worker-pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "update_timeout"
+        type : string
+        is_required: false
+        default_value: "10m"
+        description: "Timeout duration for update."
+        example: "10m"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "delete_timeout"
+        type : string
+        is_required: false
+        default_value: "10m"
+        description: "Timeout duration for delete."
+        example: "10m"
+        is_sensitive: false
+        related_to: ["satellite-cluster","satellite-cluster-worker-pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+  ##################################################
+  # satellite-cluster-worker-pool variables
+  ##################################################
+      - name: "create_cluster_worker_pool"
+        type: bool
+        is_required: false
+        default_value: false
+        description: "Create Cluster worker pool"
+        example: false
+        is_sensitive: false
+        related_to: ["satellite-cluster-worker-pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: true
+        is_count_controller: true
+      - name: "worker_pool_name"
+        type: string
+        is_required: false
+        default_value:  "tf-worker-pool"
+        description: "Workerpool name"
+        example: "tf-worker-pool"
+        is_sensitive: false
+        related_to: ["satellite-cluster-worker-pool"]
+        is_nullable: true
+        is_force_new: false
+        regex: "^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$"
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "worker_pool_host_labels"
+        type: list(string)
+        is_required: false
+        default_value: ["env:prod"]
+        description: "Labels to add to attach host script"
+        example: ["env:prod"]
+        is_sensitive: false
+        related_to: ["satellite-cluster-worker-pool"]
+        is_nullable: true
+        is_force_new: false
+        regex: "^[a-zA-Z0-9:]+$"
+        is_provision_controller: false
+        is_count_controller: false
+###################################
+# output variables
+###################################
+    outputs:
+      - name: "location_id"
+        type : string
+        description : "location ID"
+        example: "qwdfrtyfg34ee"
+        is_sensitive: false
+        related_to: ["satellite-location"]
+      - name: "host_script"
+        type : string
+        description : "Downloads attach host scripts of location"
+        is_sensitive: false
+        related_to: ["satellite-location"]
+      - name: "host_ids"
+        type : list(string)
+        description : "Host Id's"
+        is_sensitive: false
+        related_to: ["satellite-location"]
+      - name: "floating_ip_ids"
+        type : list(string)
+        description : "Floating IP Id's"
+        is_sensitive: false
+        related_to: ["ibm_is_floating_ip"]
+      - name: "floating_ip_addresses"
+        type : list(string)
+        description : "Floating IP addresses"
+        is_sensitive: false
+        related_to: ["ibm_is_floating_ip"]
+      - name: "vpc"
+        type : string
+        description : "VPC Id"
+        is_sensitive: false
+        related_to: ["ibm_is_vpc"]
+      - name: "default_security_group"
+        type : string
+        description : "Default security group"
+        is_sensitive: false
+        related_to: ["bm_is_vpc"]
+      - name: "subnets"
+        type : string
+        description : "Subnets Id"
+        is_sensitive: false
+        related_to: ["ibm_is_subnet"]
+      - name: "cluster_id"
+        type : string
+        description : "Cluster Id"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+      - name: "cluster_crn"
+        type : string
+        description : "Cluster CRN"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+      - name: "server_url"
+        type : string
+        description : "Cluster master server URL"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+      - name: "cluster_state"
+        type : string
+        description : "Cluster state"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+      - name: "cluster_status"
+        type : string
+        description : "Cluster status"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+      - name: "ingress_hostname"
+        type : string
+        description : "Cluster ingress hostname"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+      - name: "cluster_worker_pool_id"
+        type : string
+        description : "Cluster workerpool ID"
+        is_sensitive: false
+        related_to: ["satellite-cluster-worker-pool"]
+      - name: "worker_pool_zones"
+        type : list(string)
+        description : "Cluster workerpool zones"
+        is_sensitive: false
+        related_to: ["satellite-cluster-worker-pool"]
+      - name: "worker_pool_worker_count"
+        type : number
+        description : "Cluster worker count per zone"
+        is_sensitive: false
+        related_to: ["satellite-cluster-worker-pool"]
+##########################################################
+# local variables
+##########################################################
+    locals:
+      - name: "location_zones"
+        type : list(string)
+        example: ["us-east-1", "us-east-2", "us-east-3"]
+        description : "Satellite location zones"
+        is_hardcoded : false
+        related_to: ["satellite-location"]
+        derived_from: ["var.location_zones", "var.region"]
+      - name: "subnet_ids"
+        type: list(string)
+        example: ["0757-dc45976a-0c33-4e06-b242-6462eadc58db"]
+        description : "List of subnet ID's"
+        is_hardcoded : false
+        related_to: ["ibm_is_subnet.satellite_subnet[0].id"]
+      - name: "sg_rules"
+        type: map
+        description : "List of security group rules"
+        is_hardcoded : true
+        related_to: ["default_sg_rules"]
+        derived_from: [local.sg_rules]
+      - name: "rules"
+        type: map
+        description : "List of rules defined for each protocal"
+        is_hardcoded : true
+        related_to: ["default_sg_rules"]
+        derived_from: ["var.is_prefix"]
+###################################
+# Resources
+###################################
+    resources:
+      - type: "ibm_is_vpc"
+        name: "satellite_vpc"
+        description: "provision VPC resource"
+        provider: "ibm"
+        dependent_on: [data.ibm_resource_group.resource_group]
+      - type: "ibm_is_subnet"
+        name: "satellite_subnet"
+        description: "provision subnets"
+        provider: "ibm"
+        dependent_on: [data.ibm_resource_group.resource_group, ibm_is_vpc.satellite_vpc]
+      - type: "tls_private_key"
+        name: "example"
+        description: "provision subnets"
+        provider: "hashicorp"
+      - type: "ibm_is_ssh_key"
+        name: "satellite_ssh"
+        description: "Create SSH key"
+        provider: "ibm"
+        dependent_on: [module.satellite-location, data.ibm_resource_group.resource_group, tls_private_key.example]
+      - type: "ibm_is_instance"
+        name: "satellite_instance"
+        description: "provision VSI instances"
+        provider: "ibm"
+        dependent_on: [data.ibm_resource_group.resource_group, ibm_is_vpc.satellite_vpc, ibm_is_ssh_key.satellite_ssh, data.ibm_is_image.rhel7]
+      - type: "ibm_is_instance"
+        name: "satellite_cluster_instance"
+        description: "provision VSI instances"
+        provider: "ibm"
+        dependent_on: [data.ibm_resource_group.resource_group, ibm_is_vpc.satellite_vpc, ibm_is_ssh_key.satellite_ssh, data.ibm_is_image.rhel7]
+      - type: "ibm_is_floating_ip"
+        name: "satellite_ip"
+        description: "provision floating ip for satellite control plane hosts"
+        provider: "ibm"
+        dependent_on: [data.ibm_resource_group.resource_group, ibm_is_instance.satellite_instance]
+      - type: "ibm_is_floating_ip"
+        name: "satellite_cluster_ip"
+        description: "provision floating ip for satellite cluster hosts"
+        provider: "ibm"
+        dependent_on: [data.ibm_resource_group.resource_group, ibm_is_instance.satellite_cluster_instance]
+###################################
+# Data sources
+###################################
+    datasources:
+      - type: ibm_resource_group
+        name: "resource_group"
+        description: "resource group"
+        provider: "ibm"
+      - type: ibm_is_image
+        name: "rhel7"
+        description: "Retrieve information of an existing IBM Cloud Infrastructure image "
+        provider: "ibm"
+###################################
+# List of modules
+###################################
+    modules:
+      - name: "satellite-location"
+        id: "terraform-ibm-modules/satellite/ibm/1.8.0/modules/location"
+        source: "https://github.com/terraform-ibm-modules/terraform-ibm-satellite/tree/main/modules/location"
+        description: "Used to provision satellite location"
+      - name: "satellite-host"
+        id: "terraform-ibm-modules/satellite/ibm/1.8.0/modules/host"
+        source: "https://github.com/terraform-ibm-modules/terraform-ibm-satellite/tree/main/modules/host"
+        description: "Used to assign host to control plane cluster"
+      - name: "satellite-cluster"
+        id: "terraform-ibm-modules/satellite/ibm/1.8.0/modules/cluster"
+        source: "https://github.com/terraform-ibm-modules/terraform-ibm-satellite/tree/main/modules/cluster"
+        description: "Used to provision ROKS satellite cluster"
+      - name: "satellite-cluster-worker-pool"
+        id: "terraform-ibm-modules/satellite/ibm/1.8.0/modules/configure-cluster-worker-pool"
+        source: "https://github.com/terraform-ibm-modules/terraform-ibm-satellite/tree/main/modules/configure-cluster-worker-pool"
+        description: "Use to configure worker pool on existing ROKS satellite cluster"
+###################################
+# List of sub modules
+###################################
+submodules:
+  - path: "modules/location"
+    name: "location"
+    provider_dependencies:
+      - name: "ibm"
+        namepspace: "IBM-Cloud"
+        source: "IBM-Cloud/ibm"
+        version: "1.36.0"
+    inputs:
+      - name: "region"
+        type: string
+        is_required: false
+        default_value: "us-east"
+        description: "Region of the IBM Cloud account. Currently supported regions for satellite are us-east and eu-gb region"
+        example: "us-east"
+        is_sensitive: false
+        is_nullable: false
+        is_force_new: true
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "resource_group"
+        type: string
+        is_required: true
+        default_value: "default"
+        description: "Name of the resource group on which location has to be created"
+        example: "default"
+        is_sensitive: false
+        is_nullable: false
+        is_force_new: true
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "location"
+        type: string
+        is_required: true
+        default_value: "satellite-ibm"
+        description: "location name must begin and end with a letter and contain only letters, numbers, and - characters"
+        example: "satellite-ibm"
+        is_sensitive: false
+        related_to: ["location"]
+        is_nullable: false
+        is_force_new: false
+        regex: "^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$"
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "managed_from"
+        type: string
+        is_required: true
+        default_value: "wdc"
+        description: "The IBM Cloud region to manage your Satellite location from. Choose a region close to your on-prem data center for better performance"
+        example: "wdc"
+        is_sensitive: false
+        related_to: ["ibm_satellite_location"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "location_zones"
+        type: list(string)
+        is_required: false
+        default_value: false
+        description: "Allocate your hosts across these three zones"
+        example: ["us-east-1", "us-east-2", "us-east-3"]
+        is_sensitive: false
+        related_to: ["location"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "location_bucket"
+        type: string
+        is_required: false
+        description: "COS bucket name"
+        is_sensitive: false
+        related_to: ["satellite-location"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "is_location_exist"
+        type: bool
+        is_required: false
+        default_value: false
+        description: "Determines if the location has to be created or not"
+        example: false
+        is_sensitive: false
+        related_to: ["location"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: true
+        is_count_controller: true
+      - name: "host_labels"
+        type : list(string)
+        is_required: false
+        default_value: ["env:prod"]
+        description: "Labels to add to attach host script"
+        example: ["env:prod"]
+        is_sensitive: false
+        related_to: ["location", "host", "cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "host_provider"
+        type: string
+        is_required: false
+        default_value: "ibm"
+        description: "host provider name for downloading attach host script"
+        example: "ibm"
+        is_sensitive: false
+        related_to: ["location"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+    outputs:
+      - name: "location_id"
+        type : string
+        description : "location ID"
+        example: "qwdfrtyfg34ee"
+        is_sensitive: false
+        related_to: ["location"]
+      - name: "host_script"
+        type : string
+        description : "Downloads attach host scripts of location"
+        is_sensitive: false
+        related_to: ["location"]
+    resources:
+      - type: "ibm_satellite_location"
+        name: "create_location"
+        description: "provision satellite location"
+        provider: "ibm"
+        dependent_on: [data.ibm_resource_group.res_group]
+    datasources:
+      - type: ibm_resource_group
+        name: "res_group"
+        description: "resource group"
+        provider: "ibm"
+      - type: ibm_satellite_location
+        name: "location"
+        description: "satellite location"
+        provider: "ibm"
+      - type: ibm_satellite_attach_host_script
+        name: "script"
+        description: "Download attach host script for satellite location"
+        provider: "ibm"
+  ####################################
+  # host submodule
+  ####################################
+  - path: "modules/host"
+    name: "host"
+    provider_dependencies:
+      - name: "ibm"
+        namespace: ""
+        source: "IBM-Cloud/ibm"
+        version: ""
+    inputs:
+      - name: "location"
+        type: string
+        is_required: true
+        default_value: "satellite-ibm"
+        description: "location name must begin and end with a letter and contain only letters, numbers, and - characters"
+        example: "satellite-ibm"
+        is_sensitive: false
+        related_to: ["satellite-location"]
+        is_nullable: false
+        is_force_new: false
+        regex: "^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$"
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "location_zones"
+        type: list(string)
+        is_required: false
+        default_value: ["us-east-1", "us-east-2", "us-east-3"]
+        description: "Allocate your hosts across these three zones"
+        example: ["us-east-1", "us-east-2", "us-east-3"]
+        is_sensitive: false
+        related_to: ["ibm_satellite_host.host"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "host_labels"
+        type : list(string)
+        is_required: false
+        description: "Labels to add to attach host script"
+        is_sensitive: false
+        related_to: ["ibm_satellite_host.host"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "host_vms"
+        type: list(string)
+        is_required: false
+        description: "A list of hostnames to attach for setting up location control plane"
+        example: ["env:prod"]
+        is_sensitive: false
+        related_to: ["ibm_satellite_host.host"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "host_count"
+        type: number
+        is_required: true
+        default_value: 3
+        description: "The total number of ibm host assign to control plane"
+        example: 3
+        is_sensitive: false
+        related_to: ["ibm_satellite_host.host"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: true
+        is_count_controller: true
+      - name: "host_provider"
+        type: string
+        is_required: false
+        default_value: "ibm"
+        description: "host provider name for downloading attach host script"
+        example: "ibm"
+        is_sensitive: false
+        related_to: ["ibm_satellite_host.host"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+    resources:
+      - type: "ibm_satellite_host"
+        name: "assign_host"
+        description: "Assign host to control plane"
+        provider: "ibm"
+  ####################################
+  # cluster submodule
+  ####################################
+  - path: "modules/cluster"
+    name: "cluster"
+    provider_dependencies:
+      - name: "ibm"
+        namespace: ""
+        source: "IBM-Cloud/ibm"
+        version: ""
+    inputs:
+      - name: "create_cluster"
+        type: bool
+        is_required: false
+        default_value: true
+        description: "Create Cluster provision controller"
+        example: true
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: true
+        is_count_controller: true
+      - name: "cluster"
+        type: string
+        is_required: true
+        description: "Create Cluster"
+        example: "satellite-ibm-cluster"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster"]
+        is_nullable: true
+        is_force_new: false
+        regex: "^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$"
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "location"
+        type: string
+        is_required: true
+        description: "location name must begin and end with a letter and contain only letters, numbers, and - characters"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster"]
+        is_nullable: false
+        is_force_new: false
+        regex: "^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$"
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "zones"
+        type: list(string)
+        is_required: false
+        description: "Allocate your hosts across these three zones"
+        example: ["us-east-1", "us-east-2", "us-east-3"]
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "kube_version"
+        type: string
+        is_required: false
+        description: "Kube Version"
+        example: "4.7_openshift"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "host_labels"
+        type: list(string)
+        is_required: false
+        description: "Labels to add to attach host script"
+        example: ["env:prod"]
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "worker_count"
+        type: number
+        is_required: false
+        default_value: 1
+        description: "Worker Count for default pool"
+        example: 1
+        is_sensitive: false
+        related_to: ["cluster"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "wait_for_worker_update"
+        type: bool
+        is_required: false
+        default_value: true
+        description: "Wait for worker update"
+        example: true
+        is_sensitive: false
+        related_to: ["cluster"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "default_worker_pool_labels"
+        type: map(any)
+        is_required: false
+        description: "Label to add default worker pool"
+        is_sensitive: false
+        related_to: ["cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "tags"
+        type: list(string)
+        is_required: false
+        description: "List of tags associated with cluster"
+        is_sensitive: false
+        related_to: ["cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "create_timeout"
+        type : string
+        is_required: false
+        default_value: "10m"
+        description: "Timeout duration for create."
+        example: "10m"
+        is_sensitive: false
+        related_to: ["satellite-cluster","satellite-cluster-worker-pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "update_timeout"
+        type : string
+        is_required: false
+        default_value: "10m"
+        description: "Timeout duration for update."
+        example: "10m"
+        is_sensitive: false
+        related_to: ["satellite-cluster"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "delete_timeout"
+        type : string
+        is_required: false
+        default_value: "10m"
+        description: "Timeout duration for delete."
+        example: "10m"
+        is_sensitive: false
+        related_to: ["satellite-cluster","satellite-cluster-worker-pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+    outputs:
+      - name: "cluster_id"
+        type : string
+        description : "Cluster Id"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster.create_cluster"]
+      - name: "cluster_crn"
+        type : string
+        description : "Cluster CRN"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster.create_cluster"]
+      - name: "server_url"
+        type : string
+        description : "Cluster master server URL"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster.create_cluster"]
+      - name: "cluster_state"
+        type : string
+        description : "Cluster state"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster.create_cluster"]
+      - name: "cluster_status"
+        type : string
+        description : "Cluster status"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster.create_cluster"]
+      - name: "ingress_hostname"
+        type : string
+        description : "Cluster ingress hostname"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster.create_cluster"]
+    resources:
+      - type: "ibm_satellite_cluster"
+        name: "create_cluster"
+        description: "provision satellite ROKS cluster"
+        provider: "ibm"
+        dependent_on: [data.ibm_resource_group.rg_cluster]
+    datasources:
+      - type: "ibm_resource_group"
+        name: "rg_cluster"
+        description: "Get resource group information"
+        provider: "ibm"
+      - type: "ibm_satellite_cluster"
+        name: "read_cluster"
+        description: "Get satellite ROKS cluster information"
+        provider: "ibm"
+  ####################################
+  # configure-cluster-worker-pool submodule
+  ####################################
+  - path: "modules/configure-cluster-worker-pool"
+    name: "configure-cluster-worker-pool"
+    provider_dependencies:
+      - name: "ibm"
+        namespace: ""
+        source: "IBM-Cloud/ibm"
+        version: ""
+    inputs:
+      - name: "create_cluster_worker_pool"
+        type: bool
+        is_required: false
+        default_value: false
+        description: "Create Cluster worker pool"
+        example: false
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: true
+        is_count_controller: true
+      - name: "worker_pool_name"
+        type: string
+        is_required: true
+        description: "Workerpool name"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        regex: "^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$"
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "host_labels"
+        type: list(string)
+        is_required: true
+        description: "Labels to add to attach host script"
+        example: ["env:prod"]
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        regex: "^[a-zA-Z0-9:]+$"
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "resource_group"
+        type: string
+        is_required: true
+        description: "Name of the resource group on which cluster workerpool has to be created"
+        example: "default"
+        related_to: ["data.ibm_resource_group.rg_wp"]
+        is_sensitive: false
+        is_nullable: false
+        is_force_new: true
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "cluster"
+        type: string
+        is_required: true
+        description: "Create Cluster"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        regex: "^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$"
+        is_provision_controller: true
+        is_count_controller: false
+      - name: "kube_version"
+        type: string
+        is_required: true
+        description: "Kube Version"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "zones"
+        type: list(string)
+        is_required: true
+        description: "Allocate your hosts across these three zones"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "worker_count"
+        type: number
+        is_required: false
+        default_value: 1
+        description: "Worker Count for default pool"
+        example: 1
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: false
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "workerpool_labels"
+        type: list(string)
+        is_required: false
+        description: "workerpool labels"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "tags"
+        type: list(string)
+        is_required: false
+        description: "List of tags associated with cluster"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "entitlement"
+        type : string
+        is_required: false
+        default_value: false
+        description: "openshift cluster entitlement"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "disk_encryption"
+        type : string
+        is_required: false
+        description: "Disk encryption for worker node"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "isolation"
+        type : string
+        is_required: false
+        description: "Isolation for the worker node"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "flavor"
+        type : string
+        is_required: false
+        description: "Worker node flavor"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "create_timeout"
+        type : string
+        is_required: false
+        default_value: "10m"
+        description: "Timeout duration for create."
+        example: "10m"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+      - name: "delete_timeout"
+        type : string
+        is_required: false
+        default_value: "10m"
+        description: "Timeout duration for delete."
+        example: "10m"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+        is_nullable: true
+        is_force_new: false
+        is_provision_controller: false
+        is_count_controller: false
+    outputs:
+      - name: "worker_pool_id"
+        type : string
+        description : "Cluster workerpool ID"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+      - name: "worker_pool_zones"
+        type : list(string)
+        description : "Cluster workerpool zones"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+      - name: "worker_pool_worker_count"
+        type : number
+        description : "Cluster worker count per zone"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+      - name: "worker_pool_host_labels"
+        type : list(string)
+        description : "workerpool host labels"
+        is_sensitive: false
+        related_to: ["ibm_satellite_cluster_worker_pool"]
+    resources:
+      - type: "ibm_satellite_cluster_worker_pool"
+        name: "create_cluster_wp"
+        description: "provision workerpool to existing satellite cluster"
+        provider: "ibm"
+        dependent_on: [data.ibm_resource_group.rg_wp]
+    datasources:
+      - type: "ibm_resource_group"
+        name: "rg_wp"
+        description: "Get resource group information"
+        provider: "ibm"

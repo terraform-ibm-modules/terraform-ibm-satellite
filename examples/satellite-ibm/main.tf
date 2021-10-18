@@ -3,6 +3,13 @@
 # Copyright 2021 IBM
 #####################################################
 
+provider "ibm" {
+  region = var.ibm_region
+}
+
+###################################################################
+# Create satellite location
+###################################################################
 module "satellite-location" {
   //Uncomment following line to point the source to registry level module
   //source = "terraform-ibm-modules/satellite/ibm//modules/location"

@@ -2,7 +2,7 @@
 # IBMCLOUD Authentication and Target Variables.
 # The region variable is common across zones used to setup VSI Infrastructure and Satellite host.
 #################################################################################################
-variable "ibm_region" {
+variable "region" {
   description = "Region of the IBM Cloud account. Currently supported regions for satellite are us-east and eu-gb region."
   default     = "us-east"
 }
@@ -19,7 +19,7 @@ variable "location" {
   default     = "satellite-ibm"
 
   validation {
-    error_message = "Cluster name must begin and end with a letter and contain only letters, numbers, and - characters."
+    error_message = "Location name must begin and end with a letter and contain only letters, numbers, and - characters."
     condition     = can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.location))
   }
 }
@@ -33,7 +33,7 @@ variable "managed_from" {
 variable "location_zones" {
   description = "Allocate your hosts across these three zones"
   type        = list(string)
-  default     = ["us-east-1", "us-east-2", "us-east-3"]
+  default     = []
 }
 
 variable "location_bucket" {
@@ -108,7 +108,7 @@ variable "create_cluster" {
 }
 
 variable "cluster" {
-  description = "Satellite Location Name"
+  description = "Cluster Name"
   type        = string
   default     = "satellite-ibm-cluster"
 
@@ -119,8 +119,19 @@ variable "cluster" {
 }
 
 variable "kube_version" {
-  description = "Satellite Kube Version"
+  description = "Kube Version"
   default     = "4.7_openshift"
+}
+
+variable "cluster_host_labels" {
+  description = "Labels to add to attach host script"
+  type        = list(string)
+  default     = ["env:prod"]
+
+  validation {
+    condition     = can([for s in var.cluster_host_labels : regex("^[a-zA-Z0-9:]+$", s)])
+    error_message = "Label must be of the form `key:value`."
+  }
 }
 
 variable "worker_count" {
@@ -175,9 +186,9 @@ variable "create_cluster_worker_pool" {
 }
 
 variable "worker_pool_name" {
-  description = "Satellite Location Name"
+  description = "Workerpool name"
   type        = string
-  default     = "satellite-worker-pool"
+  default     = "tf-worker-pool"
 
   validation {
     error_message = "Cluster name must begin and end with a letter and contain only letters, numbers, and - characters."

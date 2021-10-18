@@ -22,7 +22,7 @@ resource "ibm_is_subnet" "satellite_subnet" {
   name                     = "${var.is_prefix}-subnet-${count.index}"
   vpc                      = ibm_is_vpc.satellite_vpc.id
   total_ipv4_address_count = 256
-  zone                     = "${var.ibm_region}-${count.index + 1}"
+  zone                     = "${var.region}-${count.index + 1}"
   resource_group           = data.ibm_resource_group.resource_group.id
 }
 
@@ -55,7 +55,7 @@ resource "ibm_is_instance" "satellite_instance" {
   depends_on     = [module.satellite-location.satellite_location]
   name           = "${var.is_prefix}-location-${count.index}"
   vpc            = ibm_is_vpc.satellite_vpc.id
-  zone           = element(local.zones, count.index)
+  zone           = element(local.location_zones, count.index)
   image          = data.ibm_is_image.rhel7.id
   profile        = var.location_profile
   keys           = [ibm_is_ssh_key.satellite_ssh.id]
@@ -72,7 +72,7 @@ resource "ibm_is_instance" "satellite_cluster_instance" {
   depends_on     = [module.satellite-location.satellite_location]
   name           = "${var.is_prefix}-cluster-${count.index}"
   vpc            = ibm_is_vpc.satellite_vpc.id
-  zone           = element(local.zones, count.index)
+  zone           = element(local.location_zones, count.index)
   image          = data.ibm_is_image.rhel7.id
   profile        = var.cluster_profile
   keys           = [ibm_is_ssh_key.satellite_ssh.id]
