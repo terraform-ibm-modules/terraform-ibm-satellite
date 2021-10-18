@@ -3,6 +3,9 @@
 # Copyright 2021 IBM
 #####################################################
 
+###################################################################
+# Assign host to satellite location control plane
+###################################################################
 module "satellite-host" {
   //Uncomment following line to point the source to registry level module
   //source = "terraform-ibm-modules/satellite/ibm//modules/host"

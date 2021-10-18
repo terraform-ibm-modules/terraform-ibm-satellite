@@ -21,10 +21,13 @@ jobs:
         name: setup terraform
         uses: hashicorp/setup-terraform@v1  # sets up Terraform CLI in your GitHub Actions workflow
         with:
-          terraform_version: 0.13.0
+          terraform_version: 0.13.1
       -
         name: Install pre-commit
         run: pip install pre-commit
+      -
+        name: Upgrade hooks
+        run: pre-commit autoupdate
       -
         name: Run pre-commit command
         run: pre-commit run -a

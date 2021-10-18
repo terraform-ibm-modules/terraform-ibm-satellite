@@ -13,14 +13,20 @@ import (
 func TestAccIBMSatelliteIBM(t *testing.T) {
 	t.Parallel()
 
-	// Unique name for an isnatnce so we can distinguish it from any other cos instances provisioned in your IBM account
+	// Unique name for an instance so we can distinguish it from any other cos instances provisioned in your IBM account
 	expectedLocationName := fmt.Sprintf("terratest-%s", strings.ToLower(random.UniqueId()))
 
 	// resource group
 	expectedResourceGroup := "default"
 
+	// region
+	expectedRegion := "us-east"
+
 	// is_prefix for resource name
 	expectedPrefix := fmt.Sprintf("terratest-ibm-%s", strings.ToLower(random.UniqueId()))
+
+	// Unique name for an instance so we can distinguish it from any other cos instances provisioned in your IBM account
+	expectedClusterName := fmt.Sprintf("terratest-cluster-%s", strings.ToLower(random.UniqueId()))
 
 	// Construct the terraform options with default retryable errors to handle the most common retryable errors in
 	// terraform testing.
@@ -30,9 +36,12 @@ func TestAccIBMSatelliteIBM(t *testing.T) {
 
 		// Variables to pass to our Terraform code using -var options
 		Vars: map[string]interface{}{
-			"location":       expectedLocationName,
-			"resource_group": expectedResourceGroup,
-			"is_prefix":      expectedPrefix,
+			"ibm_region":                 expectedRegion,
+			"location":                   expectedLocationName,
+			"resource_group":             expectedResourceGroup,
+			"is_prefix":                  expectedPrefix,
+			"cluster":                    expectedClusterName,
+			"create_cluster_worker_pool": true,
 		},
 	})
 
