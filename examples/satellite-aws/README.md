@@ -133,7 +133,7 @@ module "satellite-host" {
 | host_provider                         | The cloud provider of host/vms.                                   | string   | aws     | no       |
 | satellite_host_count                  | The total number of aws host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts   | number   | 3 |  yes     |
 | addl_host_count                       | The total number of additional aws host                            | number   | 0 |  yes     |
-| instance_type                         | The type of aws instance to start, satellite only accepts `m5d.2xlarge` or `m5d.4xlarge` as instance type.     | string   | m5d.2xlarge     | yes |
+| instance_type                         | The type of aws instance to create.     | string   | m5d.xlarge     | yes |
 | ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a     | no |
 | resource_prefix                       | Name to be used on all aws resources as prefix                        | string   | satellite-aws     | yes |
 
