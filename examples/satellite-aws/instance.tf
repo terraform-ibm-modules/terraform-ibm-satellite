@@ -6,7 +6,7 @@ data "aws_ami" "redhat_linux" {
     name = "name"
 
     values = [
-      "RHEL-7.7_HVM_GA-20190723-x86_64-1-Hourly2-GP2",
+      "RHEL-7.9_HVM_GA-20200917-x86_64-0-Hourly2-GP2",
     ]
   }
 }
