@@ -6,11 +6,11 @@ default_stages: [commit]
 # Terraform Validate : Validates the configuration files in a directory, referring only to the configuration and not accessing any remote services such as remote state, provider APIs, etc
 repos:
 - repo: git://github.com/antonbabenko/pre-commit-terraform
-  rev: v1.45.0
+  rev: v1.62.3
   hooks:
     - id: terraform_fmt
 - repo: git://github.com/pre-commit/pre-commit-hooks
-  rev: v3.4.0
+  rev: v4.1.0
   hooks:
       - id: check-merge-conflict
       - id: trailing-whitespace
@@ -20,7 +20,7 @@ repos:
   # You are encouraged to use static refs such as tags, instead of branch name
   #
   # Running "pre-commit autoupdate" would automatically updates rev to latest tag
-  rev: 0.13.1+ibm.46.dss
+  rev: 0.13.1+ibm.47.dss
   hooks:
     - id: detect-secrets # pragma: whitelist secret
       # Add options for detect-secrets-hook binary. You can run `detect-secrets-hook --help` to list out all possible options.
