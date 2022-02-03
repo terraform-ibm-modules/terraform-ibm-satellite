@@ -134,3 +134,10 @@ variable "resource_prefix" {
     error_message = "Sorry, please provide value for resource_prefix variable or check the length of resource_prefix it should be less than 25 chars."
   }
 }
+
+variable "aws_ami" {
+  description = "The AMI to use for ec2 instances"
+  type        = string
+  default     = "RHEL-7.9_HVM_GA-20200917-x86_64-0-Hourly2-GP2"
+}
+
