@@ -3,6 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
+      version = "=2.97.0"
     }
     ibm = {
       source = "ibm-cloud/ibm"
