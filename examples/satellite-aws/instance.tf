@@ -73,7 +73,8 @@ module "security_group" {
 }
 
 resource "aws_placement_group" "satellite-group" {
-  name     = "${var.resource_prefix}-pg"
+  for_each = var.hosts
+  name     = "${var.resource_prefix}-pg-${each.key}"
   strategy = "spread"
 
   tags = {
@@ -92,9 +93,10 @@ resource "tls_private_key" "example" {
 }
 
 resource "aws_key_pair" "keypair" {
+  for_each   = var.hosts
   depends_on = [module.satellite-location]
 
-  key_name   = "${var.resource_prefix}-ssh"
+  key_name   = "${var.resource_prefix}-ssh-${each.key}"
   public_key = var.ssh_public_key != null ? var.ssh_public_key : tls_private_key.example.public_key_openssh
 
   tags = {
@@ -108,21 +110,22 @@ module "ec2" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 2.21.0"
 
+  for_each = var.hosts
+
   depends_on                  = [module.satellite-location]
-  instance_count              = var.satellite_host_count + var.addl_host_count
-  name                        = "${var.resource_prefix}-host"
+  instance_count              = each.value.count
+  name                        = "${var.resource_prefix}-host-${each.key}"
   use_num_suffix              = true
   ami                         = data.aws_ami.redhat_linux.id
-  instance_type               = var.instance_type
-  key_name                    = aws_key_pair.keypair.key_name
+  instance_type               = each.value.instance_type
+  key_name                    = aws_key_pair.keypair[each.key].key_name
   subnet_ids                  = module.vpc.public_subnets
   vpc_security_group_ids      = [module.security_group.this_security_group_id]
   associate_public_ip_address = true
-  placement_group             = aws_placement_group.satellite-group.id
+  placement_group             = aws_placement_group.satellite-group[each.key].id
   user_data                   = module.satellite-location.host_script
 
   tags = {
     ibm-satellite = var.resource_prefix
   }
-
 }

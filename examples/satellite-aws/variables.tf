@@ -96,26 +96,38 @@ variable "host_provider" {
 ##################################################
 # AWS EC2 Variables
 ##################################################
-variable "satellite_host_count" {
-  description = "The total number of AWS host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts"
-  type        = number
-  default     = 3
-  validation {
-    condition     = (var.satellite_host_count % 3) == 0 && var.satellite_host_count > 0
-    error_message = "Sorry, host_count value should always be in multiples of 3, such as 6, 9, or 12 hosts."
+variable "hosts" {
+  description = "A map of AWS host objects used to create the location, including instance_type, for_control_plane and count. Control plane count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts."
+  type = map(
+    object(
+      {
+        instance_type     = string
+        count             = number
+        for_control_plane = bool
+      }
+    )
+  )
+  default = {
+    0 = {
+      instance_type     = "m5d.xlarge"
+      count             = 3
+      for_control_plane = true
+    }
   }
-}
 
-variable "addl_host_count" {
-  description = "The total number of additional aws host"
-  type        = number
-  default     = 0
-}
+  validation {
+    condition     = alltrue([for host in var.hosts : (host.count > 0)])
+    error_message = "All hosts must have a count of at least 1."
+  }
+  validation {
+    condition     = alltrue([for host in var.hosts : (host.count % 3 == 0) || !host.for_control_plane])
+    error_message = "Count value for all hosts with for_control_plane should always be in multiples of 3, such as 6, 9, or 12 hosts."
+  }
 
-variable "instance_type" {
-  description = "The type of aws instance to create"
-  type        = string
-  default     = "m5d.xlarge"
+  validation {
+    condition     = can([for host in var.hosts : host.instance_type])
+    error_message = "Each object should have an instance_type."
+  }
 }
 
 variable "ssh_public_key" {
