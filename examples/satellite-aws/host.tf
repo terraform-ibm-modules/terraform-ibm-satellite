@@ -7,7 +7,7 @@ module "satellite-host" {
   //Uncomment following line to point the source to registry level module
   //source = "terraform-ibm-modules/satellite/ibm//modules/host"
 
-  for_each = var.hosts
+  for_each = local.hosts
 
   source         = "../../modules/host"
   host_count     = each.value.for_control_plane ? each.value.count : 0

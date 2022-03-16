@@ -96,36 +96,56 @@ variable "host_provider" {
 ##################################################
 # AWS EC2 Variables
 ##################################################
-variable "hosts" {
-  description = "A map of AWS host objects used to create the location, including instance_type, for_control_plane and count. Control plane count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts."
-  type = map(
+variable "cp_hosts" {
+  description = "A map of AWS host objects used to create the location control plane, including instance_type and count. Control plane count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts."
+  type = list(
     object(
       {
-        instance_type     = string
-        count             = number
-        for_control_plane = bool
+        instance_type = string
+        count         = number
       }
     )
   )
-  default = {
-    0 = {
-      instance_type     = "m5d.xlarge"
-      count             = 3
-      for_control_plane = true
+  default = [
+    {
+      instance_type = "m5d.xlarge"
+      count         = 3
     }
-  }
+  ]
 
   validation {
-    condition     = alltrue([for host in var.hosts : (host.count > 0)])
+    condition     = alltrue([for host in var.cp_hosts : (host.count > 0)])
     error_message = "All hosts must have a count of at least 1."
   }
   validation {
-    condition     = alltrue([for host in var.hosts : (host.count % 3 == 0) || !host.for_control_plane])
-    error_message = "Count value for all hosts with for_control_plane should always be in multiples of 3, such as 6, 9, or 12 hosts."
+    condition     = alltrue([for host in var.cp_hosts : (host.count % 3 == 0)])
+    error_message = "Count value for all hosts should always be in multiples of 3, such as 6, 9, or 12 hosts."
   }
 
   validation {
-    condition     = can([for host in var.hosts : host.instance_type])
+    condition     = can([for host in var.cp_hosts : host.instance_type])
+    error_message = "Each object should have an instance_type."
+  }
+}
+
+variable "addl_hosts" {
+  description = "A list of AWS host objects used for provisioning services on your location after setup, including instance_type and count."
+  type = list(
+    object(
+      {
+        instance_type = string
+        count         = number
+      }
+    )
+  )
+  default = []
+  validation {
+    condition     = alltrue([for host in var.addl_hosts : (host.count > 0)])
+    error_message = "All hosts must have a count of at least 1."
+  }
+
+  validation {
+    condition     = can([for host in var.addl_hosts : host.instance_type])
     error_message = "Each object should have an instance_type."
   }
 }
