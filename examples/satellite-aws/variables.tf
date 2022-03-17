@@ -119,6 +119,7 @@ variable "instance_type" {
   nullable    = true
   default     = null
 }
+
 variable "cp_hosts" {
   description = "A map of AWS host objects used to create the location control plane, including instance_type and count. Control plane count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts."
   type = list(
