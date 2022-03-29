@@ -1,6 +1,6 @@
 locals {
   # combine cp_hosts and addl_hosts into a map so we can use for_each later
-  # support backwards compatibility with providing var.instance_type, satellite_host_count, and addl_host_count 
+  # support backwards compatibility with providing var.instance_type, satellite_host_count, and addl_host_count
   hosts = (var.satellite_host_count != null && var.addl_host_count != null && var.instance_type != null) ? {
     0 = {
       instance_type     = var.instance_type
