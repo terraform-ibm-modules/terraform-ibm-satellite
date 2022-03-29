@@ -100,7 +100,6 @@ variable "host_provider" {
 variable "satellite_host_count" {
   description = "The total number of AWS host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts"
   type        = number
-  # nullable    = true
   default     = null
   validation {
     condition     = var.satellite_host_count == null || ((can((var.satellite_host_count % 3) == 0)) && can(var.satellite_host_count > 0))
@@ -110,14 +109,12 @@ variable "satellite_host_count" {
 variable "addl_host_count" {
   description = "The total number of additional aws host"
   type        = number
-  # nullable    = true
   default     = null
 }
 
 variable "instance_type" {
   description = "The type of aws instance to create"
   type        = string
-  # nullable    = true
   default     = null
 }
 
