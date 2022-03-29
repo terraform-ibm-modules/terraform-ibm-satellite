@@ -96,6 +96,7 @@ variable "host_provider" {
 ##################################################
 # AWS EC2 Variables
 ##################################################
+
 variable "satellite_host_count" {
   description = "The total number of AWS host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts"
   type        = number
