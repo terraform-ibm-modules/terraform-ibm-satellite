@@ -7,8 +7,8 @@ data "ibm_resource_group" "resource_group" {
   name = var.resource_group
 }
 
-data "ibm_is_image" "rhel7" {
-  name = "ibm-redhat-7-9-minimal-amd64-3"
+data "ibm_is_image" "operating_system" {
+  name = var.os_image_name
 }
 
 resource "ibm_is_vpc" "satellite_vpc" {
@@ -56,7 +56,7 @@ resource "ibm_is_instance" "satellite_instance" {
   name           = "${var.is_prefix}-location-${count.index}"
   vpc            = ibm_is_vpc.satellite_vpc.id
   zone           = element(local.location_zones, count.index)
-  image          = data.ibm_is_image.rhel7.id
+  image          = data.ibm_is_image.operating_system.id
   profile        = var.location_profile
   keys           = [ibm_is_ssh_key.satellite_ssh.id]
   resource_group = data.ibm_resource_group.resource_group.id
@@ -73,7 +73,7 @@ resource "ibm_is_instance" "satellite_cluster_instance" {
   name           = "${var.is_prefix}-cluster-${count.index}"
   vpc            = ibm_is_vpc.satellite_vpc.id
   zone           = element(local.location_zones, count.index)
-  image          = data.ibm_is_image.rhel7.id
+  image          = data.ibm_is_image.operating_system.id
   profile        = var.cluster_profile
   keys           = [ibm_is_ssh_key.satellite_ssh.id]
   resource_group = data.ibm_resource_group.resource_group.id
