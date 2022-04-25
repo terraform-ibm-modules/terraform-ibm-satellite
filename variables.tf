@@ -97,6 +97,12 @@ variable "cluster_profile" {
   default     = "mx2-8x64"
 }
 
+variable "os_image_name" {
+  description = "The base operating system image for the hosts. Run `ibmcloud is images` to list available options."
+  type        = string
+  default     = "ibm-redhat-7-9-minimal-amd64-5"
+}
+
 ##################################################
 # IBMCLOUD ROKS Cluster Variables
 ##################################################
