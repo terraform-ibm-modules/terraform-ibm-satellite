@@ -2,7 +2,7 @@
 # make a tgz out of the terraform, modifying the paths to modules beforehand
 # --dirname - where to do the worker
 # --verison - version for the tgz name
-# --cloud - aws, azure, or gcp
+# --cloud - aws, azure, or gcp, ibm
 set -e
 
 while [[ "$#" -gt 0 ]]; do
@@ -45,8 +45,11 @@ case $CLOUD in
   gcp)
     CATALOG_NAME='satellite-gcp'
     ;;
+  ibm)
+    CATALOG_NAME='satellite-ibm'
+    ;;
   *)
-    echo "Unknown cloud type. Cloud choices are aws, azure, gcp."
+    echo "Unknown cloud type. Cloud choices are aws, azure, gcp, ibm."
     exit 1
     ;;
 esac

@@ -22,6 +22,8 @@ jobs:
           run: bash make-release-satellite.sh --dirname gh --version ${{ steps.tag_version.outputs.new_tag }} --cloud azure
         - name: Build gcp tgz
           run: bash make-release-satellite.sh --dirname gh --version ${{ steps.tag_version.outputs.new_tag }} --cloud gcp
+        - name: Build ibm tgz
+          run: bash make-release-satellite.sh --dirname gh --version ${{ steps.tag_version.outputs.new_tag }} --cloud ibm
         - name: Release
           uses: softprops/action-gh-release@v1
           with:
@@ -30,3 +32,4 @@ jobs:
                 releases/aws-*.tgz
                 releases/azure-*.tgz
                 releases/gcp-*.tgz
+                releases/ibm-*.tgz

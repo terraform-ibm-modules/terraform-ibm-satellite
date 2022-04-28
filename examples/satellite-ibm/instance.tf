@@ -58,7 +58,7 @@ resource "ibm_is_instance" "satellite_instance" {
   zone           = element(local.zones, count.index)
   image          = data.ibm_is_image.rhel7.id
   profile        = var.location_profile
-  keys           = [ibm_is_ssh_key.satellite_ssh.id]
+  keys           = [var.ssh_key_id || ibm_is_ssh_key.satellite_ssh.id]
   resource_group = data.ibm_resource_group.resource_group.id
   user_data      = module.satellite-location.host_script
 
