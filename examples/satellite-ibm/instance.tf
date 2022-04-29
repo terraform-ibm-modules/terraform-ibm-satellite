@@ -47,7 +47,7 @@ resource "ibm_is_ssh_key" "satellite_ssh" {
   count          = var.ssh_key_id ? 0 : 1
   name           = "${var.is_prefix}-ssh"
   resource_group = data.ibm_resource_group.resource_group.id
-  public_key     = var.public_key != null ? var.public_key : tls_private_key.example.public_key_openssh
+  public_key     = var.public_key != null ? var.public_key : tls_private_key.example[0].public_key_openssh
 }
 
 resource "ibm_is_instance" "satellite_instance" {
@@ -59,7 +59,7 @@ resource "ibm_is_instance" "satellite_instance" {
   zone           = element(local.zones, count.index)
   image          = data.ibm_is_image.rhel7.id
   profile        = var.location_profile
-  keys           = [var.ssh_key_id || ibm_is_ssh_key.satellite_ssh.id]
+  keys           = [var.ssh_key_id || ibm_is_ssh_key.satellite_ssh[0].id]
   resource_group = data.ibm_resource_group.resource_group.id
   user_data      = module.satellite-location.host_script
 
