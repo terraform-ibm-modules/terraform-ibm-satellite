@@ -37,14 +37,14 @@ module "default_sg_rules" {
 }
 
 resource "tls_private_key" "example" {
-  count     = var.ssh_key_id ? 0 : 1
+  count     = var.ssh_key_id == null ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
 resource "ibm_is_ssh_key" "satellite_ssh" {
   depends_on     = [module.satellite-location]
-  count          = var.ssh_key_id ? 0 : 1
+  count          = var.ssh_key_id == null ? 1 : 0
   name           = "${var.is_prefix}-ssh"
   resource_group = data.ibm_resource_group.resource_group.id
   public_key     = var.public_key != null ? var.public_key : tls_private_key.example[0].public_key_openssh
