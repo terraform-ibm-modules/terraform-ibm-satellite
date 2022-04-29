@@ -66,11 +66,6 @@ module "network-security-group" {
   depends_on = [data.azurerm_resource_group.resource_group]
 }
 
-
-locals {
-  zones = [1, 2, 3]
-}
-
 # module to create vpc, subnets and attach security group to subnet
 module "vnet" {
   depends_on          = [data.azurerm_resource_group.resource_group]
@@ -94,14 +89,14 @@ module "vnet" {
 // Creates network interface for the subnets that are been created
 resource "azurerm_network_interface" "az_nic" {
   depends_on          = [data.azurerm_resource_group.resource_group]
-  count               = var.satellite_host_count + var.addl_host_count
-  name                = "${var.az_resource_prefix}-nic-${count.index}"
+  for_each            = local.hosts_flattened
+  name                = "${var.az_resource_prefix}-nic-${each.key}"
   resource_group_name = data.azurerm_resource_group.resource_group.name
   location            = data.azurerm_resource_group.resource_group.location
 
   ip_configuration {
     name                          = "${var.az_resource_prefix}-nic-internal"
-    subnet_id                     = element(module.vnet.vnet_subnets, count.index)
+    subnet_id                     = element(module.vnet.vnet_subnets, each.key)
     private_ip_address_allocation = "Dynamic"
     primary                       = true
   }
@@ -118,16 +113,16 @@ resource "tls_private_key" "rsa_key" {
 // Creates Linux Virtual Machines and attaches host to the location..
 resource "azurerm_linux_virtual_machine" "az_host" {
   depends_on            = [data.azurerm_resource_group.resource_group, module.satellite-location]
-  count                 = var.satellite_host_count + var.addl_host_count
-  name                  = "${var.az_resource_prefix}-vm-${count.index}"
+  for_each              = local.hosts_flattened
+  name                  = "${var.az_resource_prefix}-vm-${each.key}"
   resource_group_name   = data.azurerm_resource_group.resource_group.name
   location              = data.azurerm_resource_group.resource_group.location
-  size                  = var.instance_type
+  size                  = each.value.instance_type
   admin_username        = "adminuser"
   custom_data           = base64encode(module.satellite-location.host_script)
-  network_interface_ids = [azurerm_network_interface.az_nic[count.index].id]
+  network_interface_ids = [azurerm_network_interface.az_nic[each.key].id]
 
-  zone = element(local.zones, count.index)
+  zone = each.value.zone
   admin_ssh_key {
     username   = "adminuser"
     public_key = var.ssh_public_key != null ? var.ssh_public_key : tls_private_key.rsa_key.0.public_key_openssh
@@ -145,20 +140,20 @@ resource "azurerm_linux_virtual_machine" "az_host" {
   }
 }
 resource "azurerm_managed_disk" "data_disk" {
-  count                = var.satellite_host_count + var.addl_host_count
-  name                 = "${var.az_resource_prefix}-disk-${count.index}"
+  for_each             = local.hosts_flattened
+  name                 = "${var.az_resource_prefix}-disk-${each.key}"
   location             = data.azurerm_resource_group.resource_group.location
   resource_group_name  = data.azurerm_resource_group.resource_group.name
   storage_account_type = "Premium_LRS"
   create_option        = "Empty"
   disk_size_gb         = 128
-  zones                = [element(local.zones, count.index)]
+  zones                = [each.value.zone]
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "disk_attach" {
-  count              = var.satellite_host_count + var.addl_host_count
-  managed_disk_id    = azurerm_managed_disk.data_disk[count.index].id
-  virtual_machine_id = azurerm_linux_virtual_machine.az_host[count.index].id
+  for_each           = local.hosts_flattened
+  managed_disk_id    = azurerm_managed_disk.data_disk[each.key].id
+  virtual_machine_id = azurerm_linux_virtual_machine.az_host[each.key].id
   lun                = "10"
   caching            = "ReadWrite"
 }
