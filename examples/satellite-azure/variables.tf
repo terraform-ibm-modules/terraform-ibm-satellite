@@ -59,6 +59,10 @@ variable "az_resource_prefix" {
   description = "Name to be used on all azure resources as prefix"
   type        = string
   default     = "satellite-azure"
+  validation {
+    condition     = can(regex("^[a-z0-9-]+$", var.az_resource_prefix))
+    error_message = "Variable az_resource_prefix should always be lowercase alphanumeric, and may contain hyphens."
+  }
 }
 variable "ssh_public_key" {
   description = "SSH Public Key. Get your ssh key by running `ssh-key-gen` command"
