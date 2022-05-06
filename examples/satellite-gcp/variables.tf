@@ -36,8 +36,8 @@ variable "gcp_resource_prefix" {
   default     = "satellite-google"
 
   validation {
-    condition     = can(regex("^[a-z0-9-]{1,25}$", var.gcp_resource_prefix))
-    error_message = "Sorry, gcp_resource_prefix must be between 1 and 25 characters, contain lowercase characters, numbers, or hyphens."
+    condition     = can(regex("^[a-zA-Z0-9-]{1,25}$", var.gcp_resource_prefix))
+    error_message = "Sorry, gcp_resource_prefix must be between 1 and 25 characters, contain uppercase or lowercase characters, numbers, or hyphens."
   }
 }
 variable "satellite_host_count" {
