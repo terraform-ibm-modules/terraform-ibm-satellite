@@ -138,10 +138,6 @@ variable "addl_hosts" {
     error_message = "Each object should have an instance_type."
   }
 
-  validation {
-    condition     = ! contains([for host in var.addl_hosts : (host.count % 3 == 0)], false)
-    error_message = "Count value for all hosts should always be in multiples of 3, such as 6, 9, or 12 hosts."
-  }
 }
 
 # ##################################################
