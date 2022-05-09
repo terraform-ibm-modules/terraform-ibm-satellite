@@ -85,6 +85,12 @@ variable "public_key" {
   default     = null
 }
 
+variable "ssh_key_id" {
+  description = "ID of SSH public key stored in IBM Cloud"
+  type        = string
+  default     = null
+}
+
 variable "location_profile" {
   description = "Profile information of location hosts"
   type        = string
