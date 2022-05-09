@@ -140,19 +140,21 @@ module "satellite-host" {
 | tenant_id                             | Tenent id of Azure Account                                        | string   | n/a     | yes   |
 | client_secret                         | Client Secret of Azure Account                                    | string   | n/a     | yes      |
 | is_az_resource_group_exist            | "If false, resource group (az_resource_group) will be created. If true, existing resource group (az_resource_group) will be read"| bool   | false  | yes   |
-| az_resource_group                     | Azure Resource Group                                              | string  | satellite-azure  | yes   |
-| az_region                             | Azure Region                                                      | string   | eastus  | yes   |
-| location                              | Name of the Location that has to be created                       | string   | satellite-azure | yes   |
-| is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | yes      |
-| managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc   | yes      |
+| az_resource_group                     | Azure Resource Group                                              | string   | satellite-azure  | yes   |
+| az_region                             | Azure Region                                                      | string   | eastus           | yes   |
+| location                              | Name of the Location that has to be created                       | string   | satellite-azure  | yes   |
+| is_location_exist                     | Determines if the location has to be created or not               | bool     | false            | yes   |
+| managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc              | yes   |
 | location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | ["us-east-1", "us-east-2", "us-east-3"]    | yes      |
-| host_labels                                | Add labels to attach host script                                  | list     | [env:prod]  | no   |
-| location_bucket                       | COS bucket name                                                   | string   | n/a     | no       |
-| az_resource_prefix                       | Name to be used on all azure resources as prefix                        | string   | satellite-azure     | yes |
-| satellite_host_count                  | The total number of azure host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts                 | number   | 3 |  yes     |
-| addl_host_count                       | The total number of additional azure host                            | number   | 0 |  yes     |
-|instance_type|The type of azure instance to start|string|Standard_D4s_v3|yes|
-| ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a     | no |
+| host_labels                           | Add labels to attach host script                                  | list     | [env:prod]       | no    |
+| location_bucket                       | COS bucket name                                                   | string   | n/a              | no    |
+| az_resource_prefix                    | Name to be used on all azure resources as prefix                  | string   | satellite-azure  | yes   |
+| satellite_host_count                  | [Deprecated] The total number of azure host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts                 | number   | null |  no     |
+| addl_host_count                       | [Deprecated] The total number of additional azure host            | number   | null             | no    |
+| instance_type                         | [Deprecated] The type of azure instance to start                  | string   | null             | no    |
+| cp_hosts                              | A list of Azure host objects used to create the location control plane, including parameters instance_type and count. Control plane count values should always be in multipes of 3, such as 3, 6, 9, or 12 hosts.                  | list   | [<br>&ensp; {<br>&ensp;&ensp; instance_type = "Standard_D4as_v4"<br>&ensp; count         = 3<br>&ensp;&ensp; }<br>]             | yes    |
+| addl_hosts                            | A list of Azure host objects used for provisioning services on your location after setup, including instance_type and count, see cp_hosts for an example.                  | list   | []             | yes    |
+| ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a              | no    |
 
 
 ## Outputs

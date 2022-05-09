@@ -56,7 +56,7 @@ variable "ibm_resource_group" {
 # ##################################################
 
 variable "az_resource_prefix" {
-  description = "Name to be used on all azure resources as prefix"
+  description = "Name to be used on all Azure resources as prefix"
   type        = string
   default     = "satellite-azure"
 }
@@ -66,23 +66,78 @@ variable "ssh_public_key" {
   default     = null
 }
 variable "instance_type" {
-  description = "The type of azure instance to start"
+  description = "The type of Azure instance to start"
   type        = string
-  default     = "Standard_D4s_v3"
+  default     = null
 }
 variable "satellite_host_count" {
   description = "The total number of Azure host to create for control plane. "
   type        = number
-  default     = 3
+  default     = null
   validation {
-    condition     = (var.satellite_host_count % 3) == 0 && var.satellite_host_count > 0
+    condition     = var.satellite_host_count == null || ((can((var.satellite_host_count % 3) == 0)) && can(var.satellite_host_count > 0))
     error_message = "Sorry, host_count value should always be in multiples of 3, such as 6, 9, or 12 hosts."
   }
 }
 variable "addl_host_count" {
-  description = "The total number of additional azure vm's"
+  description = "The total number of additional Azure vms"
   type        = number
-  default     = 0
+  default     = null
+}
+
+variable "cp_hosts" {
+  description = "A map of Azure host objects used to create the location control plane, including instance_type and count. Control plane count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts."
+  type = list(
+    object(
+      {
+        instance_type = string
+        count         = number
+      }
+    )
+  )
+  default = [
+    {
+      instance_type = "Standard_D4as_v4"
+      count         = 3
+    }
+  ]
+
+  validation {
+    condition     = ! contains([for host in var.cp_hosts : (host.count > 0)], false)
+    error_message = "All hosts must have a count of at least 1."
+  }
+  validation {
+    condition     = ! contains([for host in var.cp_hosts : (host.count % 3 == 0)], false)
+    error_message = "Count value for all hosts should always be in multiples of 3, such as 6, 9, or 12 hosts."
+  }
+
+  validation {
+    condition     = can([for host in var.cp_hosts : host.instance_type])
+    error_message = "Each object should have an instance_type."
+  }
+}
+
+variable "addl_hosts" {
+  description = "A list of Azure host objects used for provisioning services on your location after setup, including instance_type and count."
+  type = list(
+    object(
+      {
+        instance_type = string
+        count         = number
+      }
+    )
+  )
+  default = []
+  validation {
+    condition     = ! contains([for host in var.addl_hosts : (host.count > 0)], false)
+    error_message = "All hosts must have a count of at least 1."
+  }
+
+  validation {
+    condition     = can([for host in var.addl_hosts : host.instance_type])
+    error_message = "Each object should have an instance_type."
+  }
+
 }
 
 # ##################################################
