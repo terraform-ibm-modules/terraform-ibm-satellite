@@ -1,0 +1,8 @@
+# The settings are inherited from common repository repo-settings (same file name and location)
+# You can append settings that are deeply-merged with the inherited settings.
+#
+# When you have installed the GitHub App "repo-settings" in this repository,
+# any change of this settings.yml file is detected by the GitHub App and
+# the settings of this repository are updated immediately.
+#
+_extends: repo-settings
