@@ -141,7 +141,6 @@ variable "addl_hosts" {
     condition     = can([for host in var.addl_hosts : host.instance_type])
     error_message = "Each object should have an instance_type."
   }
-
 }
 
 # ##################################################

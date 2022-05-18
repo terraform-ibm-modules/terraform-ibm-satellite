@@ -158,9 +158,11 @@ module "satellite-host" {
 | host_labels                                | Add labels to attach host script                                  | list     | [env:prod]  | no   |
 | location_bucket                       | COS bucket name                                                   | string   | n/a     | no       |
 | gcp_resource_prefix                       | Name to be used on all google resources as prefix                        | string   | satellite-google     | yes |
-| satellite_host_count                  | The total number of google hosts to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts | number   | 3 |  yes     |
-| addl_host_count                       | The total number of additional google hosts                          | number   | 0 |  no    |
-|instance_type|The type of google instance to start|string|`"n2-standard-4"`|yes|
+| satellite_host_count                  | [Deprecated] The total number of google host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts                 | number   | null |  no     |
+| addl_host_count                       | [Deprecated] The total number of additional google host            | number   | null             | no    |
+| instance_type                         | [Deprecated] The type of google instance to start                  | string   | null             | no    |
+| cp_hosts                              | A list of GCP host objects used to create the location control plane, including parameters instance_type and count. Control plane count values should always be in multipes of 3, such as 3, 6, 9, or 12 hosts.                  | list   | [<br>&ensp; {<br>&ensp;&ensp; instance_type = "n2-standard-4"<br>&ensp; count         = 3<br>&ensp;&ensp; }<br>]             | yes    |
+| addl_hosts                            | A list of GCP host objects used for provisioning services on your location after setup, including instance_type and count, see cp_hosts for an example.                  | list   | []             | yes    |
 | ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a     | no |
 | gcp_ssh_user                        | "SSH User of above provided ssh_public_key" | string   | n/a     | no |
 

@@ -102,6 +102,7 @@ resource "tls_private_key" "rsa_key" {
   rsa_bits  = 4096
 }
 module "gcp_host-template" {
+  for_each   = local.hosts
   source     = "terraform-google-modules/vm/google//modules/instance_template"
   version    = "6.5.0"
   project_id = var.gcp_project
@@ -118,7 +119,7 @@ module "gcp_host-template" {
     startup-script = module.satellite-location.host_script
   }
   # startup_script=module.satellite-location.host_script
-  machine_type         = var.instance_type
+  machine_type         = each.value.instance_type
   can_ip_forward       = false
   source_image_project = "rhel-cloud"
   source_image_family  = "rhel-7"
@@ -136,14 +137,15 @@ module "gcp_host-template" {
   depends_on      = [module.satellite-location, module.gcp_firewall-rules]
 }
 module "gcp_hosts" {
+  for_each           = local.hosts
   source             = "terraform-google-modules/vm/google//modules/compute_instance"
   region             = var.gcp_region
   network            = module.gcp_network.network_name
   subnetwork_project = var.gcp_project
   subnetwork         = module.gcp_subnets.subnets["${var.gcp_region}/${var.gcp_resource_prefix}-subnet"].self_link
-  num_instances      = var.satellite_host_count + var.addl_host_count
+  num_instances      = each.value.count
   hostname           = "${var.gcp_resource_prefix}-host"
-  instance_template  = module.gcp_host-template.self_link
+  instance_template  = module.gcp_host-template[each.key].self_link
   access_config = [{
     nat_ip       = null
     network_tier = "PREMIUM"
