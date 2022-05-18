@@ -43,21 +43,74 @@ variable "gcp_resource_prefix" {
 variable "satellite_host_count" {
   description = "The total number of GCP host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts"
   type        = number
-  default     = 3
+  default     = null
   validation {
-    condition     = (var.satellite_host_count % 3) == 0 && var.satellite_host_count > 0
+    condition     = var.satellite_host_count == null || ((can((var.satellite_host_count % 3) == 0)) && can(var.satellite_host_count > 0))
     error_message = "Sorry, host_count value should always be in multiples of 3, such as 6, 9, or 12 hosts."
   }
 }
 variable "addl_host_count" {
   description = "The total number of additional gcp host"
   type        = number
-  default     = 0
+  default     = null
 }
 variable "instance_type" {
   description = "The type of gcp instance to start."
   type        = string
-  default     = "n2-standard-4"
+  default     = null
+}
+variable "cp_hosts" {
+  description = "A map of GCP host objects used to create the location control plane, including instance_type and count. Control plane count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts."
+  type = list(
+    object(
+      {
+        instance_type = string
+        count         = number
+      }
+    )
+  )
+  default = [
+    {
+      instance_type = "n2-standard-4"
+      count         = 3
+    }
+  ]
+
+  validation {
+    condition     = ! contains([for host in var.cp_hosts : (host.count > 0)], false)
+    error_message = "All hosts must have a count of at least 1."
+  }
+  validation {
+    condition     = ! contains([for host in var.cp_hosts : (host.count % 3 == 0)], false)
+    error_message = "Count value for all hosts should always be in multiples of 3, such as 6, 9, or 12 hosts."
+  }
+
+  validation {
+    condition     = can([for host in var.cp_hosts : host.instance_type])
+    error_message = "Each object should have an instance_type."
+  }
+}
+
+variable "addl_hosts" {
+  description = "A list of GCP host objects used for provisioning services on your location after setup, including instance_type and count."
+  type = list(
+    object(
+      {
+        instance_type = string
+        count         = number
+      }
+    )
+  )
+  default = []
+  validation {
+    condition     = ! contains([for host in var.addl_hosts : (host.count > 0)], false)
+    error_message = "All hosts must have a count of at least 1."
+  }
+
+  validation {
+    condition     = can([for host in var.addl_hosts : host.instance_type])
+    error_message = "Each object should have an instance_type."
+  }
 }
 variable "ssh_public_key" {
   description = "SSH Public Key. Get your ssh key by running `ssh-key-gen` command"
