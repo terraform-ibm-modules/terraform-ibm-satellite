@@ -144,7 +144,7 @@ module "gcp_hosts" {
   subnetwork_project = var.gcp_project
   subnetwork         = module.gcp_subnets.subnets["${var.gcp_region}/${var.gcp_resource_prefix}-subnet"].self_link
   num_instances      = each.value.count
-  hostname           = "${var.gcp_resource_prefix}-host"
+  hostname           = "${var.gcp_resource_prefix}-host-${each.key}"
   instance_template  = module.gcp_host-template[each.key].self_link
   access_config = [{
     nat_ip       = null
