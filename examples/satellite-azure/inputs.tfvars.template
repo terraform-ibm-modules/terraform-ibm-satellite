@@ -13,13 +13,11 @@ tenant_id       = ""
 client_secret   = ""
 subscription_id = ""
 
-# Standard_D16ds_v4: 16 vCPU - 64 GB AM
-instance_type = "Standard_D16ds_v4"
-
 
 ##############################################################################
 ## Satellite Variables
 ##############################################################################
+location       = "satellite-azure"
 managed_from   = "wdc"
 location_zones = ["eastus-1", "eastus-2", "eastus-3"]
 
@@ -34,6 +32,7 @@ create_cluster = false
 addl_hosts = [
     {
         instance_type = "Standard_D4as_v4"
+        # instance_type = "Standard_D16ds_v4"     # 16 vCPU - 64 GB AM
         count         = 3
     }
 ]
