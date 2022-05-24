@@ -76,7 +76,7 @@ variable "instance_type" {
 variable "satellite_host_count" {
   description = "The total number of Azure host to create for control plane. "
   type        = number
-  default     = 3
+  default     = null
   validation {
     condition     = var.satellite_host_count == null || ((can((var.satellite_host_count % 3) == 0)) && can(var.satellite_host_count > 0))
     error_message = "Sorry, host_count value should always be in multiples of 3, such as 6, 9, or 12 hosts."
