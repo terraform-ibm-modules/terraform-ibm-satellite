@@ -1,12 +1,3 @@
-#################################################################################################
-# IBM CLOUD Authentication and Target Variables.
-#################################################################################################
-
-variable "resource_group" {
-  description = "Name of the resource group on which location has to be created"
-  default     = "dev"
-}
-
 # ##################################################
 # # Azure and IBM Authentication Variables
 # ##################################################
@@ -246,22 +237,22 @@ variable "default_worker_pool_labels" {
 variable "tags" {
   description = "List of tags associated with cluster."
   type        = list(string)
-  default     = ["tf", "azure"]
+  default     = ["tf", "openshift"]
 }
 
-variable "create_timeout" {
+variable "cluster_create_timeout" {
   type        = string
   description = "Timeout duration for create."
   default     = null
 }
 
-variable "update_timeout" {
+variable "cluster_update_timeout" {
   type        = string
   description = "Timeout duration for update."
   default     = null
 }
 
-variable "delete_timeout" {
+variable "cluster_delete_timeout" {
   type        = string
   description = "Timeout duration for delete."
   default     = null

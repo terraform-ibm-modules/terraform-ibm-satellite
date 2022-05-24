@@ -3,7 +3,7 @@
 ##############################################################################
 # Set the variable export TF_VAR_ibmcloud_api_key=
 #ibmcloud_api_key = ""
-
+ibm_resource_group = "default"
 
 ##############################################################################
 ## Azure Variables
@@ -28,5 +28,12 @@ location_zones = ["eastus-1", "eastus-2", "eastus-3"]
 ## ROKS Cluster
 ##############################################################################
 
+create_cluster = false
+
 # Total number of worker nodes for cluster
-addl_host_count = 3
+addl_hosts = [
+    {
+        instance_type = "Standard_D4as_v4"
+        count         = 3
+    }
+]
