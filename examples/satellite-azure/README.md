@@ -177,6 +177,8 @@ module "satellite-host" {
 | cp_hosts                              | A list of Azure host objects used to create the location control plane, including parameters instance_type and count. Control plane count values should always be in multipes of 3, such as 3, 6, 9, or 12 hosts.                  | list   | [<br>&ensp; {<br>&ensp;&ensp; instance_type = "Standard_D4as_v4"<br>&ensp; count         = 3<br>&ensp;&ensp; }<br>]             | yes    |
 | addl_hosts                            | A list of Azure host objects used for provisioning services on your location after setup, including instance_type and count, see cp_hosts for an example.                  | list   | []             | yes    |
 | ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a              | no    |
+| create_cluster                        | If true, cluster will be provisioned. | bool   | false              | true    |
+
 
 ## Outputs
 
