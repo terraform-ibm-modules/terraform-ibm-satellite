@@ -177,8 +177,19 @@ module "satellite-host" {
 | cp_hosts                              | A list of Azure host objects used to create the location control plane, including parameters instance_type and count. Control plane count values should always be in multipes of 3, such as 3, 6, 9, or 12 hosts.                  | list   | [<br>&ensp; {<br>&ensp;&ensp; instance_type = "Standard_D4as_v4"<br>&ensp; count         = 3<br>&ensp;&ensp; }<br>]             | yes    |
 | addl_hosts                            | A list of Azure host objects used for provisioning services on your location after setup, including instance_type and count, see cp_hosts for an example.                  | list   | []             | yes    |
 | ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a              | no    |
-| create_cluster                        | If true, cluster will be provisioned. | bool   | false              | true    |
-
+| cluster_profile                       | Profile information of cluster hosts                              | string   | mx2-8x64| no       |
+| create_cluster                        | Create cluster Disable this, not to provision cluster             | bool     | true    | no       |
+| cluster                               | Name of the ROKS Cluster that has to be created                   | string   | satellite-azure-cluster     | no      |
+| zones                         | Allocate your hosts across these three zones                      | set      | n/a     | no      |
+| kube_version                          | Kuber version                                                     | string   | 4.10.9_openshift | no |
+| workerpool_labels                     | Labels on the worker pool                                         | map      | n/a     | no       |
+| tags                          | List of tags for the cluster resource                             | list     | n/a     | no       |
+| create_cluster_worker_pool            | Create Cluster worker pool                                        | bool     | false   | no       |
+| worker_pool_name                      | Worker pool name                                                  | string   | satellite-worker-pool     | no       |
+| workerpool_labels                     | Labels on the worker pool                                         | map      | n/a     | no       |
+| create_timeout                        | Timeout duration for creation                                     | string   | n/a     | no       |
+| update_timeout                        | Timeout duration for updation                                     | string   | n/a     | no       |
+| delete_timeout                        | Timeout duration for deletion                                     | string   | n/a     | no       |
 
 ## Outputs
 
