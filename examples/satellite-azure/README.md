@@ -53,35 +53,35 @@ terraform {
 
 1. Create a copy of tfvars file.
 
-```
-cp inputs.tfvars.template inputs.tfvars
-```
+    ```
+    cp inputs.tfvars.template inputs.tfvars
+    ```
 
 1. Edit it with your own variable definitions
 
 1. Initialize the terraform modules.
 
-```
-terraform init
-```
+    ```
+    terraform init
+    ```
 
 1. Create an execution plan.
 
-```
-terraform plan -var-file="inputs.tfvars"
-```
+    ```
+    terraform plan -var-file="inputs.tfvars"
+    ```
 
 1. Execute the terraform plan.
 
-```
-terraform apply -var-file="inputs.tfvars"
-```
+    ```
+    terraform apply -var-file="inputs.tfvars"
+    ```
 
 1. Destroy the resources.
 
-```
-terraform destroy -var-file="inputs.tfvars"
-```
+    ```
+    terraform destroy -var-file="inputs.tfvars"
+    ```
 
 ## Example Usage
 
@@ -167,7 +167,7 @@ module "satellite-host" {
 | location                              | Name of the Location that has to be created                       | string   | satellite-azure  | yes   |
 | is_location_exist                     | Determines if the location has to be created or not               | bool     | false            | yes   |
 | managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc              | yes   |
-| location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | ["us-east-1", "us-east-2", "us-east-3"]    | yes      |
+| location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | ["eastus-1", "eastus-2", "eastus-3"]    | yes      |
 | host_labels                           | Add labels to attach host script                                  | list     | [env:prod]       | no    |
 | location_bucket                       | COS bucket name                                                   | string   | n/a              | no    |
 | az_resource_prefix                    | Name to be used on all azure resources as prefix                  | string   | satellite-azure  | yes   |
