@@ -29,6 +29,7 @@ location_zones = ["eastus-1", "eastus-2", "eastus-3"]
 ##############################################################################
 
 create_cluster = false
+create_cluster_worker_pool = false
 
 # Total number of worker nodes for cluster
 addl_hosts = [
