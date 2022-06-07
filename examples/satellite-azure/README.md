@@ -5,7 +5,7 @@ Use this terrafrom automation to set up satellite location on IBM cloud with Azu
 This example cover end-to-end functionality of IBM cloud satellite by creating satellite location on specified zone.
 It will provision Azure host and assign it to setup location control plane.
 
-### Example uses below 3 terraform modules to set up the satellite on Azure
+## Example uses below 3 terraform modules to set up the satellite on Azure
 
 1. [satellite-location](main.tf) This module `creates satellite location` for the specified zone|location|region and `generates script` named addhost.sh in the home directory.
 1. [azurerm_linux_virtual_machine](instance.tf) This resouurce will provision Azure linux virtual machine instance, uses the generated script in module as `custom_data` and runs the script. At this stage all the VMs that has run addhost.sh will be attached to the satellite location and will be in unassigned state.
@@ -178,7 +178,7 @@ module "satellite-host" {
 | addl_hosts                            | A list of Azure host objects used for provisioning services on your location after setup, including instance_type and count, see cp_hosts for an example.                  | list   | []             | yes    |
 | ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a              | no    |
 | cluster_profile                       | Profile information of cluster hosts                              | string   | mx2-8x64| no       |
-| create_cluster                        | Create cluster Disable this, not to provision cluster             | bool     | true    | no       |
+| create_cluster                        | Create cluster Disable this, not to provision cluster             | bool     | false    | no       |
 | cluster                               | Name of the ROKS Cluster that has to be created                   | string   | satellite-azure-cluster     | no      |
 | zones                         | Allocate your hosts across these three zones                      | set      | n/a     | no      |
 | kube_version                          | Kuber version                                                     | string   | 4.10.9_openshift | no |
