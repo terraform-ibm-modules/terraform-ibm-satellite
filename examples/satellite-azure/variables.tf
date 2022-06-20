@@ -197,7 +197,7 @@ variable "host_labels" {
 variable "create_cluster" {
   description = "Create Cluster: Disable this, not to provision cluster"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "cluster" {
