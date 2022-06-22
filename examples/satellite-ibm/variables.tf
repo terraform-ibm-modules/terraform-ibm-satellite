@@ -108,9 +108,9 @@ variable "cluster_profile" {
 ##################################################
 
 variable "create_cluster" {
-  description = "Create Cluster: Disable this, not to provision cluster"
+  description = "Create Cluster: Disable this, not to provision a cluster"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "cluster" {

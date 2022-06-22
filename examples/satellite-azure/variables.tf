@@ -1,4 +1,3 @@
-
 # ##################################################
 # # Azure and IBM Authentication Variables
 # ##################################################
@@ -144,7 +143,7 @@ variable "addl_hosts" {
 }
 
 # ##################################################
-# # IBMCLOUD Satellite Location Variables
+# # IBM CLOUD Satellite Location Variables
 # ##################################################
 
 variable "location" {
@@ -171,7 +170,7 @@ variable "managed_from" {
 variable "location_zones" {
   description = "Allocate your hosts across these three zones"
   type        = list(string)
-  default     = ["us-east-1", "us-east-2", "us-east-3"]
+  default     = ["eastus-1", "eastus-2", "eastus-3"]
 }
 
 variable "location_bucket" {
@@ -186,6 +185,106 @@ variable "host_labels" {
 
   validation {
     condition     = can([for s in var.host_labels : regex("^[a-zA-Z0-9:]+$", s)])
+    error_message = "Label must be of the form `key:value`."
+  }
+}
+
+##################################################
+# IBM CLOUD ROKS Cluster Variables
+##################################################
+
+variable "create_cluster" {
+  description = "Create Cluster: Disable this, not to provision cluster"
+  type        = bool
+  default     = true
+}
+
+variable "cluster" {
+  description = "Satellite Location Name"
+  type        = string
+  default     = "satellite-azure-cluster"
+
+  validation {
+    error_message = "Cluster name must begin and end with a letter and contain only letters, numbers, and - characters."
+    condition     = can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.cluster))
+  }
+}
+
+variable "kube_version" {
+  description = "Satellite Kube Version"
+  default     = "4.10.9_openshift"
+}
+
+variable "worker_count" {
+  description = "Worker Count for default pool"
+  type        = number
+  default     = 1
+}
+
+variable "wait_for_worker_update" {
+  description = "Wait for worker update"
+  type        = bool
+  default     = true
+}
+
+variable "default_worker_pool_labels" {
+  description = "Label to add default worker pool"
+  type        = map(any)
+  default     = null
+}
+
+variable "tags" {
+  description = "List of tags associated with cluster."
+  type        = list(string)
+  default     = ["tf", "openshift"]
+}
+
+variable "cluster_create_timeout" {
+  type        = string
+  description = "Timeout duration for create."
+  default     = null
+}
+
+variable "cluster_update_timeout" {
+  type        = string
+  description = "Timeout duration for update."
+  default     = null
+}
+
+variable "cluster_delete_timeout" {
+  type        = string
+  description = "Timeout duration for delete."
+  default     = null
+}
+
+##################################################
+# IBM CLOUD ROKS Cluster Worker Pool Variables
+##################################################
+variable "create_cluster_worker_pool" {
+  description = "Create Cluster worker pool"
+  type        = bool
+  default     = false
+}
+
+variable "worker_pool_name" {
+  description = "Satellite Location Name"
+  type        = string
+  default     = "satellite-worker-pool"
+
+  validation {
+    error_message = "Cluster name must begin and end with a letter and contain only letters, numbers, and - characters."
+    condition     = can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.worker_pool_name))
+  }
+
+}
+
+variable "worker_pool_host_labels" {
+  description = "Labels to add to attach host script"
+  type        = list(string)
+  default     = ["cpu:4", "env:prod", "memory:16266544", "provider:azure"]
+
+  validation {
+    condition     = can([for s in var.worker_pool_host_labels : regex("^[a-zA-Z0-9:]+$", s)])
     error_message = "Label must be of the form `key:value`."
   }
 }
