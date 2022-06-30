@@ -50,51 +50,28 @@ resource "ibm_is_ssh_key" "satellite_ssh" {
   public_key     = var.public_key != null ? var.public_key : tls_private_key.example[0].public_key_openssh
 }
 
-resource "ibm_is_instance" "satellite_instance" {
-  count = var.host_count
+resource "ibm_is_instance" "ibm_host" {
+  for_each       = local.hosts_flattened
 
   depends_on     = [module.satellite-location.satellite_location]
-  name           = "${var.is_prefix}-location-${count.index}"
+  name           = "${var.is_prefix}-location-${each.key}"
   vpc            = ibm_is_vpc.satellite_vpc.id
-  zone           = element(local.zones, count.index)
+  zone           = element(local.zones, each.key)
   image          = data.ibm_is_image.rhel7.id
-  profile        = var.location_profile
+  profile        = each.value.instance_type
   keys           = [var.ssh_key_id != null ? var.ssh_key_id : ibm_is_ssh_key.satellite_ssh[0].id]
   resource_group = data.ibm_resource_group.resource_group.id
   user_data      = module.satellite-location.host_script
 
   primary_network_interface {
-    subnet = element(local.subnet_ids, count.index)
+    subnet = element(local.subnet_ids, each.key)
   }
 }
-resource "ibm_is_instance" "satellite_cluster_instance" {
-  count = var.addl_host_count
 
-  depends_on     = [module.satellite-location.satellite_location]
-  name           = "${var.is_prefix}-cluster-${count.index}"
-  vpc            = ibm_is_vpc.satellite_vpc.id
-  zone           = element(local.zones, count.index)
-  image          = data.ibm_is_image.rhel7.id
-  profile        = var.cluster_profile
-  keys           = [var.ssh_key_id != null ? var.ssh_key_id : ibm_is_ssh_key.satellite_ssh[0].id]
-  resource_group = data.ibm_resource_group.resource_group.id
-  user_data      = module.satellite-location.host_script
-
-  primary_network_interface {
-    subnet = element(local.subnet_ids, count.index)
-  }
-}
 resource "ibm_is_floating_ip" "satellite_ip" {
-  count = var.host_count
+  for_each       = local.hosts_flattened
 
-  name           = "${var.is_prefix}-fip-${count.index}"
-  target         = ibm_is_instance.satellite_instance[count.index].primary_network_interface[0].id
-  resource_group = data.ibm_resource_group.resource_group.id
-}
-
-resource "ibm_is_floating_ip" "satellite_cluster_ip" {
-  count          = var.addl_host_count
-  name           = "${var.is_prefix}-cluster-fip-${count.index}"
-  target         = ibm_is_instance.satellite_cluster_instance[count.index].primary_network_interface[0].id
+  name           = "${var.is_prefix}-fip-${each.key}"
+  target         = ibm_is_instance.ibm_host[each.key].primary_network_interface[0].id
   resource_group = data.ibm_resource_group.resource_group.id
 }

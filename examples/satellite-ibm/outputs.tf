@@ -12,15 +12,15 @@ output "host_script" {
 }
 
 output "host_ids" {
-  value = ibm_is_instance.satellite_instance.*.id
+  value = [for host in ibm_is_instance.ibm_host : host.id]
 }
 
 output "floating_ip_ids" {
-  value = ibm_is_floating_ip.satellite_ip.*.id
+  value = [for ip in ibm_is_floating_ip.satellite_ip : ip.id]
 }
 
 output "floating_ip_addresses" {
-  value = ibm_is_floating_ip.satellite_ip.*.address
+  value = [for ip in ibm_is_floating_ip.satellite_ip : ip.address]
 }
 
 output "vpc" {

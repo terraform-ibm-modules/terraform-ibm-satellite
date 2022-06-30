@@ -11,6 +11,8 @@ module "satellite-cluster" {
   //source = "terraform-ibm-modules/satellite/ibm//modules/cluster"
 
   source                     = "../../modules/cluster"
+
+  depends_on                 = [module.satellite-host]
   create_cluster             = var.create_cluster
   cluster                    = var.cluster
   zones                      = var.location_zones
@@ -24,7 +26,6 @@ module "satellite-cluster" {
   create_timeout             = var.create_timeout
   update_timeout             = var.update_timeout
   delete_timeout             = var.delete_timeout
-  depends_on                 = [module.satellite-host]
 }
 
 ###################################################################
@@ -35,6 +36,8 @@ module "satellite-cluster-worker-pool" {
   //source = "terraform-ibm-modules/satellite/ibm//modules/configure-cluster-worker-pool"
 
   source                     = "../../modules/configure-cluster-worker-pool"
+
+  depends_on                 = [module.satellite-cluster]
   create_cluster_worker_pool = var.create_cluster_worker_pool
   worker_pool_name           = var.worker_pool_name
   cluster                    = var.cluster
@@ -45,5 +48,4 @@ module "satellite-cluster-worker-pool" {
   host_labels                = var.worker_pool_host_labels
   create_timeout             = var.create_timeout
   delete_timeout             = var.delete_timeout
-  depends_on                 = [module.satellite-cluster]
 }
