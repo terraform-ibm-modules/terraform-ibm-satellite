@@ -144,13 +144,13 @@ variable "ssh_key_id" {
 }
 
 variable "location_profile" {
-  description = "Profile information of location hosts"
+  description = "[Deprecated] Profile information of location hosts"
   type        = string
   default     = "mx2-8x64"
 }
 
 variable "cluster_profile" {
-  description = "Profile information of Cluster hosts"
+  description = "[Deprecated] Profile information of Cluster hosts"
   type        = string
   default     = "mx2-8x64"
 }
