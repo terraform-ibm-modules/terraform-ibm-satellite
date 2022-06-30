@@ -12,10 +12,10 @@ module "satellite-host" {
 
   for_each = local.hosts
 
-  source         = "../../modules/host"
-  host_count     = each.value.for_control_plane ? each.value.count : 0
-  location       = module.satellite-location.location_id
-  host_vms       = [for count_index in range(
+  source     = "../../modules/host"
+  host_count = each.value.for_control_plane ? each.value.count : 0
+  location   = module.satellite-location.location_id
+  host_vms = [for count_index in range(
     sum([for index, host in local.hosts : index < each.key ? host.count : 0]), // starting ID
     sum([for index, host in local.hosts : index <= each.key ? host.count : 0]) // starting ID + current IDs count
     ) :

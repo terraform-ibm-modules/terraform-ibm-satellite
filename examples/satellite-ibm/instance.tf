@@ -51,7 +51,7 @@ resource "ibm_is_ssh_key" "satellite_ssh" {
 }
 
 resource "ibm_is_instance" "ibm_host" {
-  for_each       = local.hosts_flattened
+  for_each = local.hosts_flattened
 
   depends_on     = [module.satellite-location.satellite_location]
   name           = "${var.is_prefix}-host-${each.key}"
@@ -69,7 +69,7 @@ resource "ibm_is_instance" "ibm_host" {
 }
 
 resource "ibm_is_floating_ip" "satellite_ip" {
-  for_each       = local.hosts_flattened
+  for_each = local.hosts_flattened
 
   name           = "${var.is_prefix}-fip-${each.key}"
   target         = ibm_is_instance.ibm_host[each.key].primary_network_interface[0].id

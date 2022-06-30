@@ -10,7 +10,7 @@ module "satellite-cluster" {
   //Uncomment following line to point the source to registry level module
   //source = "terraform-ibm-modules/satellite/ibm//modules/cluster"
 
-  source                     = "../../modules/cluster"
+  source = "../../modules/cluster"
 
   depends_on                 = [module.satellite-host]
   create_cluster             = var.create_cluster
@@ -35,7 +35,7 @@ module "satellite-cluster-worker-pool" {
   //Uncomment following line to point the source to registry level module
   //source = "terraform-ibm-modules/satellite/ibm//modules/configure-cluster-worker-pool"
 
-  source                     = "../../modules/configure-cluster-worker-pool"
+  source = "../../modules/configure-cluster-worker-pool"
 
   depends_on                 = [module.satellite-cluster]
   create_cluster_worker_pool = var.create_cluster_worker_pool
