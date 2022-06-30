@@ -54,7 +54,7 @@ resource "ibm_is_instance" "ibm_host" {
   for_each       = local.hosts_flattened
 
   depends_on     = [module.satellite-location.satellite_location]
-  name           = "${var.is_prefix}-location-${each.key}"
+  name           = "${var.is_prefix}-host-${each.key}"
   vpc            = ibm_is_vpc.satellite_vpc.id
   zone           = element(local.zones, each.key)
   image          = data.ibm_is_image.rhel7.id
