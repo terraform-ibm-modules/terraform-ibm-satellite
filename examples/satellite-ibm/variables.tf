@@ -62,17 +62,69 @@ variable "host_labels" {
 # IBMCLOUD VPC VSI Variables
 ##################################################
 variable "host_count" {
-  description = "The total number of ibm host to create for control plane"
+  description = "[Deprecated] The total number of ibm host to create for control plane"
   type        = number
-  default     = 3
+  default     = null
 }
 
 variable "addl_host_count" {
-  description = "The total number of additional aws host"
+  description = "[Deprecated] The total number of additional ibm host"
   type        = number
-  default     = 3
+  default     = null
 }
 
+variable "cp_hosts" {
+  description = "A map of IBM host objects used to create the location control plane, including instance_type and count. Control plane count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts."
+  type = list(
+    object(
+      {
+        instance_type = string
+        count         = number
+      }
+    )
+  )
+  default = [
+    {
+      instance_type = "mx2-8x64"
+      count         = 3
+    }
+  ]
+
+  validation {
+    condition     = ! contains([for host in var.cp_hosts : (host.count > 0)], false)
+    error_message = "All hosts must have a count of at least 1."
+  }
+  validation {
+    condition     = ! contains([for host in var.cp_hosts : (host.count % 3 == 0)], false)
+    error_message = "Count value for all hosts should always be in multiples of 3, such as 6, 9, or 12 hosts."
+  }
+
+  validation {
+    condition     = can([for host in var.cp_hosts : host.instance_type])
+    error_message = "Each object should have an instance_type."
+  }
+}
+variable "addl_hosts" {
+  description = "A list of IBM host objects used for provisioning services on your location after setup, including instance_type and count."
+  type = list(
+    object(
+      {
+        instance_type = string
+        count         = number
+      }
+    )
+  )
+  default = []
+  validation {
+    condition     = ! contains([for host in var.addl_hosts : (host.count > 0)], false)
+    error_message = "All hosts must have a count of at least 1."
+  }
+
+  validation {
+    condition     = can([for host in var.addl_hosts : host.instance_type])
+    error_message = "Each object should have an instance_type."
+  }
+}
 variable "is_prefix" {
   description = "Prefix to the Names of the VPC Infrastructure resources"
   type        = string
@@ -92,13 +144,13 @@ variable "ssh_key_id" {
 }
 
 variable "location_profile" {
-  description = "Profile information of location hosts"
+  description = "[Deprecated] Profile information of location hosts"
   type        = string
   default     = "mx2-8x64"
 }
 
 variable "cluster_profile" {
-  description = "Profile information of Cluster hosts"
+  description = "[Deprecated] Profile information of Cluster hosts"
   type        = string
   default     = "mx2-8x64"
 }

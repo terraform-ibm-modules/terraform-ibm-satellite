@@ -78,4 +78,40 @@ locals {
     }
   ]
 
+  hosts = (var.host_count != null && var.addl_host_count != null && var.location_profile != null) ? {
+    0 = {
+      instance_type     = var.location_profile
+      count             = var.host_count
+      for_control_plane = true
+    }
+    1 = {
+      instance_type     = var.cluster_profile
+      count             = var.addl_host_count
+      for_control_plane = false
+    }
+    } : merge({
+      for i, host in var.cp_hosts :
+      i => {
+        instance_type     = host.instance_type
+        count             = host.count
+        for_control_plane = true
+      }
+      }, {
+      for i, host in var.addl_hosts :
+      sum([i, length(var.cp_hosts)]) => {
+        instance_type     = host.instance_type
+        count             = host.count
+        for_control_plane = false
+      }
+  })
+  // convert hosts to be a flat object with one key per desired host
+  hosts_flattened = { for index, item in flatten([
+    for host_index, host in local.hosts : [
+      for count_index in range(0, host.count) : {
+        instance_type     = host.instance_type
+        for_control_plane = host.for_control_plane
+        zone              = element(local.zones, count_index)
+      }
+    ]
+  ]) : index => item }
 }
