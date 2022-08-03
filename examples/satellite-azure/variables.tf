@@ -207,7 +207,7 @@ variable "host_labels" {
 variable "create_cluster" {
   description = "Create Cluster: Disable this, not to provision cluster"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "cluster" {
@@ -223,7 +223,7 @@ variable "cluster" {
 
 variable "kube_version" {
   description = "Satellite Kube Version"
-  default     = "4.10.9_openshift"
+  default     = "4.10_openshift"
 }
 
 variable "worker_count" {
