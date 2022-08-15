@@ -135,8 +135,8 @@ resource "azurerm_linux_virtual_machine" "az_host" {
   source_image_reference {
     publisher = "RedHat"
     offer     = "RHEL"
-    sku       = "7-LVM"
-    version   = "latest"
+    sku       = var.worker_image_sku
+    version   = var.worker_image_version
   }
 }
 resource "azurerm_managed_disk" "data_disk" {

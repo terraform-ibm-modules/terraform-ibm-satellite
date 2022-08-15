@@ -178,6 +178,8 @@ module "satellite-host" {
 | addl_hosts                            | A list of Azure host objects used for provisioning services on your location after setup, including instance_type and count, see cp_hosts for an example.                  | list   | []             | yes    |
 | ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a              | no    |
 | cluster_profile                       | Profile information of cluster hosts                              | string   | mx2-8x64| no       |
+| worker_image_sku                      | Specify the image sku for hosts to be created with                    | string   | 7-LVM    | no       |
+| worker_image_version                  | Specify the image version for hosts to be created with                    | string   | latest   | no       |
 | create_cluster                        | Create cluster Disable this, not to provision cluster             | bool     | false    | no       |
 | cluster                               | Name of the ROKS Cluster that has to be created                   | string   | satellite-azure-cluster     | no      |
 | zones                         | Allocate your hosts across these three zones                      | set      | n/a     | no      |

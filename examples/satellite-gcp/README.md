@@ -163,6 +163,8 @@ module "satellite-host" {
 | instance_type                         | [Deprecated] The type of google instance to start                  | string   | null             | no    |
 | cp_hosts                              | A list of GCP host objects used to create the location control plane, including parameters instance_type and count. Control plane count values should always be in multipes of 3, such as 3, 6, 9, or 12 hosts.                  | list   | [<br>&ensp; {<br>&ensp;&ensp; instance_type = "n2-standard-4"<br>&ensp; count         = 3<br>&ensp;&ensp; }<br>]             | yes    |
 | addl_hosts                            | A list of GCP host objects used for provisioning services on your location after setup, including instance_type and count, see cp_hosts for an example.                  | list   | []             | yes    |
+| worker_image_family                          | Specify the image family for hosts to be created with                    | string   | rhel-7    | no       |
+| worker_image_project                          | Specify the image project for hosts to be created with                    | string   | rhel-cloud    | no       |
 | ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a     | no |
 | gcp_ssh_user                        | "SSH User of above provided ssh_public_key" | string   | n/a     | no |
 

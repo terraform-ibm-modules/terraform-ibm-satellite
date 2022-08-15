@@ -155,6 +155,11 @@ variable "cluster_profile" {
   default     = "mx2-8x64"
 }
 
+variable "worker_image" {
+  description = "Operating system image for the workers created"
+  type        = string
+  default     = "ibm-redhat-7-9-minimal-amd64-3"
+}
 ##################################################
 # IBMCLOUD ROKS Cluster Variables
 ##################################################

@@ -121,8 +121,8 @@ module "gcp_host-template" {
   # startup_script=module.satellite-location.host_script
   machine_type         = each.value.instance_type
   can_ip_forward       = false
-  source_image_project = "rhel-cloud"
-  source_image_family  = "rhel-7"
+  source_image_project = var.worker_image_project
+  source_image_family  = var.worker_image_family
   disk_size_gb         = 100
   disk_type            = "pd-ssd"
   disk_labels = {
