@@ -144,14 +144,14 @@ variable "addl_hosts" {
 
 variable "worker_image_sku" {
   description = "Operating system image SKU for the workers created"
-  type = string
-  default = "7-LVM"
+  type        = string
+  default     = "7-LVM"
 }
 
 variable "worker_image_version" {
   description = "Operating system image version for the workers created"
-  type = string
-  default = "latest"
+  type        = string
+  default     = "latest"
 }
 # ##################################################
 # # IBM CLOUD Satellite Location Variables
