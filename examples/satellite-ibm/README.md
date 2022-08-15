@@ -123,6 +123,7 @@ module "satellite-cluster-worker-pool" {
 | cluster_profile                       | [Deprecated] Profile information of cluster hosts                              | string   | mx2-8x64| no       |
 | cp_hosts                              | A list of IBM host objects used to create the location control plane, including parameters instance_type and count. Control plane count values should always be in multipes of 3, such as 3, 6, 9, or 12 hosts.                  | list   | [<br>&ensp; {<br>&ensp;&ensp; instance_type = "mx2-8x64"<br>&ensp; count         = 3<br>&ensp;&ensp; }<br>]             | no    |
 | addl_hosts                            | A list of IBM host objects used for provisioning services on your location after setup, including instance_type and count, see cp_hosts for an example.                  | list   | []             | no    |
+| worker_image                          | Specify the image for hosts to be created with                    | string   | ibm-redhat-7-9-minimal-amd64-3    | no       |
 | create_cluster                        | Create cluster Disable this, not to provision cluster             | bool     | true    | no       |
 | cluster                               | Name of the ROKS Cluster that has to be created                   | string   | satellite-ibm-cluster     | no      |
 | cluster_zones                         | Allocate your hosts across these three zones                      | set      | n/a     | no      |

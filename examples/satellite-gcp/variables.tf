@@ -168,7 +168,16 @@ variable "host_labels" {
     error_message = "Label must be of the form `key:value`."
   }
 }
-
+variable "worker_image_project" {
+  description = "Operating system image project for the workers created"
+  type        = string
+  default     = "rhel-cloud"
+}
+variable "worker_image_family" {
+  description = "Operating system image family for the workers created"
+  type        = string
+  default     = "rhel-7"
+}
 variable "TF_VERSION" {
   description = "Terraform version"
   type        = string

@@ -7,8 +7,8 @@ data "ibm_resource_group" "resource_group" {
   name = var.resource_group
 }
 
-data "ibm_is_image" "rhel7" {
-  name = "ibm-redhat-7-9-minimal-amd64-3"
+data "ibm_is_image" "rhel" {
+  name = var.worker_image
 }
 
 resource "ibm_is_vpc" "satellite_vpc" {
@@ -57,7 +57,7 @@ resource "ibm_is_instance" "ibm_host" {
   name           = "${var.is_prefix}-host-${each.key}"
   vpc            = ibm_is_vpc.satellite_vpc.id
   zone           = element(local.zones, each.key)
-  image          = data.ibm_is_image.rhel7.id
+  image          = data.ibm_is_image.rhel.id
   profile        = each.value.instance_type
   keys           = [var.ssh_key_id != null ? var.ssh_key_id : ibm_is_ssh_key.satellite_ssh[0].id]
   resource_group = data.ibm_resource_group.resource_group.id
