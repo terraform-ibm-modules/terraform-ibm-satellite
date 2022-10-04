@@ -73,8 +73,8 @@ module "security_group" {
 }
 
 resource "aws_placement_group" "satellite-group" {
-  name     = "${var.resource_prefix}-pg"
-  strategy = "spread"
+  name         = "${var.resource_prefix}-pg"
+  strategy     = "spread"
   spread_level = "rack"
 
   tags = {
