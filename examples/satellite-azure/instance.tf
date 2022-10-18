@@ -30,6 +30,7 @@ data "azurerm_resource_group" "resource_group" {
 //Module to create security group and security group rules
 module "network-security-group" {
   source                = "Azure/network-security-group/azurerm"
+  version               = "~> 3.6.0"
   resource_group_name   = data.azurerm_resource_group.resource_group.name
   location              = data.azurerm_resource_group.resource_group.location # Optional; if not provided, will use Resource Group location
   security_group_name   = "${var.az_resource_prefix}-sg"
