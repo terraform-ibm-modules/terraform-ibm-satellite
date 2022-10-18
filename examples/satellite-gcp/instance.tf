@@ -139,6 +139,7 @@ module "gcp_host-template" {
 module "gcp_hosts" {
   for_each           = local.hosts
   source             = "terraform-google-modules/vm/google//modules/compute_instance"
+  version            = "7.9.0"
   region             = var.gcp_region
   network            = module.gcp_network.network_name
   subnetwork_project = var.gcp_project
