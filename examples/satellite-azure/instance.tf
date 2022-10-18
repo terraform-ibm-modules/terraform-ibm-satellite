@@ -70,6 +70,7 @@ module "network-security-group" {
 module "vnet" {
   depends_on          = [data.azurerm_resource_group.resource_group]
   source              = "Azure/vnet/azurerm"
+  version = "2.7.0"
   resource_group_name = data.azurerm_resource_group.resource_group.name
   vnet_name           = "${var.az_resource_prefix}-vpc"
   address_space       = ["10.0.0.0/16"]
