@@ -122,7 +122,7 @@ module "ec2" {
   vpc_security_group_ids      = [module.security_group.this_security_group_id]
   associate_public_ip_address = true
   placement_group             = "${var.resource_prefix}-pg"
-  user_data                   = module.satellite-location.host_script
+  user_data_base64            = base64encode(module.satellite-location.host_script)
 
   tags = {
     ibm-satellite = var.resource_prefix
