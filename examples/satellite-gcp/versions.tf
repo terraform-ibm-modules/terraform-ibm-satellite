@@ -7,7 +7,7 @@ terraform {
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = "~> 1.47.0"
+      version = "~> 1.49.0"
     }
     tls = {
       source  = "hashicorp/tls"
