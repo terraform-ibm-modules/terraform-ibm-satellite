@@ -73,8 +73,9 @@ module "security_group" {
 }
 
 resource "aws_placement_group" "satellite-group" {
-  name     = "${var.resource_prefix}-pg"
-  strategy = "spread"
+  name         = "${var.resource_prefix}-pg"
+  strategy     = "spread"
+  spread_level = "rack"
 
   tags = {
     ibm-satellite = var.resource_prefix
@@ -110,7 +111,7 @@ module "ec2" {
 
   for_each = local.hosts
 
-  depends_on                  = [module.satellite-location]
+  depends_on                  = [module.satellite-location, aws_placement_group.satellite-group]
   instance_count              = each.value.count
   name                        = "${var.resource_prefix}-host-${each.key}"
   use_num_suffix              = true
@@ -120,8 +121,8 @@ module "ec2" {
   subnet_ids                  = module.vpc.public_subnets
   vpc_security_group_ids      = [module.security_group.this_security_group_id]
   associate_public_ip_address = true
-  placement_group             = aws_placement_group.satellite-group.id
-  user_data                   = module.satellite-location.host_script
+  placement_group             = "${var.resource_prefix}-pg"
+  user_data_base64            = base64encode(module.satellite-location.host_script)
 
   tags = {
     ibm-satellite = var.resource_prefix
