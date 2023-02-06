@@ -123,6 +123,7 @@ module "ec2" {
   associate_public_ip_address = true
   placement_group             = "${var.resource_prefix}-pg"
   user_data_base64            = base64encode(module.satellite-location.host_script)
+  root_block_device           = [{ volume_type = "gp3" }]
 
   tags = {
     ibm-satellite = var.resource_prefix
