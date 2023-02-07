@@ -140,6 +140,11 @@ resource "azurerm_linux_virtual_machine" "az_host" {
     sku       = var.worker_image_sku
     version   = var.worker_image_version
   }
+  lifecycle {
+    ignore_changes = [
+      custom_data,
+    ]
+  }
 }
 resource "azurerm_managed_disk" "data_disk" {
   for_each             = local.hosts_flattened
