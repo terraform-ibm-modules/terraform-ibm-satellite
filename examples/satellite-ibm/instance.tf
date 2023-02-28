@@ -57,7 +57,7 @@ resource "ibm_is_instance" "ibm_host" {
   name           = "${var.is_prefix}-host-${each.key}"
   vpc            = ibm_is_vpc.satellite_vpc.id
   zone           = element(local.zones, each.key)
-  image          = var.instance_image_custom_id != null ? var.instance_image_custom_id : data.ibm_is_image.rhel.id
+  image          = var.worker_image_custom_id != null ? var.worker_image_custom_id : data.ibm_is_image.rhel.id
   profile        = each.value.instance_type
   keys           = [var.ssh_key_id != null ? var.ssh_key_id : ibm_is_ssh_key.satellite_ssh[0].id]
   resource_group = data.ibm_resource_group.resource_group.id
