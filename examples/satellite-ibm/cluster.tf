@@ -1,6 +1,6 @@
 #####################################################
 # IBM Cloud Satellite -  IBM Example
-# Copyright 2021 IBM
+# Copyright 2021, 2023 IBM
 #####################################################
 
 ###################################################################
@@ -26,6 +26,7 @@ module "satellite-cluster" {
   create_timeout             = var.create_timeout
   update_timeout             = var.update_timeout
   delete_timeout             = var.delete_timeout
+  operating_system           = var.operating_system
 }
 
 ###################################################################
@@ -48,4 +49,5 @@ module "satellite-cluster-worker-pool" {
   host_labels                = var.worker_pool_host_labels
   create_timeout             = var.create_timeout
   delete_timeout             = var.delete_timeout
+  operating_system           = var.operating_system
 }

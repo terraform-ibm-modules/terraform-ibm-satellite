@@ -58,3 +58,9 @@ variable "host_provider" {
   type        = string
   default     = "ibm"
 }
+
+variable "coreos_host" {
+  description = "Set to true if hosts will use CoreOS. Used for attachment script, worker pools, etc"
+  type        = bool
+  default     = false
+}

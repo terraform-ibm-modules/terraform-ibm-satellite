@@ -58,6 +58,12 @@ variable "host_labels" {
   }
 }
 
+variable "coreos_host" {
+  description = "Set to true if hosts will be CoreOS. Used for attachment script, worker pools, etc"
+  type        = bool
+  default     = false
+}
+
 ##################################################
 # IBMCLOUD VPC VSI Variables
 ##################################################
@@ -158,8 +164,15 @@ variable "cluster_profile" {
 variable "worker_image" {
   description = "Operating system image for the workers created"
   type        = string
-  default     = "ibm-redhat-7-9-minimal-amd64-3"
+  default     = "ibm-redhat-8-6-minimal-amd64-1"
 }
+
+variable "instance_image_custom_id" {
+  description = "Operating system image for the workers created, custom image by ID"
+  type        = string
+  default     = null
+}
+
 ##################################################
 # IBMCLOUD ROKS Cluster Variables
 ##################################################
@@ -181,9 +194,20 @@ variable "cluster" {
   }
 }
 
+variable "operating_system" {
+  type        = string
+  description = "Worker pool operating system"
+  default     = "REDHAT_8_64"
+
+  validation {
+    error_message = "Operating system must be one of: REDHAT_7_64, REDHAT_8_64, RHCOS."
+    condition     = contains(["REDHAT_7_64", "REDHAT_8_64", "RHCOS"], var.operating_system)
+  }
+}
+
 variable "kube_version" {
   description = "Satellite Kube Version"
-  default     = "4.7_openshift"
+  default     = "4.10_openshift"
 }
 
 variable "worker_count" {
