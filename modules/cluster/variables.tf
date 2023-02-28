@@ -89,10 +89,10 @@ variable "delete_timeout" {
 variable "operating_system" {
   type        = string
   description = "Worker pool operating system"
-  default = "REDHAT_7_64"
-  
+  default     = "REDHAT_7_64"
+
   validation {
     error_message = "Operating system must be one of: REDHAT_7_64, REDHAT_8_64, RHCOS."
-    condition = contains(["REDHAT_7_64", "REDHAT_8_64", "RHCOS"], var.operating_system)
+    condition     = contains(["REDHAT_7_64", "REDHAT_8_64", "RHCOS"], var.operating_system)
   }
 }
