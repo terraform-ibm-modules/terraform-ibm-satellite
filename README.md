@@ -1,8 +1,8 @@
-# IBM Cloud Satellite Module
+# IBM Cloud Satellite module
 
-Use this Terraform automation to set up a satellite location on IBM cloud. The module provisions the satellite location, creates 6 VSIs, assigns three hosts to the control plane, provisions a ROKS satellite cluster, auto assigns three hosts to the cluster, and configures a cluster worker pool to an existing ROKS satellite cluster.
+Use this Terraform automation to set up a Satellite location on IBM cloud. The module provisions the IBM Cloud® Satellite location, creates 6 VSIs, assigns three hosts to the control plane, provisions a ROKS Satellite cluster, assigns three hosts to the cluster, and configures a cluster worker pool to an existing ROKS Satellite cluster.
 
-This module is a collection of submodules that make it easier to provision a satellite on IBM Cloud.
+This module is a collection of submodules that make it easier to provision a Satellite on IBM Cloud.
 
 - location
 - host
@@ -11,13 +11,13 @@ This module is a collection of submodules that make it easier to provision a sat
 
 ## Overview
 
-IBM Cloud® Satellite helps you deploy and run applications consistently across all on-premises, edge computing, and public cloud environments from any cloud vendor. It standardizes a core set of Kubernetes, data, AI, and security services to be centrally managed as a service by IBM Cloud, with full visibility across all environments through a single pane of glass. The result is greater developer productivity and development velocity.
+IBM Cloud Satellite helps you deploy and run applications consistently across all on-premises, edge computing, and public cloud environments from any cloud vendor. It standardizes a core set of Kubernetes, data, AI, and security services to be centrally managed as a service by IBM Cloud, with full visibility across all environments through a single pane of glass. The result is greater developer productivity and development velocity.
 
 https://cloud.ibm.com/docs/satellite?topic=satellite-getting-started
 
 ## Features
 
-- Creates satellite location.
+- Creates Satellite location.
 - Creates 6 VSIs with RHEL 7.9.
 - Assigns the three hosts to the location control plane.
 - *Conditionally creates* of these items:
@@ -38,9 +38,9 @@ This module is meant for use with Terraform 0.13 or later.
 
 ## Note
 
-- The `location` module creates a location or uses an existing location ID or name. If you pass an existing location, the satellite-location module produces an error and exits the module. To fix the issue, set `is_location_exist` to true so that the module uses the existing location.
+- The `location` submodule creates a location or uses an existing location ID or name. If you pass an existing location, the submodule produces an error and exits the module. To fix the issue, set `is_location_exist` to true so that the module uses the existing location.
 - All optional fields are set to `null` in the `variable.tf` file. You can overwrite the values.
-- The `satellite-location` module downloads the attached host script to the home directory and appends permissions to the script. The modified script must be used in the `user_data` attribute of VSI instance.
+- The `location` submodule downloads the attached host script to the home directory and appends permissions to the script. Use the modified script in the `user_data` attribute of VSI instance.
 - If you want to use a particular version of a module, set the argument `version` to the module version.
 
 ## Requirements
@@ -65,7 +65,7 @@ Be sure you have the compiled plug-ins on $HOME/.terraform.d/plugins/
 
 ## Example Usage
 
-``` hcl
+```hcl
 provider "ibm" {
   region  = var.region
 }
