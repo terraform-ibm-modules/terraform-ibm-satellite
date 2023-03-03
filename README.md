@@ -1,8 +1,8 @@
 # IBM Cloud Satellite module
 
-Use this Terraform automation to set up a Satellite location on IBM cloud. The module provisions the IBM Cloud® Satellite location, creates 6 VSIs, assigns three hosts to the control plane, provisions a ROKS Satellite cluster, assigns three hosts to the cluster, and configures a cluster worker pool to an existing ROKS Satellite cluster.
+Use this Terraform automation to set up a Satellite location on IBM Cloud®. The module provisions the IBM Cloud Satellite location, creates 6 VSIs, assigns three hosts to the control plane, provisions a ROKS Satellite cluster, assigns three hosts to the cluster, and configures a cluster worker pool to an existing ROKS Satellite cluster.
 
-This module is a collection of submodules that make it easier to provision a Satellite on IBM Cloud.
+This module is a collection of submodules that make it easier to provision Satellite resources on IBM Cloud.
 
 - location
 - host
@@ -20,7 +20,7 @@ https://cloud.ibm.com/docs/satellite?topic=satellite-getting-started
 - Creates Satellite location.
 - Creates 6 VSIs with RHEL 7.9.
 - Assigns the three hosts to the location control plane.
-- *Conditionally creates* of these items:
+- *Conditionally creates* these items:
     - Create a Red Hat OpenShift on IBM Cloud cluster and assign the three hosts to the cluster so that you can run Red Hat OpenShift workloads in your location.
     - Configure a worker pool to an existing Red Hat OpenShift Cluster.
 
@@ -38,8 +38,8 @@ This module is meant for use with Terraform 0.13 or later.
 
 ## Note
 
-- The `location` submodule creates a location or uses an existing location ID or name. If you pass an existing location, the submodule produces an error and exits the module. To fix the issue, set `is_location_exist` to true so that the module uses the existing location.
-- All optional fields are set to `null` in the `variable.tf` file. You can overwrite the values.
+- The `location` submodule creates a location or uses an existing location ID or name.
+- All optional fields are set to `null` in the `variables.tf` file. You can override the values.
 - The `location` submodule downloads the attached host script to the home directory and appends permissions to the script. Use the modified script in the `user_data` attribute of VSI instance.
 - If you want to use a particular version of a module, set the argument `version` to the module version.
 
@@ -174,8 +174,8 @@ module "satellite-ibm" {
 
 - To destroy the VPC and all related resources, run the following command:
 
-  ````hcl
-  terraform destroy -var-file=./input.tfvars`
-  ```
+    ````hcl
+    terraform destroy -var-file=./input.tfvars`
+    ```
 
-All optional parameters are set to null by default in the example's `variable.tf` file. If you want to configure an optional parameter, overwrite the default value.
+All optional parameters are set to null by default in the example's `variables.tf` file. If you want to configure an optional parameter, override the default value.
