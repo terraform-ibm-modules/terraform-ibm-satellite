@@ -16,10 +16,10 @@ jobs:
           /tmp/tfswitch-install.sh -b $HOME/.bin
       -
         name: checkout                      # action checks-out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       -
         name: setup terraform
-        uses: hashicorp/setup-terraform@v1  # sets up Terraform CLI in your GitHub Actions workflow
+        uses: hashicorp/setup-terraform@v2  # sets up Terraform CLI in your GitHub Actions workflow
         with:
           terraform_version: 0.13.1
       -
