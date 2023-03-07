@@ -128,10 +128,4 @@ module "ec2" {
   tags = {
     ibm-satellite = var.resource_prefix
   }
-
-  lifecycle {
-    ignore_changes = [
-      user_data_base64,
-    ]
-  }
 }
