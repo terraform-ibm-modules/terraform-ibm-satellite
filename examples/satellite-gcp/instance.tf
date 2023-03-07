@@ -135,12 +135,6 @@ module "gcp_host-template" {
   auto_delete     = true
   service_account = { email = "", scopes = [] }
   depends_on      = [module.satellite-location, module.gcp_firewall-rules]
-
-  lifecycle {
-    ignore_changes = [
-      metadata["startup_script"],
-    ]
-  }
 }
 module "gcp_hosts" {
   for_each           = local.hosts
