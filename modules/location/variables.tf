@@ -26,8 +26,8 @@ variable "is_location_exist" {
   default     = false
 }
 
-variable "coreos_enabled_location" {
-  description = "CoreOS-enabled location"
+variable "coreos_enabled" {
+  description = "CoreOS-enabled location. Supports RHEL8 and CoreOS hosts."
   type        = bool
   default     = false
 }
