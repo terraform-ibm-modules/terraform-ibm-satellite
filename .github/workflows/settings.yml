@@ -5,7 +5,7 @@
 # any change of this settings.yml file is detected by the GitHub App and
 # the settings of this repository are updated immediately.
 #
-_extends: repo-settings:.github/satellite-settings-v2.yml
+_extends: repo-settings:.github/satellite-settings.yml
 
 # repo-specific settings
 #
