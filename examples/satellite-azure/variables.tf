@@ -106,11 +106,11 @@ variable "cp_hosts" {
   ]
 
   validation {
-    condition     = !contains([for host in var.cp_hosts : (host.count > 0)], false)
+    condition     = ! contains([for host in var.cp_hosts : (host.count > 0)], false)
     error_message = "All hosts must have a count of at least 1."
   }
   validation {
-    condition     = !contains([for host in var.cp_hosts : (host.count % 3 == 0)], false)
+    condition     = ! contains([for host in var.cp_hosts : (host.count % 3 == 0)], false)
     error_message = "Count value for all hosts should always be in multiples of 3, such as 6, 9, or 12 hosts."
   }
 
@@ -132,7 +132,7 @@ variable "addl_hosts" {
   )
   default = []
   validation {
-    condition     = !contains([for host in var.addl_hosts : (host.count > 0)], false)
+    condition     = ! contains([for host in var.addl_hosts : (host.count > 0)], false)
     error_message = "All hosts must have a count of at least 1."
   }
 
