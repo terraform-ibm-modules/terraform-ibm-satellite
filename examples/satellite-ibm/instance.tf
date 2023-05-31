@@ -66,6 +66,12 @@ resource "ibm_is_instance" "ibm_host" {
   primary_network_interface {
     subnet = element(local.subnet_ids, each.key)
   }
+
+  lifecycle {
+    ignore_changes = [
+      user_data,
+    ]
+  }
 }
 
 resource "ibm_is_floating_ip" "satellite_ip" {
