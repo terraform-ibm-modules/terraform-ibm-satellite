@@ -1,6 +1,6 @@
 #####################################################
 # IBM Cloud Satellite -  IBM Example
-# Copyright 2021 IBM
+# Copyright 2021, 2023 IBM
 #####################################################
 
 data "ibm_resource_group" "rg_cluster" {
@@ -21,6 +21,7 @@ resource "ibm_satellite_cluster" "create_cluster" {
   wait_for_worker_update = (var.wait_for_worker_update ? var.wait_for_worker_update : true)
   worker_count           = (var.worker_count != null ? var.worker_count : null)
   host_labels            = (var.host_labels != null ? var.host_labels : null)
+  operating_system       = var.operating_system
 
   dynamic "zones" {
     for_each = (var.zones != null ? var.zones : null)

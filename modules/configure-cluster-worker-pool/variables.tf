@@ -1,6 +1,6 @@
 #####################################################
 # IBM Cloud Satellite -  IBM Example
-# Copyright 2021 IBM
+# Copyright 2021,2023 IBM
 #####################################################
 
 variable "create_cluster_worker_pool" {
@@ -101,4 +101,15 @@ variable "delete_timeout" {
   type        = string
   description = "Timeout duration for delete."
   default     = null
+}
+
+variable "operating_system" {
+  type        = string
+  description = "Worker pool operating system"
+  default     = null
+
+  validation {
+    error_message = "Operating system must be one of: REDHAT_7_64, REDHAT_8_64, RHCOS."
+    condition     = var.operating_system == null || contains(["REDHAT_7_64", "REDHAT_8_64", "RHCOS"], coalesce(var.operating_system, "allownull"))
+  }
 }

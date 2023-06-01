@@ -9,6 +9,7 @@ resource "ibm_satellite_location" "create_location" {
   managed_from      = var.managed_from
   zones             = (var.location_zones != null ? var.location_zones : null)
   resource_group_id = data.ibm_resource_group.res_group.id
+  coreos_enabled    = var.coreos_enabled
 
   cos_config {
     bucket = (var.location_bucket != null ? var.location_bucket : null)
@@ -25,4 +26,5 @@ data "ibm_satellite_attach_host_script" "script" {
   location      = data.ibm_satellite_location.location.id
   labels        = (var.host_labels != null ? var.host_labels : null)
   host_provider = var.host_provider
+  coreos_host   = var.coreos_host
 }

@@ -26,6 +26,12 @@ variable "is_location_exist" {
   default     = false
 }
 
+variable "coreos_enabled" {
+  description = "CoreOS-enabled location. Supports RHEL8 and CoreOS hosts."
+  type        = bool
+  default     = false
+}
+
 variable "managed_from" {
   description = "The IBM Cloud region to manage your Satellite location from. Choose a region close to your on-prem data center for better performance."
   type        = string
@@ -57,4 +63,10 @@ variable "host_provider" {
   description = "The cloud provider of host|vms"
   type        = string
   default     = "ibm"
+}
+
+variable "coreos_host" {
+  description = "Set to true if hosts will use CoreOS. Used for attachment script, worker pools, etc"
+  type        = bool
+  default     = false
 }

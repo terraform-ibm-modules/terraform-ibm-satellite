@@ -24,6 +24,12 @@ variable "location" {
   }
 }
 
+variable "coreos_enabled_location" {
+  description = "CoreOS-enabled location"
+  type        = bool
+  default     = false
+}
+
 variable "managed_from" {
   description = "The IBM Cloud region to manage your Satellite location from. Choose a region close to your on-prem data center for better performance."
   type        = string
@@ -56,6 +62,12 @@ variable "host_labels" {
     condition     = can([for s in var.host_labels : regex("^[a-zA-Z0-9:]+$", s)])
     error_message = "Label must be of the form `key:value`."
   }
+}
+
+variable "coreos_host" {
+  description = "Set to true if hosts will be CoreOS. Used for attachment script, worker pools, etc"
+  type        = bool
+  default     = false
 }
 
 ##################################################
@@ -158,8 +170,16 @@ variable "cluster_profile" {
 variable "worker_image" {
   description = "Operating system image for the workers created"
   type        = string
-  default     = "ibm-redhat-7-9-minimal-amd64-3"
+  default     = "ibm-redhat-8-6-minimal-amd64-1"
 }
+
+
+variable "worker_image_custom_id" {
+  description = "Operating system image for the workers created, custom image by ID. If supplied, this will override worker_image above."
+  type        = string
+  default     = null
+}
+
 ##################################################
 # IBMCLOUD ROKS Cluster Variables
 ##################################################
@@ -181,9 +201,20 @@ variable "cluster" {
   }
 }
 
+variable "operating_system" {
+  type        = string
+  description = "Worker pool operating system"
+  default     = null
+
+  validation {
+    error_message = "Operating system must be one of: REDHAT_7_64, REDHAT_8_64, RHCOS."
+    condition     = var.operating_system == null || contains(["REDHAT_7_64", "REDHAT_8_64", "RHCOS"], coalesce(var.operating_system, "allownull"))
+  }
+}
+
 variable "kube_version" {
   description = "Satellite Kube Version"
-  default     = "4.7_openshift"
+  default     = "4.10_openshift"
 }
 
 variable "worker_count" {
