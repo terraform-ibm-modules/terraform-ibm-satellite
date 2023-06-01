@@ -25,6 +25,7 @@ data "ibm_satellite_location" "location" {
 data "ibm_satellite_attach_host_script" "script" {
   location      = data.ibm_satellite_location.location.id
   labels        = (var.host_labels != null ? var.host_labels : null)
-  host_provider = var.host_provider
+  host_provider = var.custom_script == null ? var.host_provider : null
+  custom_script = var.custom_script
   coreos_host   = var.coreos_host
 }

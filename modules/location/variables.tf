@@ -70,3 +70,9 @@ variable "coreos_host" {
   type        = bool
   default     = false
 }
+
+variable "custom_script" {
+  description = "Custom script to insert into host attach script. Can be used for OS configuration/preparation. This will override whatever the provider inserts based on host_provider."
+  type        = string
+  default     = null
+}
