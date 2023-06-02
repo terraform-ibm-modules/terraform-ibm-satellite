@@ -1,6 +1,6 @@
 #####################################################
 # IBM Cloud Satellite -  AWS Example
-# Copyright 2021 IBM
+# Copyright 2021, 2023 IBM
 #####################################################
 
 module "satellite-location" {
@@ -16,4 +16,5 @@ module "satellite-location" {
   host_labels       = var.host_labels
   resource_group    = var.resource_group
   host_provider     = "aws"
+  custom_script     = "if [[ \"$${OPERATING_SYSTEM}\" == \"RHEL7\" ]]; then\n\tyum update -y\n\tyum-config-manager --enable '*'\n\tyum install container-selinux -y\nfi\n"
 }
