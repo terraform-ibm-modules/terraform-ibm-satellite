@@ -10,7 +10,7 @@ locals {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 3.16.0"
+  version = "~> 5.1.0"
 
   name = "${var.resource_prefix}-vpc"
   cidr = "10.0.0.0/16"
@@ -18,7 +18,7 @@ module "vpc" {
   azs            = length(var.location_zones) == 0 ? local.azs : var.location_zones
   public_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
 
-  enable_ipv6 = true
+  enable_ipv6 = false
 
   enable_nat_gateway = false
   single_nat_gateway = true

@@ -13,7 +13,7 @@ data "aws_ami" "redhat_linux" {
 
 module "security_group" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 3.0"
+  version = "~> 5.1.0"
 
   name        = "${var.resource_prefix}-sg"
   description = "Security group for satellite usage with EC2 instance"
@@ -107,19 +107,40 @@ resource "aws_key_pair" "keypair" {
 
 module "ec2" {
   source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "~> 2.21.0"
+  version = "~> 5.3.1"
 
-  for_each = local.hosts
+  for_each = local.control_plane_hosts
 
   depends_on                  = [module.satellite-location, aws_placement_group.satellite-group]
-  instance_count              = each.value.count
-  name                        = "${var.resource_prefix}-host-${each.key}"
-  use_num_suffix              = true
+  name                        = "${var.resource_prefix}-cp-host-${each.key}"
   ami                         = data.aws_ami.redhat_linux.id
   instance_type               = each.value.instance_type
   key_name                    = aws_key_pair.keypair.key_name
-  subnet_ids                  = module.vpc.public_subnets
-  vpc_security_group_ids      = [module.security_group.this_security_group_id]
+  subnet_id                   = element(module.vpc.public_subnets, each.key)
+  vpc_security_group_ids      = [module.security_group.security_group_id]
+  associate_public_ip_address = true
+  placement_group             = "${var.resource_prefix}-pg"
+  user_data_base64            = base64encode(module.satellite-location.host_script)
+  root_block_device           = [{ volume_type = "gp3" }]
+
+  tags = {
+    ibm-satellite = var.resource_prefix
+  }
+}
+
+module "ec2-addl" {
+  source  = "terraform-aws-modules/ec2-instance/aws"
+  version = "~> 5.3.1"
+
+  for_each = local.additional_hosts
+
+  depends_on                  = [module.satellite-location, aws_placement_group.satellite-group]
+  name                        = "${var.resource_prefix}-host-${each.key}"
+  ami                         = data.aws_ami.redhat_linux.id
+  instance_type               = each.value.instance_type
+  key_name                    = aws_key_pair.keypair.key_name
+  subnet_id                   = element(module.vpc.public_subnets, each.key)
+  vpc_security_group_ids      = [module.security_group.security_group_id]
   associate_public_ip_address = true
   placement_group             = "${var.resource_prefix}-pg"
   user_data_base64            = base64encode(module.satellite-location.host_script)
