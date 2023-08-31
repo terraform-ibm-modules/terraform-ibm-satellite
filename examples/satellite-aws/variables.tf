@@ -1,7 +1,7 @@
-#################################################################################################
-# IBMCLOUD & AWS -  Authentication , Target Variables.
-# The region variable is common across zones used to setup VSI Infrastructure and Satellite host.
-#################################################################################################
+#####################################################
+# IBM Cloud Satellite AWS example
+# Copyright 2021, 2023 IBM
+#####################################################
 
 variable "ibmcloud_api_key" {
   description = "IBM Cloud API Key"

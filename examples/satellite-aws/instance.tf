@@ -1,4 +1,9 @@
 
+#####################################################
+# IBM Cloud Satellite -  AWS Example
+# Copyright 2021, 2023 IBM
+#####################################################
+
 data "aws_ami" "redhat_linux" {
   owners = ["309956199498"]
 
@@ -82,10 +87,6 @@ resource "aws_placement_group" "satellite-group" {
   }
 
 }
-#####################################################
-# IBM Cloud Satellite -  AWS Example
-# Copyright 2021 IBM
-#####################################################
 
 resource "tls_private_key" "example" {
   algorithm = "RSA"

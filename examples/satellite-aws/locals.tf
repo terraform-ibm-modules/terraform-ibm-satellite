@@ -1,3 +1,8 @@
+#####################################################
+# IBM Cloud Satellite AWS example
+# Copyright 2021, 2023 IBM
+#####################################################
+
 locals {
   // arrays with an element per host, specifying flavor
   control_plane_hosts = { for index, item in flatten([

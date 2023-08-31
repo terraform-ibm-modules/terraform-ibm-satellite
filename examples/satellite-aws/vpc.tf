@@ -1,3 +1,7 @@
+#####################################################
+# IBM Cloud Satellite AWS example
+# Copyright 2021, 2023 IBM
+#####################################################
 
 # Declare the data source
 data "aws_availability_zones" "available" {
