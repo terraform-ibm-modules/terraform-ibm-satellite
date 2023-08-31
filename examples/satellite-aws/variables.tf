@@ -1,13 +1,7 @@
-#################################################################################################
-# IBMCLOUD & AWS -  Authentication , Target Variables.
-# The region variable is common across zones used to setup VSI Infrastructure and Satellite host.
-#################################################################################################
-
-variable "TF_VERSION" {
-  description = "terraform version"
-  type        = string
-  default     = "0.13"
-}
+#####################################################
+# IBM Cloud Satellite AWS example
+# Copyright 2021, 2023 IBM
+#####################################################
 
 variable "ibmcloud_api_key" {
   description = "IBM Cloud API Key"
@@ -97,21 +91,6 @@ variable "host_provider" {
 # AWS EC2 Variables
 ##################################################
 
-variable "satellite_host_count" {
-  description = "The total number of AWS host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts"
-  type        = number
-  default     = null
-  validation {
-    condition     = var.satellite_host_count == null || ((can((var.satellite_host_count % 3) == 0)) && can(var.satellite_host_count > 0))
-    error_message = "Sorry, host_count value should always be in multiples of 3, such as 6, 9, or 12 hosts."
-  }
-}
-variable "addl_host_count" {
-  description = "The total number of additional aws host"
-  type        = number
-  default     = null
-}
-
 variable "instance_type" {
   description = "The type of aws instance to create"
   type        = string
@@ -136,11 +115,11 @@ variable "cp_hosts" {
   ]
 
   validation {
-    condition     = ! contains([for host in var.cp_hosts : (host.count > 0)], false)
+    condition     = !contains([for host in var.cp_hosts : (host.count > 0)], false)
     error_message = "All hosts must have a count of at least 1."
   }
   validation {
-    condition     = ! contains([for host in var.cp_hosts : (host.count % 3 == 0)], false)
+    condition     = !contains([for host in var.cp_hosts : (host.count % 3 == 0)], false)
     error_message = "Count value for all hosts should always be in multiples of 3, such as 6, 9, or 12 hosts."
   }
 
@@ -162,7 +141,7 @@ variable "addl_hosts" {
   )
   default = []
   validation {
-    condition     = ! contains([for host in var.addl_hosts : (host.count > 0)], false)
+    condition     = !contains([for host in var.addl_hosts : (host.count > 0)], false)
     error_message = "All hosts must have a count of at least 1."
   }
 
@@ -192,6 +171,5 @@ variable "resource_prefix" {
 variable "aws_ami" {
   description = "The AMI to use for ec2 instances"
   type        = string
-  default     = "RHEL-7.9_HVM-20220512-x86_64-1-Hourly2-GP2"
+  default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
 }
-

@@ -1,6 +1,6 @@
 #####################################################
-# IBM Cloud Satellite Module
-# Copyright 2021 IBM
+# IBM Cloud Satellite AWS example
+# Copyright 2021, 2023 IBM
 #####################################################
 
 /***************************************************
@@ -18,11 +18,11 @@ If we dont configure the version parameter, it fetches the latest provider versi
 ****************************************************/
 
 terraform {
-  required_version = ">=0.13"
+  required_version = ">=1.1"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.22.0"
+      version = "~> 5.14.0"
     }
     tls = {
       source  = "hashicorp/tls"
