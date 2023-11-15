@@ -7,11 +7,11 @@ output "edge_gateway_id" {
 }
 
 output "external_network_name_1" {
-  value = element([ for net in data.vcd_edgegateway.edge.external_network : net.name if !tolist(net.subnet)[0].use_for_default_route ], 0)
+  value = element([for net in data.vcd_edgegateway.edge.external_network : net.name if !tolist(net.subnet)[0].use_for_default_route], 0)
 }
 
 output "external_network_name_2" {
-  value = element([ for net in data.vcd_edgegateway.edge.external_network : net.name if tolist(net.subnet)[0].use_for_default_route ], 0)
+  value = element([for net in data.vcd_edgegateway.edge.external_network : net.name if tolist(net.subnet)[0].use_for_default_route], 0)
 }
 
 output "default_external_network_ip" {

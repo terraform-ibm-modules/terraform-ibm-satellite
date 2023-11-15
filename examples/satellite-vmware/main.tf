@@ -39,7 +39,7 @@ module "ibm_vmware_solutions_shared_instance" {
   network_name          = var.dhcp_network_name
 }
 
-# Create the firewall rule to access the Internet 
+# Create the firewall rule to access the Internet
 resource "vcd_nsxv_firewall_rule" "rule_internet" {
   edge_gateway = module.ibm_vmware_solutions_shared_instance.edge_gateway_name
   name         = "${var.dhcp_network_name}-Internet"
@@ -92,7 +92,7 @@ resource "vcd_nsxv_firewall_rule" "rule_internet_ssh" {
   }
 }
 
-# Create the firewall to access IBM Cloud services over the IBM Cloud private network 
+# Create the firewall to access IBM Cloud services over the IBM Cloud private network
 resource "vcd_nsxv_firewall_rule" "rule_ibm_private" {
   edge_gateway = module.ibm_vmware_solutions_shared_instance.edge_gateway_name
   name         = "${var.dhcp_network_name}-IBM-Private"

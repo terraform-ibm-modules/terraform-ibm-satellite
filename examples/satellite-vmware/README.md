@@ -1,6 +1,6 @@
 # satellite-vmware
 
-**Note: this is currently under development, and not yet fully tested.** 
+**Note: this is currently under development, and not yet fully tested.**
 
 Use this terrafrom automation to set up a Satellite location on IBM Cloud with hosts in VMware Cloud Director.
 
