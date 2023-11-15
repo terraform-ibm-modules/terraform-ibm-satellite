@@ -2,7 +2,7 @@
 # make a tgz out of the terraform, modifying the paths to modules beforehand
 # --dirname - where to do the worker
 # --verison - version for the tgz name
-# --cloud - aws, azure, or gcp, ibm
+# --cloud - aws, azure, gcp, ibm, or vmware
 set -e
 
 while [[ "$#" -gt 0 ]]; do
@@ -48,6 +48,9 @@ case $CLOUD in
   ibm)
     CATALOG_NAME='satellite-ibm'
     ;;
+  vmware)
+    CATALOG_NAME='satellite-vmware'
+    ;;
   *)
     echo "Unknown cloud type. Cloud choices are aws, azure, gcp, ibm."
     exit 1
@@ -68,10 +71,11 @@ echo "catalog name is $CATALOG_NAME"
 
 mkdir -p $OUTPUT_DIR
 cp -r examples/satellite-$CLOUD/. $OUTPUT_DIR
-cp -r modules $OUTPUT_DIR
-
-# note, gnu sed. If on MacOS, use gsed or add '' after -i
-sed -i 's#../../modules#./modules#g' $OUTPUT_DIR/*.tf
+if [[ $CLOUD != 'vmware' ]]; then
+  cp -r modules $OUTPUT_DIR
+  # note, gnu sed. If on MacOS, use gsed or add '' after -i
+  gsed -i 's#../../modules#./modules#g' $OUTPUT_DIR/*.tf
+fi
 
 cd $OUTPUT_DIR/..
 # chown should only be needed locally so username isn't in tar
