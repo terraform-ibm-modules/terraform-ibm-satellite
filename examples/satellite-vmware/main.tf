@@ -12,7 +12,9 @@ locals {
   host_name_worker  = "${var.host_name}-worker"
   host_name_storage = "${var.host_name}-stg"
 
-  # this is going to be a bit finicky, and jq would be better, but this is what we have for now
+  # This is going to be a bit finicky, and jq would be better, but this is what we have for now
+  # The insertionPoint variables indicate where we're going to make some changes to the ignition script.
+  # We'll use replace() later when spinning up the VMs, filling in the hostname and (optionally) the SSH key provided.
   hostnameInsertionPoint = "\"files\": ["
   hostnameIgnition       = "\"files\": [{\"path\": \"/etc/hostname\", \"mode\": 420, \"contents\": {\"source\": \"data:text/plain;charset=utf-8;base64,%s\"}},"
   sshInsertionPoint      = "\"sshAuthorizedKeys\": [ \"\" ]"
