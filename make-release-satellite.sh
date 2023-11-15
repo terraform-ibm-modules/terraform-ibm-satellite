@@ -74,7 +74,7 @@ cp -r examples/satellite-$CLOUD/. $OUTPUT_DIR
 if [[ $CLOUD != 'vmware' ]]; then
   cp -r modules $OUTPUT_DIR
   # note, gnu sed. If on MacOS, use gsed or add '' after -i
-  gsed -i 's#../../modules#./modules#g' $OUTPUT_DIR/*.tf
+  sed -i 's#../../modules#./modules#g' $OUTPUT_DIR/*.tf
 fi
 
 cd $OUTPUT_DIR/..
