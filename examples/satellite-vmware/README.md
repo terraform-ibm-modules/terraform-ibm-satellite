@@ -56,9 +56,17 @@ When running this example, supply the name of the routed VDC network as `dhcp_ne
 
 
 ## Compute Details
-TODO: fill in
+This example creates Red Hat CoreOS virtual machines for use with IBM Cloud Satellite. A Red Hat CoreOS v4 image must be available in the VMWare environment.Provide its ID in the variable `rhcos_template_id`.
 
 
+The example will create 3 different sizes of virtual machines:
+- Control plane virtual machines (8 CPU, 32GB RAM, 100GB primary disk)
+- Worker virtual machines (4 CPU, 16GB RAM, 25GB primary disk, 100GB secondary disk)
+- Storage virtual machines (16 CPU, 64GB RAM, 25GB primary disk, 100GB secondary disk, 500GB tertiary disk). The specs for the storage VMs are configurable via terraform variables.
+
+These virtual machines will automatically attach to the Satellite location on boot. The control plane virtual machines will automatically be assigned to the location's control plane.
+
+Further details:
 * The `satellite-location` module creates a new location or uses an existing location ID/name. If using an existing location, set `is_location_exist` to `true`.
 * The `satellite-location` module downloads the attach host script to the $HOME directory and appends respective permissions to the script.
 * The `satellite-location` module will update the attach host script and pass it as ignition data to VMware during VM creation
