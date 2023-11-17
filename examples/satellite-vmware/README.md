@@ -22,7 +22,7 @@ This module is meant for use with Terraform 1.1.9 or later.
 
 
 ## Required environment data
-The tables below outline the information to gather from your environment before filling out the terraform variable values. 
+The tables below outline the information to gather from your environment before filling out the terraform variable values.
 
 Required to connect to the VMware Cloud Director environment:
 | Name                                  | Description                                                       | Example
@@ -41,7 +41,7 @@ Used within the VMware environment when configuring the Virtual Machines and net
 rhcos_template_id     | The ID of the RHCOS 4.12+ template to be used when provisioning the virtual machines      | 158d698b-7498-4038-b48d-70665115f4ea |
 dhcp_network_name     | The name of the network pre-configured for the environment         | my-network |
 vdc_edge_gateway_name | The name of the edge network configured in the environment. This may not be needed in all applications, but if provided, firewall rules and NAT setup will take place | edge-dal10-12345678 |
- 
+
 Other input information can be found in variables.tf TODO: link this
 
 ## Networking configuration

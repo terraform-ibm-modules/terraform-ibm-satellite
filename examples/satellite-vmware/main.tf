@@ -35,15 +35,15 @@ module "satellite-location" {
 
 # Used to obtain information from the already deployed Edge Gateway and network
 module "ibm_vmware_solutions_shared_instance" {
-  source = "./modules/ibm-vmware-solutions-shared-instance/"
-  count = var.vdc_edge_gateway_name != null ? 1 : 0
+  source                = "./modules/ibm-vmware-solutions-shared-instance/"
+  count                 = var.vdc_edge_gateway_name != null ? 1 : 0
   vdc_edge_gateway_name = var.vdc_edge_gateway_name
   network_name          = var.dhcp_network_name
 }
 
 # Create the firewall rule to access the Internet
 resource "vcd_nsxv_firewall_rule" "rule_internet" {
-  count = var.vdc_edge_gateway_name != null ? 1 : 0
+  count        = var.vdc_edge_gateway_name != null ? 1 : 0
   edge_gateway = module.ibm_vmware_solutions_shared_instance[0].edge_gateway_name
   name         = "${var.dhcp_network_name}-Internet"
 
@@ -64,7 +64,7 @@ resource "vcd_nsxv_firewall_rule" "rule_internet" {
 
 # Create SNAT rule to access the Internet
 resource "vcd_nsxv_snat" "rule_internet" {
-  count = var.vdc_edge_gateway_name != null ? 1 : 0
+  count        = var.vdc_edge_gateway_name != null ? 1 : 0
   edge_gateway = module.ibm_vmware_solutions_shared_instance[0].edge_gateway_name
   network_type = "ext"
   network_name = module.ibm_vmware_solutions_shared_instance[0].external_network_name_2
@@ -98,7 +98,7 @@ resource "vcd_nsxv_firewall_rule" "rule_internet_ssh" {
 
 # Create the firewall to access IBM Cloud services over the IBM Cloud private network
 resource "vcd_nsxv_firewall_rule" "rule_ibm_private" {
-  count = var.vdc_edge_gateway_name != null ? 1 : 0
+  count        = var.vdc_edge_gateway_name != null ? 1 : 0
   edge_gateway = module.ibm_vmware_solutions_shared_instance[0].edge_gateway_name
   name         = "${var.dhcp_network_name}-IBM-Private"
 
@@ -120,7 +120,7 @@ resource "vcd_nsxv_firewall_rule" "rule_ibm_private" {
 
 # Create SNAT rule to access the IBM Cloud services over a private network
 resource "vcd_nsxv_snat" "rule_ibm_private" {
-  count = var.vdc_edge_gateway_name != null ? 1 : 0
+  count        = var.vdc_edge_gateway_name != null ? 1 : 0
   edge_gateway = module.ibm_vmware_solutions_shared_instance[0].edge_gateway_name
   network_type = "ext"
   network_name = module.ibm_vmware_solutions_shared_instance[0].external_network_name_1
