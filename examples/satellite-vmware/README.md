@@ -31,7 +31,9 @@ vcd_user              | The VMware Cloud Director username | admin |
 vcd_password          | The VMware Cloud Director password ||
 vcd_org               | The VMware organization name | 0ff080abcdef123456789abcd12345678 |
 vcd_url               | The VMware Cloud Director URL | `https://daldir01.vmware-solutions.cloud.ibm.com/api` |
-vdc_name              | The VMware Cloud Director virtual datacenter name | vmware-satellite |
+vdc_name              | The VMware Cloud Director virtual data center name | vmware-satellite |
+
+<BR/>
 
 Used within the VMware environment when configuring the Virtual Machines and networking:
 | Name                                  | Description                                                       | Example
@@ -43,20 +45,20 @@ vdc_edge_gateway_name | The name of the edge network configured in the environme
 Other input information can be found in variables.tf TODO: link this
 
 ## Networking configuration
-Networking environments can vary quite a bit. This section details what is needed in the [VMware Solutions Shared environment on IBM Cloud](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview). [The Satellite documentation](https://cloud.ibm.com/docs/satellite?topic=satellite-getting-started), can be consulted for more details about what is generally needed.
+This section details what is needed in a [VMware Solutions Shared environment on IBM Cloud](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview) environment. [The Satellite documentation](https://cloud.ibm.com/docs/satellite?topic=satellite-getting-started), can be consulted for more details about what is generally needed.
 
-Before attempting to run the example, the following must be created:
+Before attempting to run the example, the following must be created in the virtual data center:
 - A routed VDC network
 - An edge gateway, configured with **Distributed Routing** enabled. This network should also be **configured with DHCP**. Add a DHCP pool with IP addresses from the previously created VDC network, and **enable DHCP**.
 
-When running this example, supply the name of the routed VDC network as `dhcp_network_name`. The edge gateway is optionally provided as `vdc_edge_gateway_name`. The following will be configured by the example:
+When running this example, supply the name of the routed VDC network as `dhcp_network_name`. The edge gateway is **optionally** provided as `vdc_edge_gateway_name`. The following will be configured by the example:
 - Virtual machines will use the `dhcp_network_name` network, with IPs from the DHCP pool.
 - If the `vdc_edge_gateway_name` is provided, firewall rules will be created for full outbound connectivity from the VDC network.
 - If the `vdc_edge_gateway_name` is provided, an SNAT rule will be created for mapping to an external IP.
 
 
 ## Compute Details
-This example creates Red Hat CoreOS virtual machines for use with IBM Cloud Satellite. A Red Hat CoreOS v4 image must be available in the VMWare environment.Provide its ID in the variable `rhcos_template_id`.
+This example creates Red Hat CoreOS virtual machines for use with IBM Cloud Satellite. A Red Hat CoreOS v4 image must be available in the VMWare environment. Provide its ID in the variable `rhcos_template_id`.
 
 
 The example will create 3 different sizes of virtual machines:
