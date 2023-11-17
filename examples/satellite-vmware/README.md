@@ -1,63 +1,76 @@
 # satellite-vmware
-
-**Note: this is currently under development, and not yet fully tested.**
-
-Use this terrafrom automation to set up a Satellite location on IBM Cloud with hosts in VMware Cloud Director.
+Use this Terraform automation to set up a Satellite location on IBM Cloud with hosts in VMware Cloud Director.
 
 This example will:
-- Create the IBM Cloud Satellite location
-- Create RHCOS VMs in VMware Cloud Director with 3 different specifications: control plane, worker, and storage
+- Create an [IBM Cloud Satellite](https://cloud.ibm.com/satellite) location
+- Create Red Hat CoreOS (RHCOS) VMs in VMware Cloud Director with 3 different specifications: control plane, worker, and storage
 - Attach the VMs to the Satellite location
 - Assign the control plane VMs to the Satellite location control plane
 
+The example has been tested within the [IBM Cloud VMware Shared](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview) environment. Other virtual cloud environments may require further customization. It is based on the [Getting Started with IBM Cloud for VMware Shared Solution tutorial](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-vmware-solutions-shared-getting-started).
 
 ## Compatibility
 
-This module is meant for use with Terraform 1.1 or later.
+This module is meant for use with Terraform 1.1.9 or later.
 
 ## Requirements
-
-### Terraform plugins
-
-- [Terraform](https://www.terraform.io/downloads.html) 1.1 or later.
-- [terraform-provider-ibm](https://github.com/IBM-Cloud/terraform-provider-ibm)
-
-## Install
-
-### Terraform provider plugins
-
-Be sure you have the compiled plugins on $HOME/.terraform.d/plugins/
-
-- [terraform-provider-ibm](https://github.com/IBM-Cloud/terraform-provider-ibm)
+- [Terraform](https://www.terraform.io/downloads.html) 1.1.9 or later
+- An IBM Cloud account, with the ability to create Satellite locations
+- IC_API_KEY set in the environment as described in the [IBM Terraform provider documentation](https://github.com/IBM-Cloud/terraform-provider-ibm/tree/master#download-the-provider-manually-option-2). There are other approaches to configure this including a `providers` file if developing your own terraform based on the example.
+- A VMware Virtual Cloud environment, with appropriate permissions and access information
+- Pre-configured networking environment with DHCP enabled
 
 
-## Note
+## Required environment data
+Required to connect to the VMware Cloud Director environment:
+| Name                                  | Description                                                       | Example
+|---------------------------------------|-------------------------------------------------------------------|--------------|
+vcd_user              | The VMware Cloud Director username | admin |
+vcd_password          | The VMware Cloud Director password ||
+vcd_org               | The VMware organization name | 0ff080abcdef123456789abcd12345678 |
+vcd_url               | The VMware Cloud Director URL | `https://daldir01.vmware-solutions.cloud.ibm.com/api` |
+vdc_name              | The VMware Cloud Director virtual data center name | vmware-satellite |
 
-* `satellite-location` module creates a new location or uses an existing location ID/name to process. If using an existing location, set `is_location_exist` to `true`.
-* `satellite-location` module download attach host script to the $HOME directory and appends respective permissions to the script.
-* `satellite-location` module will update the attach host script pass the ignition data to VMware during VM creation
+<BR/>
+
+Used within the VMware environment when configuring the Virtual Machines and networking:
+| Name                                  | Description                                                       | Example
+|---------------------------------------|-------------------------------------------------------------------|--------------|
+rhcos_template_id     | The ID of the RHCOS 4.12+ template to be used when provisioning the virtual machines      | 158d698b-7498-4038-b48d-70665115f4ea |
+dhcp_network_name     | The name of the network pre-configured for the environment         | my-network |
+vdc_edge_gateway_name | The name of the edge network configured in the environment. This may not be needed in all applications, but if provided, firewall rules and NAT setup will take place | edge-dal10-12345678 |
+
+Other input information can be found in [variables.tf](variables.tf).
+
+## Networking configuration
+This section details what is needed in a [VMware Solutions Shared environment on IBM Cloud](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview) environment. [The Satellite documentation](https://cloud.ibm.com/docs/satellite?topic=satellite-getting-started) can be consulted for more details about what is generally needed when setting up an IBM Cloud Satellite environment.
+
+Before attempting to run the example, the following **must** be created in the virtual data center:
+- A routed VDC network
+- An edge gateway, configured with **Distributed Routing** enabled. This network should also be **configured with DHCP**. Add a DHCP pool with IP addresses from the previously created VDC network, and **enable DHCP**.
+
+When running this example, supply the name of the routed VDC network as `dhcp_network_name`. The edge gateway is **optionally** provided as `vdc_edge_gateway_name`. The following will be configured by the example:
+- Virtual machines will use the `dhcp_network_name` network, with IPs from the DHCP pool.
+- If the `vdc_edge_gateway_name` is provided, firewall rules will be created for full outbound connectivity from the VDC network.
+- If the `vdc_edge_gateway_name` is provided, an SNAT rule will be created for mapping to an external IP.
+
+
+## Compute Details
+This example creates Red Hat CoreOS virtual machines for use with IBM Cloud Satellite. A Red Hat CoreOS v4 image must be available in the VMWare environment. Provide its ID in the variable `rhcos_template_id`.
+
+
+The example will create 3 different sizes of virtual machines:
+- Control plane virtual machines (8 CPU, 32GB RAM, 100GB primary disk)
+- Worker virtual machines (4 CPU, 16GB RAM, 25GB primary disk, 100GB secondary disk)
+- Storage virtual machines (16 CPU, 64GB RAM, 25GB primary disk, 100GB secondary disk, 500GB tertiary disk). The specs for the storage VMs are configurable via terraform variables.
+
+These virtual machines will automatically attach to the Satellite location on boot. The control plane virtual machines will automatically be assigned to the location's control plane.
+
+Further details:
+* The `satellite-location` module creates a new location or uses an existing location ID/name. If using an existing location, set `is_location_exist` to `true`.
+* The `satellite-location` module downloads the attach host script to the $HOME directory and appends respective permissions to the script.
+* The `satellite-location` module will update the attach host script and pass it as ignition data to VMware during VM creation
 
 
 ## Inputs
-
-| Name                                  | Description                                                       | Type     | Default | Required |
-|---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
-<!-- | ibmcloud_api_key                      | IBM Cloud API Key                                                 | string   | n/a     | yes      |
-| resource_group                        | Resource group name that has to be targeted                       | string   | n/a     | no       |
-| aws_access_key                        | AWS access key                                                    | string   | n/a     | yes      |
-| aws_secret_key                        | AWS secret key                                                    | string   | n/a     | yes      |
-| aws_region                            | AWS cloud region                                                  | string   | us-east-1  | yes   |
-| location                              | Name of the Location that has to be created                       | string   | satellite-aws  | yes   |
-| is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | yes      |
-| managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc     | yes      |
-| location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | []      | no       |
-| labels                                | Add labels to attach host script                                  | list     | [env:prod]  | no   |
-| location_bucket                       | COS bucket name                                                   | string   | n/a     | no       |
-| host_provider                         | The cloud provider of host/vms.                                   | string   | aws     | no       |
-| satellite_host_count                  | [Deprecated] The total number of aws host to create for control plane. satellite_host_count value should always be in multiples of 3, such as 3, 6, 9, or 12 hosts   | number   | 3 |  yes     |
-| addl_host_count                       | [Deprecated] The total number of additional aws host                            | number   | 0 |  yes     |
-| instance_type                         | [Deprecated] The type of aws instance to create.     | string   | m5d.xlarge     | yes |
-| cp_hosts                              | A list of AWS host objects used to create the location control plane, including parameters instance_type and count. Control plane count values should always be in multipes of 3, such as 3, 6, 9, or 12 hosts.                  | list   | [<br>&ensp; {<br>&ensp;&ensp; instance_type = "m5d.xlarge"<br>&ensp; count         = 3<br>&ensp;&ensp; }<br>]             | yes    |
-| addl_hosts                            | A list of AWS host objects used for provisioning services on your location after setup, including instance_type and count, see cp_hosts for an example.                  | list   | []             | yes    |
-| ssh_public_key                        | SSH Public Key. Get your ssh key by running `ssh-key-gen` command | string   | n/a     | no |
-| resource_prefix                       | Name to be used on all aws resources as prefix                        | string   | satellite-aws     | yes | -->
+See [variables.tf](variables.tf) for input information.
