@@ -28,7 +28,8 @@ variable "vdc_name" {
 
 variable "vdc_edge_gateway_name" {
   description = "vCloud Director virtual datacenter edge gateway name"
-  default     = ""
+  type        = string
+  default     = null
 }
 
 variable "dhcp_network_name" {
