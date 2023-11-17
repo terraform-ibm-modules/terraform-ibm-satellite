@@ -3,17 +3,17 @@
 ###########################################################
 variable "vcd_user" {
   description = "vCloud Director username"
-  default     = "admin"
+  type        = string
 }
 
 variable "vcd_password" {
   description = "vCloud Director instance password"
-  default     = ""
+  type        = string
 }
 
 variable "vcd_org" {
   description = "vCloud Director organization name/id"
-  default     = ""
+  type        = string
 }
 
 variable "vcd_url" {
@@ -23,7 +23,7 @@ variable "vcd_url" {
 
 variable "vdc_name" {
   description = "vCloud Director virtual datacenter"
-  default     = ""
+  type        = string
 }
 
 variable "vdc_edge_gateway_name" {
@@ -57,7 +57,7 @@ variable "location" {
 }
 
 variable "is_location_exist" {
-  description = "Determines if the location has to be created or not"
+  description = "Determines if the location already exists, or should be created by terraform"
   type        = bool
   default     = false
 }
@@ -74,7 +74,7 @@ variable "location_zones" {
 }
 
 variable "host_labels" {
-  description = "Optional host labels for Satellite. Can be used to direct hosts to different assignments."
+  description = "Optional host labels for Satellite. Can be used to direct hosts to different worker pools."
   type        = list(string)
   default     = []
 }
@@ -95,8 +95,8 @@ variable "vapp_name" {
 }
 
 variable "allow_ssh" {
-  description = "Set to false to not configure SSH into the VM."
-  default     = true
+  description = "Set to true to configure an SSH firewall rule. Will most likely still require manual configuration for NAT."
+  default     = false
 }
 
 variable "ssh_public_key" {

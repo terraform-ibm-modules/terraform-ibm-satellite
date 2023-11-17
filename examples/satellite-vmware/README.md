@@ -3,27 +3,25 @@ Use this Terraform automation to set up a Satellite location on IBM Cloud with h
 
 This example will:
 - Create an [IBM Cloud Satellite](https://cloud.ibm.com/satellite) location
-- Create Red Hat Core OS VMs in VMware Cloud Director with 3 different specifications: control plane, worker, and storage
+- Create Red Hat CoreOS (RHCOS) VMs in VMware Cloud Director with 3 different specifications: control plane, worker, and storage
 - Attach the VMs to the Satellite location
 - Assign the control plane VMs to the Satellite location control plane
 
-The example has been tested within the [IBM Cloud VMware Shared](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview) environment. Other virtual cloud environments may require further customization. It is heavily based on the [Getting Started with IBM Cloud for VMware Shared Solution tutorial](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-vmware-solutions-shared-getting-started).
+The example has been tested within the [IBM Cloud VMware Shared](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview) environment. Other virtual cloud environments may require further customization. It is based on the [Getting Started with IBM Cloud for VMware Shared Solution tutorial](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-vmware-solutions-shared-getting-started).
 
 ## Compatibility
 
 This module is meant for use with Terraform 1.1.9 or later.
 
 ## Requirements
-- [Terraform](https://www.terraform.io/downloads.html) 1.1.9 or later.
+- [Terraform](https://www.terraform.io/downloads.html) 1.1.9 or later
 - An IBM Cloud account, with the ability to create Satellite locations
-- IC_API_KEY set in the environment as described in the IBM Terraform provider documentation.
-- A VMware Virtual Cloud environment, with appropriate permissions and access information.
-- Pre-configured networking environment with DHCP enabled.
+- IC_API_KEY set in the environment as described in the [IBM Terraform provider documentation](https://github.com/IBM-Cloud/terraform-provider-ibm/tree/master#download-the-provider-manually-option-2). There are other approaches to configure this including a `providers` file if developing your own terraform based on the example.
+- A VMware Virtual Cloud environment, with appropriate permissions and access information
+- Pre-configured networking environment with DHCP enabled
 
 
 ## Required environment data
-The tables below outline the information to gather from your environment before filling out the terraform variable values.
-
 Required to connect to the VMware Cloud Director environment:
 | Name                                  | Description                                                       | Example
 |---------------------------------------|-------------------------------------------------------------------|--------------|
@@ -45,9 +43,9 @@ vdc_edge_gateway_name | The name of the edge network configured in the environme
 Other input information can be found in [variables.tf](variables.tf).
 
 ## Networking configuration
-This section details what is needed in a [VMware Solutions Shared environment on IBM Cloud](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview) environment. [The Satellite documentation](https://cloud.ibm.com/docs/satellite?topic=satellite-getting-started), can be consulted for more details about what is generally needed.
+This section details what is needed in a [VMware Solutions Shared environment on IBM Cloud](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview) environment. [The Satellite documentation](https://cloud.ibm.com/docs/satellite?topic=satellite-getting-started) can be consulted for more details about what is generally needed when setting up an IBM Cloud Satellite environment.
 
-Before attempting to run the example, the following must be created in the virtual data center:
+Before attempting to run the example, the following **must** be created in the virtual data center:
 - A routed VDC network
 - An edge gateway, configured with **Distributed Routing** enabled. This network should also be **configured with DHCP**. Add a DHCP pool with IP addresses from the previously created VDC network, and **enable DHCP**.
 
