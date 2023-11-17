@@ -7,7 +7,7 @@ This example will:
 - Attach the VMs to the Satellite location
 - Assign the control plane VMs to the Satellite location control plane
 
-The example has been tested within the [IBM Cloud VMware Shared](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview) environment. Other virtual cloud environments may require further customization. It is heavily based on the Getting Started with [IBM Cloud for VMware Shared Solution tutorial](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-vmware-solutions-shared-getting-started).
+The example has been tested within the [IBM Cloud VMware Shared](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview) environment. Other virtual cloud environments may require further customization. It is heavily based on the [Getting Started with IBM Cloud for VMware Shared Solution tutorial](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-vmware-solutions-shared-getting-started).
 
 ## Compatibility
 
@@ -42,7 +42,7 @@ rhcos_template_id     | The ID of the RHCOS 4.12+ template to be used when provi
 dhcp_network_name     | The name of the network pre-configured for the environment         | my-network |
 vdc_edge_gateway_name | The name of the edge network configured in the environment. This may not be needed in all applications, but if provided, firewall rules and NAT setup will take place | edge-dal10-12345678 |
 
-Other input information can be found in variables.tf TODO: link this
+Other input information can be found in [variables.tf](variables.tf).
 
 ## Networking configuration
 This section details what is needed in a [VMware Solutions Shared environment on IBM Cloud](https://cloud.ibm.com/docs/vmwaresolutions?topic=vmwaresolutions-shared_overview) environment. [The Satellite documentation](https://cloud.ibm.com/docs/satellite?topic=satellite-getting-started), can be consulted for more details about what is generally needed.
@@ -75,4 +75,4 @@ Further details:
 
 
 ## Inputs
-See variables.tf for input information.
+See [variables.tf](variables.tf) for input information.
