@@ -10,7 +10,7 @@ variable "host_labels" {
 
   validation {
     condition     = can([for s in var.host_labels : regex("^[a-zA-Z0-9:]+$", s)])
-    error_message = "Label must be of the form `key:value`."
+    error_message = "Label must be of the form `key:value`, and can only contain letters or numbers."
   }
 }
 
