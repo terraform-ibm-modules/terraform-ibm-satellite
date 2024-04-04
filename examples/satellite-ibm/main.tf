@@ -1,6 +1,6 @@
 #####################################################
 # IBM Cloud Satellite -  IBM Example
-# Copyright 2021, 2023 IBM
+# Copyright 2021, 2024 IBM
 #####################################################
 
 provider "ibm" {
@@ -26,4 +26,6 @@ module "satellite-location" {
   resource_group    = var.resource_group
   host_provider     = "ibm"
   coreos_host       = var.coreos_host
+  pod_subnet        = var.pod_subnet
+  service_subnet    = var.service_subnet
 }

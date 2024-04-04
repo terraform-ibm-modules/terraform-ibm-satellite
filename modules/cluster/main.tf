@@ -22,6 +22,7 @@ resource "ibm_satellite_cluster" "create_cluster" {
   worker_count           = (var.worker_count != null ? var.worker_count : null)
   host_labels            = (var.host_labels != null ? var.host_labels : null)
   operating_system       = var.operating_system
+  calico_ip_autodetection = (var.calico_ip_autodetection != null ? var.calico_ip_autodetection : null)
 
   dynamic "zones" {
     for_each = (var.zones != null ? var.zones : null)

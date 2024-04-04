@@ -96,3 +96,9 @@ variable "operating_system" {
     condition     = var.operating_system == null || contains(["REDHAT_7_64", "REDHAT_8_64", "RHCOS"], coalesce(var.operating_system, "allownull"))
   }
 }
+
+variable "calico_ip_autodetection" {
+  description = "Set IP autodetection to use correct interface for Calico"
+  type        = map(string)
+  default = null
+}

@@ -76,3 +76,15 @@ variable "custom_script" {
   type        = string
   default     = null
 }
+
+variable "pod_subnet" {
+  type = string
+  default = null
+  description = "Custom subnet CIDR to provide private IP addresses for services"
+}
+
+variable "service_subnet" {
+  type = string
+  default = null
+  description = "Custom subnet CIDR to provide private IP addresses for pods"
+}
