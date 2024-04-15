@@ -100,5 +100,5 @@ variable "operating_system" {
 variable "calico_ip_autodetection" {
   description = "Set IP autodetection to use correct interface for Calico"
   type        = map(string)
-  default = null
+  default     = null
 }

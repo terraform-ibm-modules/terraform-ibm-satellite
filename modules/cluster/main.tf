@@ -13,15 +13,15 @@ data "ibm_resource_group" "rg_cluster" {
 resource "ibm_satellite_cluster" "create_cluster" {
   count = var.create_cluster ? 1 : 0
 
-  name                   = var.cluster
-  location               = var.location
-  resource_group_id      = data.ibm_resource_group.rg_cluster.id
-  enable_config_admin    = true
-  kube_version           = var.kube_version
-  wait_for_worker_update = (var.wait_for_worker_update ? var.wait_for_worker_update : true)
-  worker_count           = (var.worker_count != null ? var.worker_count : null)
-  host_labels            = (var.host_labels != null ? var.host_labels : null)
-  operating_system       = var.operating_system
+  name                    = var.cluster
+  location                = var.location
+  resource_group_id       = data.ibm_resource_group.rg_cluster.id
+  enable_config_admin     = true
+  kube_version            = var.kube_version
+  wait_for_worker_update  = (var.wait_for_worker_update ? var.wait_for_worker_update : true)
+  worker_count            = (var.worker_count != null ? var.worker_count : null)
+  host_labels             = (var.host_labels != null ? var.host_labels : null)
+  operating_system        = var.operating_system
   calico_ip_autodetection = (var.calico_ip_autodetection != null ? var.calico_ip_autodetection : null)
 
   dynamic "zones" {
