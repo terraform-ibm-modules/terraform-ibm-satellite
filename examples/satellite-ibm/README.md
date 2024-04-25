@@ -112,7 +112,7 @@ location_zones = ["gondor", "rohan", "shire"]
 coreos_enabled_location = true
 coreos_host = true
 
-pod_subnet = "10.28.0.0/16"
+pod_subnet = "10.29.0.0/16"
 service_subnet = "192.168.42.0/24"
 
 # VPC VSI Variables
