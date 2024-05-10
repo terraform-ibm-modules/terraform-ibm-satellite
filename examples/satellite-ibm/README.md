@@ -97,7 +97,7 @@ module "satellite-cluster-worker-pool" {
 ### Example `terraform.tfvars` file
 
 ```hcl
-# IBMCLOUD Authentication 
+# IBMCLOUD Authentication
 
 ibm_region = "us-south"
 resource_group = "Default"
