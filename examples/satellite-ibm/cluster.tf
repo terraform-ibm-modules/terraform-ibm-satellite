@@ -27,6 +27,7 @@ module "satellite-cluster" {
   update_timeout             = var.update_timeout
   delete_timeout             = var.delete_timeout
   operating_system           = var.operating_system
+  calico_ip_autodetection    = var.calico_ip_autodetection
 }
 
 ###################################################################

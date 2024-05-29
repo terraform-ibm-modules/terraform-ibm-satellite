@@ -72,6 +72,7 @@ module "satellite-cluster" {
   create_timeout             = var.create_timeout
   update_timeout             = var.update_timeout
   delete_timeout             = var.delete_timeout
+  calico_ip_autodetection    = var.calico_ip_autodetection
 }
 
 module "satellite-cluster-worker-pool" {
@@ -90,6 +91,61 @@ module "satellite-cluster-worker-pool" {
   tags                       = var.tags
   create_timeout             = var.create_timeout
   delete_timeout             = var.delete_timeout
+}
+```
+
+### Example `terraform.tfvars` file
+
+```hcl
+# IBMCLOUD Authentication
+
+ibm_region = "us-south"
+resource_group = "Default"
+
+# Satellite Location and Host Variables
+
+location = "middle-earth"
+is_location_exist = false
+
+managed_from = "dal10"
+location_zones = ["gondor", "rohan", "shire"]
+coreos_enabled_location = true
+coreos_host = true
+
+pod_subnet = "10.29.0.0/16"
+service_subnet = "192.168.42.0/24"
+
+# VPC VSI Variables
+
+cp_hosts = [ {
+    instance_type = "mx2-8x64"
+    count         = 3
+} ]
+
+# A list of IBM host objects used for provisioning services on your location after setup, including instance_type and count.
+addl_hosts = [ {
+    instance_type = "mx2-8x64"
+    count         = 6
+} ]
+
+# Prefix to the Names of the VPC Infrastructure resources
+is_prefix = "middle-earth"
+
+ssh_key_id = "xxxx-xxxx-xxxx"
+
+worker_image = "rhcos-image" # default: "ibm-redhat-8-6-minimal-amd64-1"
+
+# ROKS Cluster Variables
+
+create_cluster = true
+cluster = "terraform-2-cluster"
+# Operating system must be one of: REDHAT_7_64, REDHAT_8_64, RHCOS.
+operating_system = "RHCOS"
+kube_version = "4.14_openshift"
+worker_count = 6 # "Worker Count for default pool"
+
+calico_ip_autodetection = {
+  "can-reach" = "www.ibm.com",
 }
 ```
 
@@ -127,7 +183,7 @@ module "satellite-cluster-worker-pool" {
 | create_cluster                        | Create cluster Disable this, not to provision cluster             | bool     | true    | no       |
 | cluster                               | Name of the ROKS Cluster that has to be created                   | string   | satellite-ibm-cluster     | no      |
 | cluster_zones                         | Allocate your hosts across these three zones                      | set      | n/a     | no      |
-| kube_version                          | Kuber version                                                     | string   | 4.7_openshift | no |
+| kube_version                          | Kuber version                                                     | string   | 4.14_openshift | no |
 | default_wp_labels                     | Labels on the default worker pool                                 | map      | n/a     | no       |
 | workerpool_labels                     | Labels on the worker pool                                         | map      | n/a     | no       |
 | cluster_tags                          | List of tags for the cluster resource                             | list     | n/a     | no       |
@@ -137,6 +193,9 @@ module "satellite-cluster-worker-pool" {
 | create_timeout                        | Timeout duration for creation                                     | string   | n/a     | no       |
 | update_timeout                        | Timeout duration for updation                                     | string   | n/a     | no       |
 | delete_timeout                        | Timeout duration for deletion                                     | string   | n/a     | no       |
+| pod_subnet                            | Custom subnet CIDR to provide private IP addresses for pods       | string   | null    | no       |
+| service_subnet                        | Custom subnet CIDR to provide private IP addresses for services   | string   | null    | no       |
+| calico_ip_autodetection               | Set IP autodetection to use correct interface for Calico (needs RHCOS) | map(string) | null | no       |
 
 
 

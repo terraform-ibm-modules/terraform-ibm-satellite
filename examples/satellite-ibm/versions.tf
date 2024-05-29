@@ -1,6 +1,6 @@
 #####################################################
 # IBM Cloud Satellite Module
-# Copyright 2021 IBM
+# Copyright 2021, 2024 IBM
 #####################################################
 
 /***************************************************
@@ -22,7 +22,7 @@ terraform {
   required_providers {
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = "~> 1.49.0"
+      version = "~> 1.64.0"
     }
     tls = {
       source  = "hashicorp/tls"
