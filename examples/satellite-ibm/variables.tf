@@ -71,15 +71,15 @@ variable "coreos_host" {
 }
 
 variable "pod_subnet" {
+  description = "Custom subnet CIDR to provide private IP addresses for pods"
   type        = string
   default     = null
-  description = "Custom subnet CIDR to provide private IP addresses for pods"
 }
 
 variable "service_subnet" {
+  description = "Custom subnet CIDR to provide private IP addresses for services"
   type        = string
   default     = null
-  description = "Custom subnet CIDR to provide private IP addresses for services"
 }
 
 ##################################################
