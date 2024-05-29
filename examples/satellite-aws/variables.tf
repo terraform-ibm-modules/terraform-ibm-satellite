@@ -171,5 +171,5 @@ variable "resource_prefix" {
 variable "aws_ami" {
   description = "The AMI to use for ec2 instances"
   type        = string
-  default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
+  default     = "RHEL-8.9.0_HVM-20240327-x86_64-4-Hourly2-GP3"
 }
