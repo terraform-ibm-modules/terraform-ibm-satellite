@@ -70,18 +70,6 @@ variable "coreos_host" {
   default     = false
 }
 
-variable "pod_subnet" {
-  description = "Custom subnet CIDR to provide private IP addresses for pods"
-  type        = string
-  default     = null
-}
-
-variable "service_subnet" {
-  description = "Custom subnet CIDR to provide private IP addresses for services"
-  type        = string
-  default     = null
-}
-
 ##################################################
 # IBMCLOUD VPC VSI Variables
 ##################################################
@@ -226,7 +214,7 @@ variable "operating_system" {
 
 variable "kube_version" {
   description = "Satellite Kube Version"
-  default     = "4.14_openshift"
+  default     = "4.10_openshift"
 }
 
 variable "worker_count" {
@@ -268,12 +256,6 @@ variable "update_timeout" {
 variable "delete_timeout" {
   type        = string
   description = "Timeout duration for delete."
-  default     = null
-}
-
-variable "calico_ip_autodetection" {
-  description = "Set IP autodetection to use correct interface for Calico"
-  type        = map(string)
   default     = null
 }
 

@@ -24,6 +24,7 @@ variable "client_secret" {
   description = "Client Secret of Azure Account"
   type        = string
 }
+
 variable "is_az_resource_group_exist" {
   default     = false
   description = "If false, resource group (az_resource_group) will be created. If true, existing resource group (az_resource_group) will be read"
