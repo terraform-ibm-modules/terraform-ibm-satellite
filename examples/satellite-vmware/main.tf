@@ -22,7 +22,9 @@ locals {
 }
 
 module "satellite-location" {
-  source            = "terraform-ibm-modules/satellite/ibm//modules/location"
+  // source            = "terraform-ibm-modules/satellite/ibm//modules/location"
+  source = "../../modules/location"
+
   is_location_exist = var.is_location_exist
   coreos_enabled    = true
   coreos_host       = true
@@ -269,7 +271,8 @@ resource "vcd_vm_internal_disk" "storage_disks_2" {
 
 # Assign control plane hosts to control plane
 module "satellite-host" {
-  source         = "terraform-ibm-modules/satellite/ibm//modules/host"
+  // source         = "terraform-ibm-modules/satellite/ibm//modules/host"
+  source         = "../../modules/host"
   host_count     = var.num_control_plane_hosts
   location       = module.satellite-location.location_id
   host_vms       = [for v in vcd_vapp_vm.control_plane_vms : v.name]
