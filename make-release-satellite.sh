@@ -71,11 +71,9 @@ echo "catalog name is $CATALOG_NAME"
 
 mkdir -p $OUTPUT_DIR
 cp -r examples/satellite-$CLOUD/. $OUTPUT_DIR
-if [[ $CLOUD != 'vmware' ]]; then
-  cp -r modules $OUTPUT_DIR
-  # note, gnu sed. If on MacOS, use gsed or add '' after -i
-  sed -i 's#../../modules#./modules#g' $OUTPUT_DIR/*.tf
-fi
+cp -r modules $OUTPUT_DIR
+# note, gnu sed. If on MacOS, use gsed or add '' after -i
+sed -i 's#../../modules#./modules#g' $OUTPUT_DIR/*.tf
 
 cd $OUTPUT_DIR/..
 # chown should only be needed locally so username isn't in tar
