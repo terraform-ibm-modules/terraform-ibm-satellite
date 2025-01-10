@@ -164,7 +164,7 @@ calico_ip_autodetection = {
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
 | resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | yes      |
 | ibm_region                            | The location or the region in which VM instance exists.           | string   | us-east | no       |
-| location                              | Name of the Location that has to be created                       | string   | n/a     | satellite-ibm|
+| location                              | Name of location to be created. Can also be ID of existing location. if `is_location_exist` is true | string   | satellite-ibm     | no |
 | is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | no       |
 | managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc     | no       |
 | location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | ["us-east-1", "us-east-2", "us-east-3"]     | no  |
@@ -196,6 +196,7 @@ calico_ip_autodetection = {
 | pod_subnet                            | Custom subnet CIDR to provide private IP addresses for pods       | string   | null    | no       |
 | service_subnet                        | Custom subnet CIDR to provide private IP addresses for services   | string   | null    | no       |
 | calico_ip_autodetection               | Set IP autodetection to use correct interface for Calico (needs RHCOS) | map(string) | null | no       |
+| allow_ssh_sg                          | Include an allow rule for SSH during security group creation      | bool     | true  | no         |
 
 
 
