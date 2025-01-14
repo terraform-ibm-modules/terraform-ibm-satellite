@@ -164,7 +164,7 @@ calico_ip_autodetection = {
 |---------------------------------------|-------------------------------------------------------------------|----------|---------|----------|
 | resource_group                        | Resource Group Name that has to be targeted.                      | string   | n/a     | yes      |
 | ibm_region                            | The location or the region in which VM instance exists.           | string   | us-east | no       |
-| location                              | Name of location to be created. Can also be ID of existing location. if `is_location_exist` is true | string   | satellite-ibm     | no |
+| location                              | Name of location to be created. Can also be ID of existing location if `is_location_exist` is true | string   | satellite-ibm     | no |
 | is_location_exist                     | Determines if the location has to be created or not               | bool     | false   | no       |
 | managed_from                          | The IBM Cloud region to manage your Satellite location from.      | string   | wdc     | no       |
 | location_zones                        | Allocate your hosts across three zones for higher availablity     | list     | ["us-east-1", "us-east-2", "us-east-3"]     | no  |
