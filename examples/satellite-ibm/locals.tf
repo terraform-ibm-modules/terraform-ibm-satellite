@@ -11,11 +11,12 @@ locals {
       icmp       = lookup(r, "icmp", null)
       tcp        = lookup(r, "tcp", null)
       udp        = lookup(r, "udp", null)
-    }
+    } if r.service != "ssh" || var.allow_ssh_sg == true
   ]
   rules = [
     {
       name      = "${var.is_prefix}-ingress-1"
+      service   = "ssh"
       direction = "inbound"
       remote    = "0.0.0.0/0"
       tcp = {
@@ -25,6 +26,7 @@ locals {
     },
     {
       name      = "${var.is_prefix}-ingress-2"
+      service   = "http"
       direction = "inbound"
       remote    = "0.0.0.0/0"
       tcp = {
@@ -34,6 +36,7 @@ locals {
     },
     {
       name      = "${var.is_prefix}-ingress-3"
+      service   = "https"
       direction = "inbound"
       remote    = "0.0.0.0/0"
       tcp = {
@@ -43,6 +46,7 @@ locals {
     },
     {
       name      = "${var.is_prefix}-ingress-4"
+      service   = "openshift"
       direction = "inbound"
       remote    = "0.0.0.0/0"
       tcp = {
@@ -52,6 +56,7 @@ locals {
     },
     {
       name      = "${var.is_prefix}-ingress-5"
+      service   = "openshift"
       direction = "inbound"
       remote    = "0.0.0.0/0"
       udp = {
@@ -61,6 +66,7 @@ locals {
     },
     {
       name      = "${var.is_prefix}-ingress-6"
+      service   = ""
       direction = "inbound"
       icmp = {
         type = 8
@@ -69,6 +75,7 @@ locals {
     },
     {
       name      = "${var.is_prefix}-egress-1"
+      service   = ""
       direction = "outbound"
       remote    = "0.0.0.0/0"
       tcp = {

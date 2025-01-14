@@ -83,6 +83,15 @@ variable "service_subnet" {
 }
 
 ##################################################
+# IBMCLOUD VPC Security Group Variables
+##################################################
+variable "allow_ssh_sg" {
+  description = "Include an allow rule for SSH during security group creation"
+  type        = bool
+  default     = true
+}
+
+##################################################
 # IBMCLOUD VPC VSI Variables
 ##################################################
 variable "host_count" {
