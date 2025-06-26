@@ -195,7 +195,7 @@ variable "worker_image" {
 }
 
 variable "control_plane_image" {
-  description = "Operating system image for the control plane workers created. Only needed if different image is desired."
+  description = "Operating system image for the control plane workers created. If supplied, this will override worker_image above for cp nodes."
   type        = string
   default     = null
 }
