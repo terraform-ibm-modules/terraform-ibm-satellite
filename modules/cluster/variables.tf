@@ -1,6 +1,6 @@
 #####################################################
 # IBM Cloud Satellite -  IBM Example
-# Copyright 2021, 2023 IBM
+# Copyright 2021, 2025 IBM
 #####################################################
 
 variable "create_cluster" {
@@ -92,13 +92,25 @@ variable "operating_system" {
   default     = null
 
   validation {
-    error_message = "Operating system must be one of: REDHAT_7_64, REDHAT_8_64, RHCOS."
-    condition     = var.operating_system == null || contains(["REDHAT_7_64", "REDHAT_8_64", "RHCOS"], coalesce(var.operating_system, "allownull"))
+    error_message = "Operating system must be one of: REDHAT_8_64, REDHAT_9_64, RHCOS."
+    condition     = var.operating_system == null || contains(["REDHAT_8_64", "REDHAT_9_64", "RHCOS"], coalesce(var.operating_system, "allownull"))
   }
 }
 
 variable "calico_ip_autodetection" {
   description = "Set IP autodetection to use correct interface for Calico"
   type        = map(string)
+  default     = null
+}
+
+variable "pod_subnet" {
+  description = "Custom subnet CIDR to provide private IP addresses for services"
+  type        = string
+  default     = null
+}
+
+variable "service_subnet" {
+  description = "Custom subnet CIDR to provide private IP addresses for pods"
+  type        = string
   default     = null
 }
