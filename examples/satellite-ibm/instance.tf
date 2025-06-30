@@ -11,6 +11,11 @@ data "ibm_is_image" "rhel" {
   name = var.worker_image
 }
 
+data "ibm_is_image" "rhel_control_plane" {
+  count = var.control_plane_image != null ? 1 : 0
+  name  = var.control_plane_image
+}
+
 resource "ibm_is_vpc" "satellite_vpc" {
   name           = "${var.is_prefix}-vpc"
   resource_group = data.ibm_resource_group.resource_group.id
@@ -57,7 +62,7 @@ resource "ibm_is_instance" "ibm_host" {
   name           = "${var.is_prefix}-host-${each.key}"
   vpc            = ibm_is_vpc.satellite_vpc.id
   zone           = element(local.zones, each.key)
-  image          = var.worker_image_custom_id != null ? var.worker_image_custom_id : data.ibm_is_image.rhel.id
+  image          = each.value.for_control_plane && length(data.ibm_is_image.rhel_control_plane) == 1 ? data.ibm_is_image.rhel_control_plane[0].id : (var.worker_image_custom_id != null ? var.worker_image_custom_id : data.ibm_is_image.rhel.id)
   profile        = each.value.instance_type
   keys           = [var.ssh_key_id != null ? var.ssh_key_id : ibm_is_ssh_key.satellite_ssh[0].id]
   resource_group = data.ibm_resource_group.resource_group.id

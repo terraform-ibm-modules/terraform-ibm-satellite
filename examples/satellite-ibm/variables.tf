@@ -194,6 +194,12 @@ variable "worker_image" {
   default     = "ibm-redhat-8-6-minimal-amd64-1"
 }
 
+variable "control_plane_image" {
+  description = "Operating system image for the control plane workers created. If supplied, this will override worker_image above for cp nodes."
+  type        = string
+  default     = null
+}
+
 
 variable "worker_image_custom_id" {
   description = "Operating system image for the workers created, custom image by ID. If supplied, this will override worker_image above."
