@@ -33,10 +33,6 @@ resource "ibm_satellite_cluster" "create_cluster" {
     }
   }
 
-  lifecycle {
-    ignore_changes = [resource_group_id]
-  }
-
   default_worker_pool_labels = (var.default_worker_pool_labels != null ? var.default_worker_pool_labels : null)
   tags                       = (var.tags != null ? var.tags : null)
 
