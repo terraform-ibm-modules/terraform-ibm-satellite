@@ -1,6 +1,6 @@
 #####################################################
 # IBM Cloud Satellite -  IBM Example
-# Copyright 2021, 2023 IBM
+# Copyright 2021, 2025 IBM
 #####################################################
 
 data "ibm_resource_group" "rg_cluster" {
@@ -23,6 +23,8 @@ resource "ibm_satellite_cluster" "create_cluster" {
   host_labels             = (var.host_labels != null ? var.host_labels : null)
   operating_system        = var.operating_system
   calico_ip_autodetection = (var.calico_ip_autodetection != null ? var.calico_ip_autodetection : null)
+  pod_subnet              = var.pod_subnet
+  service_subnet          = var.service_subnet
 
   dynamic "zones" {
     for_each = (var.zones != null ? var.zones : null)
