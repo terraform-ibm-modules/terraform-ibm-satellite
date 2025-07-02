@@ -1,4 +1,4 @@
-data "vcd_edgegateway" "edge" {
+data "vcd_nsxt_edgegateway" "edge" {
   name = var.vdc_edge_gateway_name
 }
 
