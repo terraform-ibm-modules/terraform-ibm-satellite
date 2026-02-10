@@ -1,0 +1,5 @@
+# Ignore all symlinks and git submodules
+.pre-commit-config.yaml
+Makefile
+ci
+common-dev-assets/
